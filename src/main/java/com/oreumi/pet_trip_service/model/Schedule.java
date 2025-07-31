@@ -33,6 +33,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(name = "schedule")
 public class Schedule {
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
