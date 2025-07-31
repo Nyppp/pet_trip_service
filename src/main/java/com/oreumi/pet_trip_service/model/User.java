@@ -44,12 +44,4 @@ public class User {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-    
-    public enum UserStatus {
-        ACTIVE, INACTIVE
-    }
-    
-    public enum AuthProvider {
-        LOCAL, GOOGLE
-    }
 }
