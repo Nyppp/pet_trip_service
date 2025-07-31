@@ -31,6 +31,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "schedule")
 public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
