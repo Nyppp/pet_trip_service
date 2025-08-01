@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>일정 아이템 추가</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background-color: #fafafa;
+    }
+    .form_group {
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: bold;
+    }
+    input, textarea {
+      padding: 0.5rem;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .submit_button {
+      padding: 0.75rem 1.5rem;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🗺️ 일정에 장소 추가</h1>
+
+<form action="/schedules/1/items" method="POST">
+  <div class="form_group">
+    <label for="place_name">장소 이름</label>
+    <input type="text" id="place_name" name="place_name" placeholder="예: 남이섬" required />
+  </div>
+
+  <div class="form_group">
+    <label for="start_time">시작 시간</label>
+    <input type="time" id="start_time" name="start_time" required />
+  </div>
+
+  <div class="form_group">
+    <label for="end_time">종료 시간</label>
+    <input type="time" id="end_time" name="end_time" required />
+  </div>
+
+  <div class="form_group">
+    <label for="memo">메모</label>
+    <textarea id="memo" name="memo" rows="3" placeholder="예: 반려견 산책 코스 추천" ></textarea>
+  </div>
+
+  <button type="submit" class="submit_button">장소 추가</button>
+</form>
+
+</body>
+</html>

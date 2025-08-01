@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>여행 스케줄 플래너</title>
+    <style>
+        body {
+          font-family: sans-serif;
+          margin: 0;
+          padding: 0;
+        }
+        header {
+          background-color: #3f51b5;
+          color: white;
+          padding: 1rem;
+          text-align: center;
+        }
+        .date-tabs {
+          display: flex;
+          overflow-x: auto;
+          border-bottom: 1px solid #ddd;
+          background-color: #f9f9f9;
+        }
+        .date-tab {
+          padding: 1rem;
+          cursor: pointer;
+        }
+        .date-tab.active {
+          background-color: #e0e0e0;
+          font-weight: bold;
+        }
+        .planner-body {
+          padding: 1.5rem;
+        }
+        .location-card {
+          border: 1px solid #ccc;
+          padding: 1rem;
+          margin-bottom: 1rem;
+          border-radius: 8px;
+          background-color: #fff;
+        }
+        .add-location {
+          margin-top: 1rem;
+          padding: 0.5rem 1rem;
+          border: none;
+          background-color: #3f51b5;
+          color: white;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        .footer {
+          text-align: center;
+          margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>여행 스케줄 플래너</h1>
+</header>
+
+<div class="date-tabs">
+    <div class="date-tab active">8월 9일 (금)</div>
+    <div class="date-tab">8월 10일 (토)</div>
+</div>
+
+<div class="planner-body">
+    <!-- 선택된 날짜에 해당하는 일정 리스트 -->
+    <div class="location-card">
+        <h3>남이섬</h3>
+        <p>10:00 AM ~ 12:00 PM</p>
+        <p>반려견 동반 가능 / 강변 산책 추천</p>
+    </div>
+
+    <div class="location-card">
+        <h3>쁘띠프랑스</h3>
+        <p>13:00 ~ 15:00</p>
+        <p>입장료 있음 / 사진 스팟</p>
+    </div>
+    <div class="location-card">
+        <h3>쁘띠프랑스</h3>
+        <p>13:00 ~ 15:00</p>
+        <p>입장료 있음 / 사진 스팟</p>
+    </div>
+    <div class="location-card">
+        <h3>쁘띠프랑스</h3>
+        <p>13:00 ~ 15:00</p>
+        <p>입장료 있음 / 사진 스팟</p>
+    </div>
+    <div class="location-card">
+        <h3>쁘띠프랑스</h3>
+        <p>13:00 ~ 15:00</p>
+        <p>입장료 있음 / 사진 스팟</p>
+    </div>
+    <div class="location-card">
+        <h3>쁘띠프랑스</h3>
+        <p>13:00 ~ 15:00</p>
+        <p>입장료 있음 / 사진 스팟</p>
+    </div>
+
+    <!-- 일정 추가 버튼 -->
+    <button class="add-location">+ 장소 추가</button>
+</div>
+
+<div class="footer">
+    <button class="add-location">저장하기</button>
+</div>
+
+</body>
+</html>
