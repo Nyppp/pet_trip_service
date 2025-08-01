@@ -1,5 +1,7 @@
 package com.oreumi.pet_trip_service.model;
 
+import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
+import com.oreumi.pet_trip_service.model.Enum.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -7,7 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor

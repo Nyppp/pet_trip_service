@@ -29,7 +29,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "schedule_item")
 public class ScheduleItem {
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -37,7 +39,7 @@ public class ScheduleItem {
     @JoinColumn(name="schedule_id", nullable = false)
     private Schedule schedule;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
