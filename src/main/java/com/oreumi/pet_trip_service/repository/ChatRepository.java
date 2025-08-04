@@ -11,5 +11,5 @@ import java.util.List;
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     // 채팅방의 모든 채팅을 오름차순으로 조회
-    List<Chat> findAllByChatRoomIdCreatedAt(@Param("chatRoomId")Long chatRoomId);
+    List<Chat> findAllByChatRoomIdOrderByCreatedAt(@Param("chatRoomId")Long chatRoomId);
 }
