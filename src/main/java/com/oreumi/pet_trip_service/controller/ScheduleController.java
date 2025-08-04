@@ -19,7 +19,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/{id}")
-    public String showScheduleDetail(@PathVariable Long scheduleId,
+    public String showScheduleDetail(@PathVariable("id") Long scheduleId,
                                      Model model){
         //서비스 구현 > id 접근
 
@@ -99,6 +99,17 @@ public class ScheduleController {
     }
 
     @GetMapping("/{scheduleId}/items/{itemId}")
+    public String showScheduleItemDetail(@PathVariable Long scheduleId,
+                                           @PathVariable Long itemId,
+                                           Model model){
+
+        //스케쥴 > 아이템 불러와서
+
+        return "/schedule/schedule_item/schedule_item_detail";
+
+    }
+
+    @GetMapping("/{scheduleId}/items/{itemId}/edit")
     public String showEditScheduleItemForm(@PathVariable Long scheduleId,
                                            @PathVariable Long itemId,
                                            Model model){
@@ -110,7 +121,7 @@ public class ScheduleController {
 
     }
 
-    @PutMapping("/{scheduleId}/items/{itemId}")
+    @PutMapping("/{scheduleId}/items/{itemId}/edit")
     public String editScheduleItem(@PathVariable Long scheduleId,
                                    @PathVariable Long itemId,
                                    @RequestParam Place place,
@@ -122,7 +133,7 @@ public class ScheduleController {
         //파라미터들 받아서 스케쥴아이템 생성 후 > 스케쥴에 저장
         //전달하면서, 스케쥴 id + 아이템 id 전달
 
-        return "redirect:/schedule/{scheduleId}/items";
+        return "redirect:/schedule/{scheduleId}/items/{itemId}";
     }
 
     @DeleteMapping("/{scheduleId}/items/{itemId}")
