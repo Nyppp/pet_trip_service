@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <title>일정 만들기</title>
@@ -37,20 +37,23 @@
 
 <h1>📌 새 여행 일정 만들기</h1>
 
-<form action="/schedules" method="POST">
+<form th:action="@{/schedule/new}" method="POST" th:object="${scheduleDTO}">
     <div class="form_group">
         <label for="title">일정 제목</label>
-        <input type="text" id="title" name="title" placeholder="예: 가평 여행" required />
+        <input type="text" th:field="*{title}"
+               id="title" name="title" placeholder="예: 가평 여행" required />
     </div>
 
     <div class="form_group">
         <label for="start_date">시작 날짜</label>
-        <input type="date" id="start_date" name="start_date" required />
+        <input type="date" th:field="*{startDate}"
+               id="start_date" name="start_date" required />
     </div>
 
     <div class="form_group">
         <label for="end_date">종료 날짜</label>
-        <input type="date" id="end_date" name="end_date" required />
+        <input type="date" th:field="*{endDate}"
+               id="end_date" name="end_date" required />
     </div>
 
     <button type="submit" class="submit_button">일정 생성</button>
