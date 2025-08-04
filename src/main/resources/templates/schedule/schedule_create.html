@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>일정 만들기</title>
+    <style>
+        body {
+          font-family: sans-serif;
+          padding: 2rem;
+          background-color: #f4f4f4;
+        }
+        .form_group {
+          margin-bottom: 1.5rem;
+        }
+        label {
+          display: block;
+          margin-bottom: 0.3rem;
+          font-weight: bold;
+        }
+        input {
+          padding: 0.5rem;
+          width: 100%;
+          border-radius: 5px;
+          border: 1px solid #ccc;
+        }
+        .submit_button {
+          padding: 0.75rem 1.5rem;
+          background-color: #3f51b5;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📌 새 여행 일정 만들기</h1>
+
+<form action="/schedules" method="POST">
+    <div class="form_group">
+        <label for="title">일정 제목</label>
+        <input type="text" id="title" name="title" placeholder="예: 가평 여행" required />
+    </div>
+
+    <div class="form_group">
+        <label for="start_date">시작 날짜</label>
+        <input type="date" id="start_date" name="start_date" required />
+    </div>
+
+    <div class="form_group">
+        <label for="end_date">종료 날짜</label>
+        <input type="date" id="end_date" name="end_date" required />
+    </div>
+
+    <button type="submit" class="submit_button">일정 생성</button>
+</form>
+
+</body>
+</html>
