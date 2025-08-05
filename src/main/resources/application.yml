@@ -10,3 +10,7 @@ spring:
     password: ${DATABASE_PASSWORD}
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}
+
+logging:
+  level:
+    com.oreumi.pet_trip_service: debug
