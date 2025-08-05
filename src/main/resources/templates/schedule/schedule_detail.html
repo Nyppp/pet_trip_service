@@ -61,16 +61,19 @@
 </header>
 
 <div class="date-tabs">
-    <div class="date-tab active">8월 9일 (금)</div>
-    <div class="date-tab">8월 10일 (토)</div>
+    <div th:each="entry : ${scheduleGroup}"
+         th:text="${#temporals.format(entry.key, 'M월 d일')}" class="date-tab"></div>
 </div>
 
 <div class="planner-body">
     <!-- 선택된 날짜에 해당하는 일정 리스트 -->
-    <div class="location-card">
-        <h3>남이섬</h3>
-        <p>10:00 AM ~ 12:00 PM</p>
-        <p>반려견 동반 가능 / 강변 산책 추천</p>
+    <div th:each="entry : ${scheduleGroup}">
+        <div th:each="item : ${entry.value}" class="location-card">
+            <h3 th:text="${item.title}">장소명</h3>
+            <p th:text="${item.startTime}">시작시간</p>
+            <p th:text="${item.endTime}">종료시간</p>
+            <p th:text="${item.memo}">메모</p>
+        </div>
     </div>
 
     <!-- 일정 추가 버튼 -->
@@ -78,7 +81,7 @@
 </div>
 
 <div class="footer">
-    <button class="add-location">저장하기</button>
+    <a th:href="@{/schedule}" class="add-location">스케쥴 리스트로 돌아가기</a>
 </div>
 
 </body>

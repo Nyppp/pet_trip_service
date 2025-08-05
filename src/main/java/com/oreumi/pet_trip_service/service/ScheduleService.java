@@ -4,6 +4,7 @@ import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
 import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
 import com.oreumi.pet_trip_service.model.Enum.UserStatus;
 import com.oreumi.pet_trip_service.model.Schedule;
+import com.oreumi.pet_trip_service.model.ScheduleItem;
 import com.oreumi.pet_trip_service.model.User;
 import com.oreumi.pet_trip_service.repository.ScheduleItemRepository;
 import com.oreumi.pet_trip_service.repository.ScheduleRepository;
@@ -11,9 +12,11 @@ import com.oreumi.pet_trip_service.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 @Service
 public class ScheduleService {
@@ -64,5 +67,23 @@ public class ScheduleService {
 
     public Optional<Schedule> findByScheduleId(Long id){
         return scheduleRepository.findById(id);
+    }
+
+    public Map<LocalDate, List<ScheduleItem>> getScheduleItemsGroup(Schedule schedule){
+        Map<LocalDate, List<ScheduleItem>> groupedItems = schedule.getScheduleItems().stream()
+                .collect(Collectors.groupingBy(
+                        item -> item.getStartTime().toLocalDate(),
+                        TreeMap::new,
+                        Collectors.toList()
+                ));
+
+        LocalDate start = schedule.getStartDate();
+        LocalDate end = schedule.getEndDate();
+
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            groupedItems.putIfAbsent(date, new ArrayList<>());
+        }
+
+        return groupedItems;
     }
 }

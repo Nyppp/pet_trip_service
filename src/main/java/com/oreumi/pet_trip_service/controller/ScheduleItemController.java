@@ -4,18 +4,21 @@ import com.oreumi.pet_trip_service.model.Place;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.model.ScheduleItem;
 import com.oreumi.pet_trip_service.service.ScheduleService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.TreeMap;
 
 @Controller
+@Slf4j
 @RequestMapping("/schedule")
 public class ScheduleItemController {
     private final ScheduleService scheduleService;
@@ -24,19 +27,18 @@ public class ScheduleItemController {
         this.scheduleService = scheduleService;
     }
 
-    @GetMapping("/{id}/items")
+    @GetMapping("/{id}")
     public String showScheduleItemList(@PathVariable("id") Long scheduleId,
                                        Model model){
-        //아이디로 스케쥴 접근 > 스케쥴 하위의 아이템 리스트 모델에 전달
+        //스케쥴 객체 로딩
         Schedule schedule = scheduleService.findByScheduleId(scheduleId)
                 .orElseThrow();
 
-        Map<LocalDate, List<ScheduleItem>> groupedItems = schedule.getScheduleItems().stream()
-                .collect(Collectors.groupingBy(
-                        scheduleItem -> scheduleItem.getStartTime().toLocalDate(),
-                        TreeMap::new,
-                        Collectors.toList()
-                ));
+        //스케쥴 (일차 - 스케쥴 아이템) 쌍으로 이루어진 맵 그룹화
+        Map<LocalDate, List<ScheduleItem>> groupedItems = scheduleService.getScheduleItemsGroup(schedule);
+
+        log.debug("📦 Schedule title = {}", schedule.getTitle());
+        log.debug("🗓️ Grouped schedule items = {}", groupedItems);
 
         model.addAttribute("schedule", schedule);
         model.addAttribute("scheduleGroup", groupedItems);
