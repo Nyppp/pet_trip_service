@@ -74,16 +74,37 @@ public class ScheduleService {
         scheduleItem.setCreatedAt(LocalDateTime.now());
         scheduleItem.setSchedule(schedule);
 
+        schedule.getScheduleItems().add(scheduleItem);
+
+
         return scheduleItemRepository.save(scheduleItem);
     }
 
+    @Transactional
+    public ScheduleItem updateScheduleItem(Long scheduleId, Long scheduleItemId, ScheduleItemDTO scheduleItemDTO){
+        ScheduleItem scheduleItem = scheduleItemRepository.findById(scheduleItemId).orElseThrow();
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow();
 
-    public List<Schedule> findAllSchedules(){
+        scheduleItem.setTitle(scheduleItemDTO.getTitle());
+        scheduleItem.setMemo(scheduleItemDTO.getMemo());
+        scheduleItem.setStartTime(scheduleItemDTO.getStartTime());
+        scheduleItem.setEndTime(scheduleItemDTO.getEndTime());
+
+        return scheduleItemRepository.save(scheduleItem);
+
+    }
+
+
+    public List<Schedule> findScheduleAllSchedules(){
         return scheduleRepository.findAll();
     }
 
-    public Optional<Schedule> findByScheduleId(Long id){
+    public Optional<Schedule> findScheduleByScheduleId(Long id){
         return scheduleRepository.findById(id);
+    }
+
+    public Optional<ScheduleItem> findScheduleItemByItemId(Long id){
+        return scheduleItemRepository.findById(id);
     }
 
     public Map<LocalDate, List<ScheduleItem>> getScheduleItemsGroup(Schedule schedule){

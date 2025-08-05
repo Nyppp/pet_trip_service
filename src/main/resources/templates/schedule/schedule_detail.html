@@ -70,9 +70,14 @@
     <div th:each="entry : ${scheduleGroup}">
         <div th:each="item : ${entry.value}" class="location-card">
             <h3 th:text="${item.title}">장소명</h3>
-            <p th:text="${item.startTime}">시작시간</p>
-            <p th:text="${item.endTime}">종료시간</p>
+            <p th:text="${#temporals.format(item.startTime, 'MM-dd HH:mm')} + ' ~ ' + ${#temporals.format(item.endTime, 'MM-dd HH:mm')}">
+                시작시간 ~ 종료시간
+            </p>
             <p th:text="${item.memo}">메모</p>
+
+            <a th:href="@{/schedule/{scheduleId}/items/{itemId}(scheduleId=${schedule.id}, itemId=${item.id})}">
+                일정 상세보기
+            </a>
         </div>
     </div>
 

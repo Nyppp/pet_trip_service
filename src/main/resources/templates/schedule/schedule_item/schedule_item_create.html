@@ -37,7 +37,7 @@
 
 <h1>🗺️ 일정에 장소 추가</h1>
 
-<form th:action="@{/schedule/{id}/items/new(id=${scheduleId})}" method="POST"
+<form th:action="@{${formAction}}" method="POST"
   th:object="${scheduleItemDTO}">
   <div class="form_group">
     <label for="place_name">장소 이름</label>

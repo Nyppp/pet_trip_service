@@ -2,22 +2,14 @@ package com.oreumi.pet_trip_service.controller;
 
 
 import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
-import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
-import com.oreumi.pet_trip_service.model.Enum.UserStatus;
-import com.oreumi.pet_trip_service.model.Place;
 import com.oreumi.pet_trip_service.model.Schedule;
-import com.oreumi.pet_trip_service.model.User;
-import com.oreumi.pet_trip_service.repository.UserRepository;
 import com.oreumi.pet_trip_service.service.ScheduleService;
 import jakarta.validation.Valid;
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -31,24 +23,10 @@ public class ScheduleController {
 
     @GetMapping
     public String showScheduleList(Model model){
-        List<Schedule> scheduleList = scheduleService.findAllSchedules();
+        List<Schedule> scheduleList = scheduleService.findScheduleAllSchedules();
         model.addAttribute("schedules", scheduleList);
         return "/schedule/schedule_list";
     }
-
-//    @GetMapping("/{id}")
-//    public String showScheduleDetail(@PathVariable("id") Long scheduleId,
-//                                     Model model){
-//        //서비스 구현 > id 접근
-//        scheduleService.findByScheduleId(scheduleId)
-//                .map(schedule -> {
-//                    model.addAttribute("schedule", schedule);
-//                    return schedule;
-//                })
-//                .orElseThrow();
-//
-//        return "/schedule/schedule_detail";
-//    }
 
     @GetMapping("/new")
     public String showScheduleForm(Model model){
