@@ -55,7 +55,7 @@
 </div>
 
 <div class="schedule_list" th:each="schedule : ${schedules}">
-  <a th:href="@{/schedules/{id}(id=${schedule.id})}" class="schedule_card">
+  <a th:href="@{/schedule/{id}(id=${schedule.id})}" class="schedule_card">
     <div class="schedule_title" th:text="${schedule.title}">여행 제목</div>
     <div class="schedule_date"
          th:text="${#temporals.format(schedule.startDate, 'yyyy.MM.dd')} + ' ~ ' + ${#temporals.format(schedule.endDate, 'yyyy.MM.dd')}">

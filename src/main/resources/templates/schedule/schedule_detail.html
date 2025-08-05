@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <title>여행 스케줄 플래너</title>
@@ -57,7 +57,7 @@
 <body>
 
 <header>
-    <h1>여행 스케줄 플래너</h1>
+    <h1 th:text="${schedule.title}">여행 스케줄 플래너</h1>
 </header>
 
 <div class="date-tabs">
@@ -73,34 +73,8 @@
         <p>반려견 동반 가능 / 강변 산책 추천</p>
     </div>
 
-    <div class="location-card">
-        <h3>쁘띠프랑스</h3>
-        <p>13:00 ~ 15:00</p>
-        <p>입장료 있음 / 사진 스팟</p>
-    </div>
-    <div class="location-card">
-        <h3>쁘띠프랑스</h3>
-        <p>13:00 ~ 15:00</p>
-        <p>입장료 있음 / 사진 스팟</p>
-    </div>
-    <div class="location-card">
-        <h3>쁘띠프랑스</h3>
-        <p>13:00 ~ 15:00</p>
-        <p>입장료 있음 / 사진 스팟</p>
-    </div>
-    <div class="location-card">
-        <h3>쁘띠프랑스</h3>
-        <p>13:00 ~ 15:00</p>
-        <p>입장료 있음 / 사진 스팟</p>
-    </div>
-    <div class="location-card">
-        <h3>쁘띠프랑스</h3>
-        <p>13:00 ~ 15:00</p>
-        <p>입장료 있음 / 사진 스팟</p>
-    </div>
-
     <!-- 일정 추가 버튼 -->
-    <button class="add-location">+ 장소 추가</button>
+    <a th:href="@{/schedule/{id}/items/new(id=${schedule.id})}" class="add-location">+ 장소 추가</a>
 </div>
 
 <div class="footer">

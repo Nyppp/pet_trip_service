@@ -1,18 +1,45 @@
 package com.oreumi.pet_trip_service.controller;
 
 import com.oreumi.pet_trip_service.model.Place;
+import com.oreumi.pet_trip_service.model.Schedule;
+import com.oreumi.pet_trip_service.model.ScheduleItem;
+import com.oreumi.pet_trip_service.service.ScheduleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.TreeMap;
 
 @Controller
+@RequestMapping("/schedule")
 public class ScheduleItemController {
+    private final ScheduleService scheduleService;
+
+    public ScheduleItemController(ScheduleService scheduleService) {
+        this.scheduleService = scheduleService;
+    }
+
     @GetMapping("/{id}/items")
     public String showScheduleItemList(@PathVariable("id") Long scheduleId,
                                        Model model){
         //아이디로 스케쥴 접근 > 스케쥴 하위의 아이템 리스트 모델에 전달
+        Schedule schedule = scheduleService.findByScheduleId(scheduleId)
+                .orElseThrow();
+
+        Map<LocalDate, List<ScheduleItem>> groupedItems = schedule.getScheduleItems().stream()
+                .collect(Collectors.groupingBy(
+                        scheduleItem -> scheduleItem.getStartTime().toLocalDate(),
+                        TreeMap::new,
+                        Collectors.toList()
+                ));
+
+        model.addAttribute("schedule", schedule);
+        model.addAttribute("scheduleGroup", groupedItems);
 
         return "/schedule/schedule_detail";
     }

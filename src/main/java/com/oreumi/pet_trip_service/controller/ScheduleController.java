@@ -40,6 +40,12 @@ public class ScheduleController {
     public String showScheduleDetail(@PathVariable("id") Long scheduleId,
                                      Model model){
         //서비스 구현 > id 접근
+        scheduleService.findByScheduleId(scheduleId)
+                .map(schedule -> {
+                    model.addAttribute("schedule", schedule);
+                    return schedule;
+                })
+                .orElseThrow();
 
         return "/schedule/schedule_detail";
     }

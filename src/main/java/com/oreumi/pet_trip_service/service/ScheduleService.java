@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ScheduleService {
@@ -59,5 +60,9 @@ public class ScheduleService {
 
     public List<Schedule> findAllSchedules(){
         return scheduleRepository.findAll();
+    }
+
+    public Optional<Schedule> findByScheduleId(Long id){
+        return scheduleRepository.findById(id);
     }
 }
