@@ -45,8 +45,8 @@ public class ScheduleItem {
 //    private Place place;
 
 //    장소 대체 > 타이틀로 우선 저장하도록
-    @Column(name="item_title")
-    private String itemTitle;
+    @Column(name="title")
+    private String title;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;

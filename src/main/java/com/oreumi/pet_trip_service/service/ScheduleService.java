@@ -1,6 +1,7 @@
 package com.oreumi.pet_trip_service.service;
 
 import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
+import com.oreumi.pet_trip_service.DTO.ScheduleItemDTO;
 import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
 import com.oreumi.pet_trip_service.model.Enum.UserStatus;
 import com.oreumi.pet_trip_service.model.Schedule;
@@ -60,6 +61,22 @@ public class ScheduleService {
 
         return scheduleRepository.save(schedule);
     }
+
+    @Transactional
+    public ScheduleItem saveScheduleItem(Long scheduleId, ScheduleItemDTO scheduleItemDTO){
+        ScheduleItem scheduleItem = new ScheduleItem();
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow();
+
+        scheduleItem.setTitle(scheduleItemDTO.getTitle());
+        scheduleItem.setStartTime(scheduleItemDTO.getStartTime());
+        scheduleItem.setEndTime(scheduleItemDTO.getEndTime());
+        scheduleItem.setMemo(scheduleItemDTO.getMemo());
+        scheduleItem.setCreatedAt(LocalDateTime.now());
+        scheduleItem.setSchedule(schedule);
+
+        return scheduleItemRepository.save(scheduleItem);
+    }
+
 
     public List<Schedule> findAllSchedules(){
         return scheduleRepository.findAll();

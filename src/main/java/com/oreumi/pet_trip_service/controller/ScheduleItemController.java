@@ -1,9 +1,12 @@
 package com.oreumi.pet_trip_service.controller;
 
+import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
+import com.oreumi.pet_trip_service.DTO.ScheduleItemDTO;
 import com.oreumi.pet_trip_service.model.Place;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.model.ScheduleItem;
 import com.oreumi.pet_trip_service.service.ScheduleService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,22 +50,24 @@ public class ScheduleItemController {
     }
 
     @GetMapping("/{id}/items/new")
-    public String showScheduleItemForm(@PathVariable("id") Long scheduleId){
+    public String showScheduleItemForm(@PathVariable("id") Long scheduleId,
+                                       Model model){
+        model.addAttribute("scheduleId", scheduleId);
+        model.addAttribute("scheduleItemDTO", new ScheduleItemDTO());
         return "/schedule/schedule_item/schedule_item_create";
     }
 
 
     @PostMapping("/{id}/items/new")
     public String createNewScheduleItem(@PathVariable("id") Long scheduleId,
-                                        @RequestParam Long placeId,
-                                        @RequestParam LocalDateTime startTime,
-                                        @RequestParam LocalDateTime endTime,
-                                        @RequestParam String memo,
+                                        @Valid @ModelAttribute ScheduleItemDTO scheduleItemDTO,
                                         Model model){
 
         //파라미터들 받아서 스케쥴아이템 생성 후 > 스케쥴에 저장
 
-        return "/schedule/schedule_item/schedule_item_detail";
+        scheduleService.saveScheduleItem(scheduleId, scheduleItemDTO);
+
+        return "redirect:/schedule/{id}";
     }
 
     @GetMapping("/{scheduleId}/items/{itemId}")
