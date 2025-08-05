@@ -9,7 +9,6 @@
       --color-border: #E1E1E1;
       --color-subline: #F1F1F1;
     }
-
     /* 기본 스타일 */
     body {
       font-family: 'Arial', sans-serif;
@@ -30,6 +29,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-size:20px;
     }
     .logo {
       font-size: 1.5rem;
@@ -43,11 +43,19 @@
       font-weight: bold;
     }
 
+    .container {
+      max-width: 1200px;      /* 너비 제한 */
+      margin: 0 auto;         /* 좌우 중앙 정렬 */
+      padding: 0 1.5rem;      /* 양쪽 여백 */
+      box-sizing: border-box;
+    }
+
     /* 검색 */
     .search-bar {
       background: var(--color-accent);
       padding: 1.5rem 2rem;
       display: flex;
+      justify-content: center;
       gap: 1rem;
       flex-wrap: wrap;
       align-items: center;
@@ -76,6 +84,7 @@
       margin-right: 8px;
       vertical-align: middle;
       background-color: #E1E1E1;
+      border-radius: 25%;
     }
 
     /* 리스트 영역 */
@@ -114,8 +123,8 @@
     }
 
     #chat-toggle-btn button {
-      width: 64px;
-      height: 64px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
       border: none;
       background-color: var(--color-secondary);
@@ -127,11 +136,12 @@
       padding: 0;
     }
 
-    #chat-btn-logo {
-      width: 32px;
-      height: 32px;
+    .chat-btn-logo {
+      width: 50px;
+      height: 50px;
       object-fit: contain;
       vertical-align: middle;
+      background-color: #f47b38;
     }
     /* 채팅 모달 */
     #chat-modal {
@@ -156,20 +166,40 @@
       padding: 0.75rem;
       font-weight: bold;
       display: flex;
-      justify-content: space-between;
+      justify-content: left;
       align-items: center;
+    }
+
+    #chat-modal-header img {
+      border-radius: 50%;
+    }
+    .chat-modal-header-title {
+        margin-left: 7px;
+        font-size: 20px;
+    }
+
+    #chat-modal-header button {
+      background: transparent;
+      border: none;
+      color: #d1d1d1;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-left: auto
     }
 
     #chat-modal-body {
       flex: 1;
       padding: 1rem;
-      overflow-y: auto;
       background-color: #FAFAFA;
+      overflow-y: auto;
+
     }
 
     #chat-modal-input {
       display: flex;
       border-top: 1px solid var(--color-subline);
+      padding: 0.5rem;
+      margin: 0;
     }
 
     #chat-modal-input input {
