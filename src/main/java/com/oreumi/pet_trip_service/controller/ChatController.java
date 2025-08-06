@@ -1,5 +1,6 @@
 package com.oreumi.pet_trip_service.controller;
 
+
 import com.oreumi.pet_trip_service.DTO.ChatRequest;
 import com.oreumi.pet_trip_service.DTO.ChatResponse;
 import com.oreumi.pet_trip_service.service.ChatService;
@@ -14,8 +15,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor // 필수 생성자 생성인듯
 public class ChatController {
 
-    private final ChatService chatService;
 
+    private final ChatService chatService;
+  
     // 채팅방 조회
     @GetMapping("/{roomId}")
     public String chatRoomFind(@PathVariable Long roomId) {
@@ -46,8 +48,4 @@ public class ChatController {
     public String chatDelete(@PathVariable Long messageId) {
         return "";
     }
-
-    // 채팅창은 모달창으로 만들예정
-    // 채팅 모달을 띄우는 버튼은 어느페이지든 있음.
-    // 위 메서드는 모두 Restful Api로 바꿀것
 }
