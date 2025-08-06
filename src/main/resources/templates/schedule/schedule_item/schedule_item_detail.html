@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <title>일정 아이템 상세</title>
@@ -53,16 +53,18 @@
 <body>
 
 <div class="item_container">
-  <div class="item_header">남이섬</div>
+  <div th:text="${item.title}" class="item_header">남이섬</div>
 
   <div class="item_info">
-    <p><span>시작 시간:</span> 2025-08-09 10:00</p>
-    <p><span>종료 시간:</span> 2025-08-09 12:00</p>
-    <p><span>메모:</span> 반려견과 강변 산책 코스가 좋아요!</p>
+    <p th:text="'시작 시간: ' + ${item.startTime}"></p>
+    <p th:text="'종료 시간: ' + ${item.endTime}"></p>
+    <p th:text="'메모: ' + ${item.memo}"></p>
   </div>
 
   <div class="button_group">
-    <a href="/schedules/1/items/5/edit" class="edit_button">수정</a>
+    <a th:href="@{/schedule/{scheduleId}/items/{itemId}/edit(scheduleId=${item.schedule.id}, itemId=${item.id})}" class="edit_button">수정</a>
+
+    <a th:href="@{/schedule/{scheduleId}(scheduleId=${item.schedule.id})}" class="edit_button">일정 리스트로 돌아가기</a>
 
     <form action="/schedules/1/items/5" method="POST" onsubmit="return confirm('정말 삭제할까요?');">
       <input type="hidden" name="_method" value="DELETE" />

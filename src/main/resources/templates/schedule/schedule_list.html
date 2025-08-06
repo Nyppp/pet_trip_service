@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>내 여행 일정</title>
@@ -45,24 +45,20 @@
       display: inline-block;
     }
   </style>
+  <script th:src="@{/scripts/scheduleList.js}"></script>
 </head>
 <body>
 
 <h1>📅 내 여행 일정</h1>
 
-<div class="schedule_list">
-  <a href="/schedules/1" class="schedule_card">
-    <div class="schedule_title">8월 가평 여행</div>
-    <div class="schedule_date">2025.08.09 ~ 2025.08.10</div>
-  </a>
-
-  <a href="/schedules/2" class="schedule_card">
-    <div class="schedule_title">9월 강릉 바다 여행</div>
-    <div class="schedule_date">2025.09.03 ~ 2025.09.05</div>
-  </a>
+<div th:if="${#lists.isEmpty(schedules)}">
+  <p>등록된 일정이 없습니다.</p>
 </div>
 
-<a href="/schedules/new" class="create_schedule_button">+ 새 일정 만들기</a>
+<div id="schedule_list" class="schedule_list">
+</div>
+
+<a th:href="@{/schedule/new}" class="create_schedule_button">+ 새 일정 만들기</a>
 
 </body>
 </html>
