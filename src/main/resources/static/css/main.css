@@ -218,6 +218,33 @@
       cursor: pointer;
     }
 
+    /* 메세지 말풍선 */
+    .chat-message {
+        max-width: 70%;
+        padding: 10px 14px;
+        border-radius: 18px;
+        margin: 10px;
+        font-size: 14px;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+    /* 챗봇 메시지 (왼쪽 정렬, 회색 말풍선) */
+    .bot-message {
+        background-color: #f1f1f1;
+        color: #333;
+        align-self: flex-start;
+        border-bottom-left-radius: 0;
+    }
+
+    /* 사용자 메시지 (오른쪽 정렬, 파란색 말풍선) */
+    .user-message {
+        background-color: #f7eac2;
+        color: #333;
+        align-self: flex-end;
+        border-bottom-right-radius: 0;
+    }
+
     /* 푸터 */
     footer {
       text-align: center;
