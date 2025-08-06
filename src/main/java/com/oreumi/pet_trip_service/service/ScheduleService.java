@@ -10,6 +10,7 @@ import com.oreumi.pet_trip_service.model.User;
 import com.oreumi.pet_trip_service.repository.ScheduleItemRepository;
 import com.oreumi.pet_trip_service.repository.ScheduleRepository;
 import com.oreumi.pet_trip_service.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,7 +92,30 @@ public class ScheduleService {
         scheduleItem.setEndTime(scheduleItemDTO.getEndTime());
 
         return scheduleItemRepository.save(scheduleItem);
+    }
 
+    public Schedule editSchedule(Long scheduleId, ScheduleDTO dto){
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        // 일정 정보 수정
+        schedule.setTitle(dto.getTitle());
+        schedule.setStartDate(dto.getStartDate());
+        schedule.setEndDate(dto.getEndDate());
+
+        schedule.getScheduleItems().removeIf(item ->
+                item.getStartTime().toLocalDate().isBefore(dto.getStartDate()) ||
+                        item.getEndTime().toLocalDate().isAfter(dto.getEndDate()));
+
+        return scheduleRepository.save(schedule);
+    }
+
+    public void deleteSchdule(Long scheduleId){
+        if(scheduleRepository.existsById(scheduleId)){
+            scheduleRepository.deleteById(scheduleId);
+        }else{
+            throw new EntityNotFoundException("스케쥴 데이터를 찾을 수 없습니다.");
+        }
     }
 
 

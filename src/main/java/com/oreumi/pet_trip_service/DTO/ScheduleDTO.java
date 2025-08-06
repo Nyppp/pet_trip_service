@@ -1,5 +1,6 @@
 package com.oreumi.pet_trip_service.DTO;
 
+import com.oreumi.pet_trip_service.model.Schedule;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -24,4 +25,11 @@ public class ScheduleDTO {
     private LocalDate startDate;
     @Future
     private LocalDate endDate;
+    
+    public ScheduleDTO(Schedule schedule){
+        this.id = schedule.getId();
+        this.title = schedule.getTitle();
+        this.startDate = schedule.getStartDate();
+        this.endDate = schedule.getEndDate();
+    }
 }

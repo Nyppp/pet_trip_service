@@ -12,10 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -55,5 +52,20 @@ public class ScheduleApiController {
     public ResponseEntity<List<ScheduleItemDTO>> getAllItemsBySchedule(@PathVariable Long scheduleId){
         List<ScheduleItemDTO> scheduleItems = scheduleService.findAllScheduleItems(scheduleId);
         return ResponseEntity.ok(scheduleItems);
+    }
+
+    @Operation(summary = "특정 스케쥴 삭제", description = "특정 스케쥴을 삭제합니다. (하위 일정도 모두 삭제)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "삭제 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ScheduleItemDTO.class))),
+            @ApiResponse(responseCode = "500", description = "서버 오류",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @DeleteMapping("/schedules/{scheduleId}")
+    public ResponseEntity<?> deleteSchedule(@PathVariable Long scheduleId){
+        scheduleService.deleteSchdule(scheduleId);
+        return ResponseEntity.noContent().build();
     }
 }

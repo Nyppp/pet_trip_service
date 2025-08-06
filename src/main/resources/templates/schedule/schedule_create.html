@@ -37,7 +37,7 @@
 
 <h1>📌 새 여행 일정 만들기</h1>
 
-<form th:action="@{/schedule/new}" method="POST" th:object="${scheduleDTO}">
+<form th:action="@{${formAction}}" method="POST" th:object="${scheduleDTO}">
     <div class="form_group">
         <label for="title">일정 제목</label>
         <input type="text" th:field="*{title}"
