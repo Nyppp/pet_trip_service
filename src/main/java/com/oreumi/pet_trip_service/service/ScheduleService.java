@@ -122,6 +122,18 @@ public class ScheduleService {
         return scheduleItemRepository.findById(id);
     }
 
+    public List<ScheduleItemDTO> findAllScheduleItems(Long scheduleId){
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow();
+        List<ScheduleItemDTO> scheduleItemDTOList = new ArrayList<>();
+
+        for(ScheduleItem item : schedule.getScheduleItems()){
+            ScheduleItemDTO dto = new ScheduleItemDTO(item.getId(), item.getTitle(), item.getStartTime(), item.getEndTime(), item.getMemo());
+            scheduleItemDTOList.add(dto);
+        }
+
+        return scheduleItemDTOList;
+    }
+
     public Map<LocalDate, List<ScheduleItem>> getScheduleItemsGroup(Schedule schedule){
         Map<LocalDate, List<ScheduleItem>> groupedItems = schedule.getScheduleItems().stream()
                 .collect(Collectors.groupingBy(

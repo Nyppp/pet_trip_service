@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleItemDTO {
+    private Long id;
     @NotBlank
     private String title;
 

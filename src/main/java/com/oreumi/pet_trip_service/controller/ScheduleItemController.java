@@ -34,11 +34,7 @@ public class ScheduleItemController {
         Schedule schedule = scheduleService.findScheduleByScheduleId(scheduleId)
                 .orElseThrow();
 
-        //스케쥴 (일차 - 스케쥴 아이템) 쌍으로 이루어진 맵을 받는다
-        Map<LocalDate, List<ScheduleItem>> groupedItems = scheduleService.getScheduleItemsGroup(schedule);
-
         model.addAttribute("schedule", schedule);
-        model.addAttribute("scheduleGroup", groupedItems);
 
         return "/schedule/schedule_detail";
     }
@@ -85,6 +81,7 @@ public class ScheduleItemController {
         ScheduleItem scheduleItem = scheduleService.findScheduleItemByItemId(itemId).orElseThrow();
 
         ScheduleItemDTO scheduleItemDTO = new ScheduleItemDTO(
+                scheduleItem.getId(),
                 scheduleItem.getTitle(),
                 scheduleItem.getStartTime(),
                 scheduleItem.getEndTime(),

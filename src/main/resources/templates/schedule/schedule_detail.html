@@ -53,6 +53,7 @@
           margin: 2rem 0;
         }
     </style>
+    <script th:src="@{/scripts/scheduleItemList.js}"></script>
 </head>
 <body>
 
@@ -61,25 +62,9 @@
 </header>
 
 <div class="date-tabs">
-    <div th:each="entry : ${scheduleGroup}"
-         th:text="${#temporals.format(entry.key, 'M월 d일')}" class="date-tab"></div>
 </div>
 
-<div class="planner-body">
-    <!-- 선택된 날짜에 해당하는 일정 리스트 -->
-    <div th:each="entry : ${scheduleGroup}">
-        <div th:each="item : ${entry.value}" class="location-card">
-            <h3 th:text="${item.title}">장소명</h3>
-            <p th:text="${#temporals.format(item.startTime, 'MM-dd HH:mm')} + ' ~ ' + ${#temporals.format(item.endTime, 'MM-dd HH:mm')}">
-                시작시간 ~ 종료시간
-            </p>
-            <p th:text="${item.memo}">메모</p>
-
-            <a th:href="@{/schedule/{scheduleId}/items/{itemId}(scheduleId=${schedule.id}, itemId=${item.id})}">
-                일정 상세보기
-            </a>
-        </div>
-    </div>
+<div id="planner-body" class="planner-body">
 
     <!-- 일정 추가 버튼 -->
     <a th:href="@{/schedule/{id}/items/new(id=${schedule.id})}" class="add-location">+ 장소 추가</a>
