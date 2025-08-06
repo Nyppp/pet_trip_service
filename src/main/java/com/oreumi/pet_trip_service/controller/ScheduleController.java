@@ -23,7 +23,7 @@ public class ScheduleController {
 
     @GetMapping
     public String showScheduleList(Model model){
-        List<Schedule> scheduleList = scheduleService.findScheduleAllSchedules();
+        List<ScheduleDTO> scheduleList = scheduleService.findAllSchedules();
         model.addAttribute("schedules", scheduleList);
         return "/schedule/schedule_list";
     }

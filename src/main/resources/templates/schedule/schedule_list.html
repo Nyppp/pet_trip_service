@@ -45,6 +45,7 @@
       display: inline-block;
     }
   </style>
+  <script th:src="@{/scripts/scheduleList.js}"></script>
 </head>
 <body>
 
@@ -54,14 +55,7 @@
   <p>등록된 일정이 없습니다.</p>
 </div>
 
-<div class="schedule_list" th:each="schedule : ${schedules}">
-  <a th:href="@{/schedule/{id}(id=${schedule.id})}" class="schedule_card">
-    <div class="schedule_title" th:text="${schedule.title}">여행 제목</div>
-    <div class="schedule_date"
-         th:text="${#temporals.format(schedule.startDate, 'yyyy.MM.dd')} + ' ~ ' + ${#temporals.format(schedule.endDate, 'yyyy.MM.dd')}">
-      2025.08.09 ~ 2025.08.10
-    </div>
-  </a>
+<div id="schedule_list" class="schedule_list">
 </div>
 
 <a th:href="@{/schedule/new}" class="create_schedule_button">+ 새 일정 만들기</a>

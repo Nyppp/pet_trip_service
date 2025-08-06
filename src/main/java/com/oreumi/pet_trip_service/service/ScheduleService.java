@@ -95,8 +95,23 @@ public class ScheduleService {
     }
 
 
-    public List<Schedule> findScheduleAllSchedules(){
-        return scheduleRepository.findAll();
+    public List<ScheduleDTO> findAllSchedules(){
+
+        List<Schedule> scheduleList = scheduleRepository.findAll();
+
+        List<ScheduleDTO> scheduleDTOList = new ArrayList<>();
+
+        for (Schedule schedule : scheduleList){
+            ScheduleDTO scheduleDTO = new ScheduleDTO(
+                    schedule.getId(),
+                    schedule.getTitle(),
+                    schedule.getStartDate(),
+                    schedule.getEndDate()
+            );
+            scheduleDTOList.add(scheduleDTO);
+        }
+
+        return scheduleDTOList;
     }
 
     public Optional<Schedule> findScheduleByScheduleId(Long id){
