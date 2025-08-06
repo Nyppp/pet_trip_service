@@ -56,9 +56,7 @@ public class ScheduleApiController {
 
     @Operation(summary = "특정 스케쥴 삭제", description = "특정 스케쥴을 삭제합니다. (하위 일정도 모두 삭제)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ScheduleItemDTO.class))),
+            @ApiResponse(responseCode = "204", description = "삭제 성공"),
             @ApiResponse(responseCode = "500", description = "서버 오류",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
@@ -66,6 +64,20 @@ public class ScheduleApiController {
     @DeleteMapping("/schedules/{scheduleId}")
     public ResponseEntity<?> deleteSchedule(@PathVariable Long scheduleId){
         scheduleService.deleteSchdule(scheduleId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "특정 스케쥴 일정 삭제", description = "특정 스케쥴내의 일정을 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "삭제 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @DeleteMapping("/schedules/{scheduleId}/items/{itemId}")
+    public ResponseEntity<?> deleteSchedule(@PathVariable Long scheduleId,
+                                            @PathVariable Long itemId){
+        scheduleService.deleteSchduleItem(scheduleId, itemId);
         return ResponseEntity.noContent().build();
     }
 }

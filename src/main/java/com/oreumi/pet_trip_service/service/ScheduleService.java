@@ -118,6 +118,21 @@ public class ScheduleService {
         }
     }
 
+    public void deleteSchduleItem(Long scheduleId,Long scheduleItemId){
+        if(!scheduleRepository.existsById(scheduleId)){
+            throw new EntityNotFoundException("스케쥴 데이터를 찾을 수 없습니다.");
+        }
+
+
+
+
+        if(scheduleItemRepository.existsById(scheduleItemId)){
+            scheduleItemRepository.deleteById(scheduleItemId);
+        }else{
+            throw new EntityNotFoundException("일정 데이터를 찾을 수 없습니다.");
+        }
+    }
+
 
     public List<ScheduleDTO> findAllSchedules(){
 

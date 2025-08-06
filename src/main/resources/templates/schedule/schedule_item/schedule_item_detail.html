@@ -49,6 +49,7 @@
       background-color: #f44336;
     }
   </style>
+  <script th:src="@{/scripts/scheduleItemDetail.js}"></script>
 </head>
 <body>
 
@@ -66,10 +67,8 @@
 
     <a th:href="@{/schedule/{scheduleId}(scheduleId=${item.schedule.id})}" class="edit_button">일정 리스트로 돌아가기</a>
 
-    <form action="/schedules/1/items/5" method="POST" onsubmit="return confirm('정말 삭제할까요?');">
-      <input type="hidden" name="_method" value="DELETE" />
-      <button type="submit" class="delete_button">삭제</button>
-    </form>
+    <button type="submit" class="delete_button"
+            th:onclick="'deleteScheduleItem(' + ${scheduleId} + ',' + ${itemId}+')'">삭제</button>
   </div>
 </div>
 
