@@ -12,16 +12,19 @@ document.addEventListener("DOMContentLoaded", () =>{
             }
 
         data.forEach(schedule =>{
-            const link = document.createElement("a");
-            link.href = `/schedule/${schedule.id}`; 
-            link.className = "schedule_card";
+            const cardDiv = document.createElement("div");
+            cardDiv.className = "schedule_card";
 
-            const titleDiv = document.createElement("div");
-            titleDiv.className = "schedule_title";
-            titleDiv.textContent = schedule.title;
+            const titleLink = document.createElement("a");
+            titleLink.className = "schedule_title";
+            titleLink.href = `/schedule/${schedule.id}`;
+            titleLink.textContent = schedule.title;
 
             const dateDiv = document.createElement("div");
             dateDiv.className = "schedule_date";
+
+            const actionDiv = document.createElement("div");
+            actionDiv.className = "schedule_action";
 
 
 
@@ -47,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () =>{
                 })
                 .then(res => {
                     if (res.status === 204) {
-                        scheduleList.removeChild(link);
+                        scheduleList.removeChild(cardDiv);
                         if (scheduleList.children.length === 0) {
                           emptyMessage.style.display = "block";
                         }
@@ -62,11 +65,12 @@ document.addEventListener("DOMContentLoaded", () =>{
             updateButton.className = "update_button";
             updateButton.href = `/schedule/${schedule.id}/edit`;
 
-            link.appendChild(titleDiv);
-            link.appendChild(dateDiv);
-            link.appendChild(deleteButton);
-            link.appendChild(updateButton);
-            scheduleList.appendChild(link);
+            cardDiv.appendChild(titleLink);
+            cardDiv.appendChild(dateDiv);
+            actionDiv.appendChild(updateButton);
+            actionDiv.appendChild(deleteButton);
+            cardDiv.appendChild(actionDiv);
+            scheduleList.appendChild(cardDiv);
         });
     });
 
