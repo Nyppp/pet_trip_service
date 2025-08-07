@@ -37,14 +37,13 @@ public class PlaceDataCollector {
         try {
             areaResponse = objectMapper.readValue(areaListJson, AreaBasedListResponse.class);
         } catch (JsonProcessingException e) {
-            System.out.println("비어있음");
+            System.out.println("areaBasedList 비어있음");
             return;
         }
         List<AreaBasedListResponse.Item> items = areaResponse.getResponse().getBody().getItems().getItem();
 
         for (AreaBasedListResponse.Item item : items) {
             long contentId = item.getContentid();
-            System.out.println(contentId);
             // 2. 상세정보 요청
             Map<String, String> detailParams = new HashMap<>();
             detailParams.put("contentId", String.valueOf(contentId));
@@ -53,8 +52,14 @@ public class PlaceDataCollector {
             detailParams.put("_type", "json");
 
             String detailJson = tourApiService.callApi("/detailCommon", detailParams);
-            DetailCommonResponse detailResponse = objectMapper.readValue(detailJson, DetailCommonResponse.class);
+            DetailCommonResponse detailResponse;
 
+            try {
+                detailResponse = objectMapper.readValue(detailJson, DetailCommonResponse.class);
+            } catch (JsonProcessingException e) {
+                System.out.println("detailCommon 비어있음");
+                continue;
+            }
             List<DetailCommonResponse.Item> item2 = detailResponse.getResponse()
                     .getBody()
                     .getItems()
@@ -97,8 +102,14 @@ public class PlaceDataCollector {
             imageParams.put("_type", "json");
 
             String imageJson = tourApiService.callApi("/detailImage", imageParams);
-            DetailImageResponse imageResponse = objectMapper.readValue(imageJson, DetailImageResponse.class);
+            DetailImageResponse imageResponse;
 
+            try {
+                imageResponse = objectMapper.readValue(imageJson, DetailImageResponse.class);
+            } catch (JsonProcessingException e) {
+                System.out.println("detailImage 비어있음");
+                continue;
+            }
             List<DetailImageResponse.Item> imageItems = Optional.ofNullable(imageResponse)
                     .map(DetailImageResponse::getResponse)
                     .map(DetailImageResponse.Response::getBody)
