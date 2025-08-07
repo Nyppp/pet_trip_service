@@ -3,57 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <title>여행 스케줄 플래너</title>
-    <style>
-        body {
-          font-family: sans-serif;
-          margin: 0;
-          padding: 0;
-        }
-        header {
-          background-color: #3f51b5;
-          color: white;
-          padding: 1rem;
-          text-align: center;
-        }
-        .date-tabs {
-          display: flex;
-          overflow-x: auto;
-          border-bottom: 1px solid #ddd;
-          background-color: #f9f9f9;
-        }
-        .date-tab {
-          padding: 1rem;
-          cursor: pointer;
-        }
-        .date-tab.active {
-          background-color: #e0e0e0;
-          font-weight: bold;
-        }
-        .planner-body {
-          padding: 1.5rem;
-        }
-        .location-card {
-          border: 1px solid #ccc;
-          padding: 1rem;
-          margin-bottom: 1rem;
-          border-radius: 8px;
-          background-color: #fff;
-        }
-        .add-location {
-          margin-top: 1rem;
-          padding: 0.5rem 1rem;
-          border: none;
-          background-color: #3f51b5;
-          color: white;
-          border-radius: 5px;
-          cursor: pointer;
-        }
-        .footer {
-          text-align: center;
-          margin: 2rem 0;
-        }
-    </style>
     <script th:src="@{/scripts/scheduleItemList.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/schedule/scheduleDetail.css}"/>
 </head>
 <body>
 

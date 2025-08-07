@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () =>{
                 .toString()
                 .padStart(2, "0")}.${date.getDate().toString().padStart(2, "0")}`;
 
-            dateDiv.textContent = `${formatDate(startDate)} ~ ${formatDate(endDate)}`;
+            dateDiv.textContent = `기간 : ${formatDate(startDate)} ~ ${formatDate(endDate)}`;
 
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "삭제";

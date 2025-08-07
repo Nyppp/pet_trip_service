@@ -42,7 +42,7 @@ public class ScheduleItemController {
     @GetMapping("/{id}/items/new")
     public String showScheduleItemForm(@PathVariable("id") Long scheduleId,
                                        Model model){
-        model.addAttribute("scheduleId", scheduleId);
+        model.addAttribute("schedule", scheduleService.findScheduleByScheduleId(scheduleId).orElseThrow());
         model.addAttribute("scheduleItemDTO", new ScheduleItemDTO());
         String formAction = String.format("/schedule/%d/items/new", scheduleId);
         return "/schedule/schedule_item/schedule_item_create";
@@ -88,7 +88,7 @@ public class ScheduleItemController {
                 scheduleItem.getMemo()
         );
 
-        model.addAttribute("scheduleId", scheduleId);
+        model.addAttribute("schedule", scheduleService.findScheduleByScheduleId(scheduleId).orElseThrow());
         model.addAttribute("scheduleItemDTO", scheduleItemDTO);
 
         String formAction = String.format("/schedule/%d/items/%d/edit", scheduleId, itemId);

@@ -32,8 +32,15 @@
       cursor: pointer;
     }
   </style>
+  <script th:src="@{/scripts/scheduleItemCreate.js}"></script>
 </head>
 <body>
+<div id="schedule-data"
+     th:data-schedule-id="${schedule.id}"
+     th:data-start-date="${schedule.startDate}"
+     th:data-end-date="${schedule.endDate}"
+     style="display: none;">
+</div>
 
 <h1>🗺️ 일정에 장소 추가</h1>
 
