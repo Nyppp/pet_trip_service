@@ -1,0 +1,146 @@
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    margin: 0;
+    background-color: #fafafa;
+    color: #333;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* 상단 영역 */
+.top-section {
+    display: flex;
+    gap: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* 이미지 영역 반쪽 */
+.image-area {
+    flex: 1;
+}
+
+.image-area img {
+    width: 100%; /* 부모 영역에 맞게 꽉 채움 */
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover; /* 비율 유지하며 꽉 채움 */
+}
+
+/* 정보 영역 반쪽 */
+.info-area {
+    flex: 1;
+}
+
+.place-title {
+    font-size: 28px;
+    margin: 0 0 5px;
+}
+
+.category {
+    color: #777;
+    margin-bottom: 8px;
+}
+
+.rating {
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.description {
+    margin: 15px 0;
+    line-height: 1.5;
+}
+
+.add-schedule-btn {
+    background: #007bff;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* AI 리뷰 요약 */
+.ai-review {
+    background: white;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+}
+
+.ai-review h2 {
+    margin-top: 0;
+}
+
+/* 사용자 리뷰 */
+.user-reviews {
+    background: white;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+}
+
+.user-reviews h2 {
+    margin-top: 0;
+}
+
+.review {
+    border-top: 1px solid #eee;
+    padding: 15px 0;
+}
+
+.review:first-child {
+    border-top: none;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.review-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #555;
+}
+
+.username {
+    font-weight: bold;
+    color: #333;
+}
+
+.review-content {
+    margin: 8px 0;
+    line-height: 1.4;
+    font-size: 15px;
+}
+
+/* 리뷰 이미지 썸네일 */
+.review-images {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.review-images img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+}

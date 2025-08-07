@@ -1,18 +1,20 @@
+tourapi:
+  service-key: ${API_KEY}
+  base-url: ${API_BASE_URL}
+  app-name: ${APP_NAME}
+  os: "ETC"
+
 spring:
-  h2:
-    console:
-      enabled: ${H2_CONSOLE_ENABLED:true} # 기본값 true
-      path: ${H2_CONSOLE_PATH:/h2-console}
   datasource:
     url: ${DATABASE_URL}
-    driver-class-name: org.h2.Driver
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:local}
-  swagger-ui:
-    path: /swagger-ui.html
+    driver-class-name: org.postgresql.Driver
 
-logging:
-  level:
-    com.oreumi.pet_trip_service: debug
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: ${SERVER_PORT}
