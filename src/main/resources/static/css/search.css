@@ -1,0 +1,163 @@
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #fafafa;
+    margin: 0;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* 검색창 */
+.search-bar {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.search-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.search-form select,
+.search-form input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.search-form select {
+    width: 160px;
+}
+
+.search-form input {
+    flex: 1;
+}
+
+.search-form button {
+    background: #007bff;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.nearby-btn {
+    background: #28a745;
+}
+
+/* 전체 레이아웃 */
+.content-wrapper {
+    display: flex;
+    gap: 20px;
+}
+
+/* 왼쪽 필터 */
+.filter-sidebar {
+    background: white;
+    padding: 15px;
+    width: 220px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.filter-sidebar h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.filter-sidebar label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.filter-sidebar input {
+    margin-right: 6px;
+}
+
+/* 오른쪽 검색 결과 */
+.search-results {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.result-card {
+    display: flex;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: box-shadow 0.2s ease;
+}
+
+.result-card:hover {
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+
+.result-card img {
+    width: 250px;
+    height: 160px;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 15px;
+    flex: 1;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.like-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.like-btn.liked {
+    color: red;
+}
+
+.place-name {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.category {
+    color: #777;
+    margin: 5px 0;
+}
+
+.rating {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.animal-type {
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #28a745;
+}
+
+.desc {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #555;
+}
