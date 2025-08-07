@@ -31,8 +31,26 @@
       border-radius: 5px;
       cursor: pointer;
     }
+    #autocomplete-list {
+      border: 1px solid var(--gray-300);
+      background-color: white;
+      position: absolute;
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 10;
+    }
+
+    #autocomplete-list li {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    #autocomplete-list li:hover {
+      background-color: var(--gray-100);
+    }
   </style>
-  <script th:src="@{/scripts/scheduleItemCreate.js}"></script>
+  <script th:src="@{/scripts/timeInputControl.js}"></script>
+  <script th:src="@{/scripts/placeAutoComplete.js}"></script>
 </head>
 <body>
 <div id="schedule-data"
@@ -47,9 +65,11 @@
 <form th:action="@{${formAction}}" method="POST"
   th:object="${scheduleItemDTO}">
   <div class="form_group">
-    <label for="place_name">장소 이름</label>
-    <input type="text" th:field="*{title}"
-           id="place_name" name="place_name" placeholder="예: 남이섬" required />
+    <label for="place_search">장소 검색</label>
+    <input type="text" id="place_search" class="place_search"
+           placeholder="장소 이름 입력" autocomplete="off">
+    <input type="hidden"  th:field="*{placeId}" id="place_id">
+    <ul id="autocomplete-list"></ul>
   </div>
 
   <div class="form_group">

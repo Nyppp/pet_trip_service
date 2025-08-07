@@ -82,7 +82,7 @@ public class ScheduleItemController {
 
         ScheduleItemDTO scheduleItemDTO = new ScheduleItemDTO(
                 scheduleItem.getId(),
-                scheduleItem.getTitle(),
+                scheduleItem.getPlace().getId(),
                 scheduleItem.getStartTime(),
                 scheduleItem.getEndTime(),
                 scheduleItem.getMemo()

@@ -25,9 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const startDate = startDateTime.split("T")[0]; // 날짜만
       const timePart = endTimeInput.value.split("T")[1] || "23:59";
 
-      endTimeInput.value = startDate + "T" + timePart; // 같은 날짜 유지
-      endTimeInput.min = startDate + "T00:00";
+      endTimeInput.value = startTimeInput.value; // 같은 날짜 유지
+      endTimeInput.min = startTimeInput.value;
       endTimeInput.max = startDate + "T23:59";
     }
+  });
+
+  endTimeInput.addEventListener('change', () => {
+      const startDateTime = startTimeInput.value;
+      if (startTimeInput.value && endTimeInput.value < startTimeInput.value) {
+              alert("종료 시간은 시작 시간보다 빠를 수 없습니다.");
+              endTimeInput.value = startTimeInput.value;
+            }
   });
 });

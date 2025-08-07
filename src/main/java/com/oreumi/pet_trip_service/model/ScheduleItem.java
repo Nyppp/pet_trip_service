@@ -39,14 +39,9 @@ public class ScheduleItem {
     @JoinColumn(name="schedule_id", nullable = false)
     private Schedule schedule;
 
-//    장소 > 개발중으로 임시 주석처리
-//    @ManyToOne
-//    @JoinColumn(name = "place_id", nullable = false)
-//    private Place place;
-
-//    장소 대체 > 타이틀로 우선 저장하도록
-    @Column(name="title")
-    private String title;
+    @ManyToOne
+    @JoinColumn(name = "place_id", nullable = false)
+    private Place place;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
