@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <title>여행 스케줄 플래너</title>
@@ -53,58 +53,25 @@
           margin: 2rem 0;
         }
     </style>
+    <script th:src="@{/scripts/scheduleItemList.js}"></script>
 </head>
 <body>
 
 <header>
-    <h1>여행 스케줄 플래너</h1>
+    <h1 th:text="${schedule.title}">여행 스케줄 플래너</h1>
 </header>
 
 <div class="date-tabs">
-    <div class="date-tab active">8월 9일 (금)</div>
-    <div class="date-tab">8월 10일 (토)</div>
 </div>
 
-<div class="planner-body">
-    <!-- 선택된 날짜에 해당하는 일정 리스트 -->
-    <div class="location-card">
-        <h3>남이섬</h3>
-        <p>10:00 AM ~ 12:00 PM</p>
-        <p>반려견 동반 가능 / 강변 산책 추천</p>
-    </div>
-
-    <div class="location-card">
-        <h3>쁘띠프랑스</h3>
-        <p>13:00 ~ 15:00</p>
-        <p>입장료 있음 / 사진 스팟</p>
-    </div>
-    <div class="location-card">
-        <h3>쁘띠프랑스</h3>
-        <p>13:00 ~ 15:00</p>
-        <p>입장료 있음 / 사진 스팟</p>
-    </div>
-    <div class="location-card">
-        <h3>쁘띠프랑스</h3>
-        <p>13:00 ~ 15:00</p>
-        <p>입장료 있음 / 사진 스팟</p>
-    </div>
-    <div class="location-card">
-        <h3>쁘띠프랑스</h3>
-        <p>13:00 ~ 15:00</p>
-        <p>입장료 있음 / 사진 스팟</p>
-    </div>
-    <div class="location-card">
-        <h3>쁘띠프랑스</h3>
-        <p>13:00 ~ 15:00</p>
-        <p>입장료 있음 / 사진 스팟</p>
-    </div>
+<div id="planner-body" class="planner-body">
 
     <!-- 일정 추가 버튼 -->
-    <button class="add-location">+ 장소 추가</button>
+    <a th:href="@{/schedule/{id}/items/new(id=${schedule.id})}" class="add-location">+ 장소 추가</a>
 </div>
 
 <div class="footer">
-    <button class="add-location">저장하기</button>
+    <a th:href="@{/schedule}" class="add-location">스케쥴 리스트로 돌아가기</a>
 </div>
 
 </body>

@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>떠나개 - 반려동물 동반 여행 플랫폼</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 <body>
 <!-- 헤더 -->
 <header>
-    <div class="logo"><a href="/"><img id="header-logo" src="project_logo.png" alt="프로젝트 로고">떠나개</a></div>
+    <div class="logo"><a href="/"><img id="header-logo" src="/images/project_logo.png" alt="프로젝트 로고"></a></div>
+    <div>떠나개 - 즐거운 반려여행</div>
     <div class="nav-links">
         <a href="/login">로그인</a>
         <a href="/mypage">마이페이지</a>
@@ -18,154 +18,159 @@
 
 <!-- 검색 -->
 <section class="search-bar">
-    <select>
-        <option value="all">전체</option>
-        <option value="32">숙박</option>
-        <option value="12">관광지</option>
-        <option value="14">문화시설</option>
-        <option value="15">축제공연행사</option>
-        <option value="28">레포츠</option>
-        <option value="38">쇼핑</option>
-        <option value="39">음식점</option>
-    </select>
-    <input type="text" placeholder="검색어를 입력하세요" />
-    <button>검색</button>
-    <button style="background:#555">내 주변 검색</button>
+    <div class="container">
+        <select>
+            <option value="all">전체</option>
+            <option value="32">숙박</option>
+            <option value="12">관광지</option>
+            <option value="14">문화시설</option>
+            <option value="15">축제공연행사</option>
+            <option value="28">레포츠</option>
+            <option value="38">쇼핑</option>
+            <option value="39">음식점</option>
+        </select>
+        <input type="text" placeholder="검색어를 입력하세요" />
+        <button>검색</button>
+        <button>내 주변 검색</button>
+    </div>
 </section>
 
 <!-- 본문: 인기 장소 등 -->
 <div class="main-content">
-    <h2 class="section-title">내 주변 인기 장소</h2>
-    <div class="place-list">
-        <div class="place-card">
-            <img src="travel_image1.png" alt="장소 이미지" />
-            <p>고성 반비치</p>
-        </div>
-        <div class="place-card">
-            <img src="travel_image2.png" alt="장소 이미지" />
-            <p>썸머 댕댕 촌캉스</p>
-        </div>
-        <div class="place-card">
-            <img src="travel_image1.png" alt="장소 이미지" />
-            <p>고성 반비치</p>
-        </div>
-        <div class="place-card">
-            <img src="travel_image2.png" alt="장소 이미지" />
-            <p>썸머 댕댕 촌캉스</p>
-        </div>
-        <div class="place-card">
-            <img src="travel_image1.png" alt="장소 이미지" />
-            <p>고성 반비치</p>
-        </div>
-        <div class="place-card">
-            <img src="travel_image2.png" alt="장소 이미지" />
-            <p>썸머 댕댕 촌캉스</p>
-        </div>
-        <div class="place-card">
-            <img src="travel_image1.png" alt="장소 이미지" />
-            <p>고성 반비치</p>
-        </div>
-        <div class="place-card">
-            <img src="travel_image2.png" alt="장소 이미지" />
-            <p>썸머 댕댕 촌캉스</p>
-        </div>
-        <div class="place-card">
-            <img src="travel_image1.png" alt="장소 이미지" />
-            <p>고성 반비치</p>
-        </div>
-        <div class="place-card">
-            <img src="travel_image2.png" alt="장소 이미지" />
-            <p>썸머 댕댕 촌캉스</p>
-        </div>
-    </div>
+    <div class="container">
+        <h2 class="section-title">내 주변 인기 장소</h2>
+        <div class="place-list">
+            <div class="place-card">
+                <img src="/images/travel_image1.png" alt="장소 이미지" />
+                <p>고성 반비치</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/travel_image2.png" alt="장소 이미지" />
+                <p>썸머 댕댕 촌캉스</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/travel_image1.png" alt="장소 이미지" />
+                <p>고성 반비치</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/travel_image2.png" alt="장소 이미지" />
+                <p>썸머 댕댕 촌캉스</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/travel_image1.png" alt="장소 이미지" />
+                <p>고성 반비치</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/travel_image2.png" alt="장소 이미지" />
+                <p>썸머 댕댕 촌캉스</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/travel_image1.png" alt="장소 이미지" />
+                <p>고성 반비치</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/travel_image2.png" alt="장소 이미지" />
+                <p>썸머 댕댕 촌캉스</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/travel_image1.png" alt="장소 이미지" />
+                <p>고성 반비치</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/travel_image2.png" alt="장소 이미지" />
+                <p>썸머 댕댕 촌캉스</p>
+            </div>
 
-    <h2 class="section-title">인기 숙박</h2>
-    <div class="place-list">
-        <!-- 숙박 카드 -->
-        <div class="place-card">
-            <img src="accommodation_image1.png" alt="장소 이미지" />
-            <p>호텔</p>
         </div>
-        <div class="place-card">
-            <img src="accommodation_image2.png" alt="장소 이미지" />
-            <p>펜션</p>
-        </div>
-        <div class="place-card">
-            <img src="accommodation_image1.png" alt="장소 이미지" />
-            <p>호텔</p>
-        </div>
-        <div class="place-card">
-            <img src="accommodation_image2.png" alt="장소 이미지" />
-            <p>펜션</p>
-        </div>
-        <div class="place-card">
-            <img src="accommodation_image1.png" alt="장소 이미지" />
-            <p>호텔</p>
-        </div>
-        <div class="place-card">
-            <img src="accommodation_image2.png" alt="장소 이미지" />
-            <p>펜션</p>
-        </div>
-        <div class="place-card">
-            <img src="accommodation_image1.png" alt="장소 이미지" />
-            <p>호텔</p>
-        </div>
-        <div class="place-card">
-            <img src="accommodation_image2.png" alt="장소 이미지" />
-            <p>펜션</p>
-        </div>
-        <div class="place-card">
-            <img src="accommodation_image1.png" alt="장소 이미지" />
-            <p>호텔</p>
-        </div>
-        <div class="place-card">
-            <img src="accommodation_image2.png" alt="장소 이미지" />
-            <p>펜션</p>
-        </div>
-    </div>
 
-    <h2 class="section-title">인기 관광지</h2>
-    <div class="place-list">
-        <!-- 관광지 카드 -->
-        <div class="place-card">
-            <img src="location_image1.png" alt="장소 이미지" />
-            <p>다낭</p>
+        <h2 class="section-title">인기 숙박</h2>
+        <div class="place-list">
+            <!-- 숙박 카드 -->
+            <div class="place-card">
+                <img src="/images/accommodation_image1.png" alt="장소 이미지" />
+                <p>호텔</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/accommodation_image2.png" alt="장소 이미지" />
+                <p>펜션</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/accommodation_image1.png" alt="장소 이미지" />
+                <p>호텔</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/accommodation_image2.png" alt="장소 이미지" />
+                <p>펜션</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/accommodation_image1.png" alt="장소 이미지" />
+                <p>호텔</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/accommodation_image2.png" alt="장소 이미지" />
+                <p>펜션</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/accommodation_image1.png" alt="장소 이미지" />
+                <p>호텔</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/accommodation_image2.png" alt="장소 이미지" />
+                <p>펜션</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/accommodation_image1.png" alt="장소 이미지" />
+                <p>호텔</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/accommodation_image2.png" alt="장소 이미지" />
+                <p>펜션</p>
+            </div>
         </div>
-        <div class="place-card">
-            <img src="location_image2.png" alt="장소 이미지" />
-            <p>방콕</p>
-        </div>
-        <div class="place-card">
-            <img src="location_image1.png" alt="장소 이미지" />
-            <p>다낭</p>
-        </div>
-        <div class="place-card">
-            <img src="location_image2.png" alt="장소 이미지" />
-            <p>방콕</p>
-        </div>
-        <div class="place-card">
-            <img src="location_image1.png" alt="장소 이미지" />
-            <p>다낭</p>
-        </div>
-        <div class="place-card">
-            <img src="location_image2.png" alt="장소 이미지" />
-            <p>방콕</p>
-        </div>
-        <div class="place-card">
-            <img src="location_image1.png" alt="장소 이미지" />
-            <p>다낭</p>
-        </div>
-        <div class="place-card">
-            <img src="location_image2.png" alt="장소 이미지" />
-            <p>방콕</p>
-        </div>
-        <div class="place-card">
-            <img src="location_image1.png" alt="장소 이미지" />
-            <p>다낭</p>
-        </div>
-        <div class="place-card">
-            <img src="location_image2.png" alt="장소 이미지" />
-            <p>방콕</p>
+
+        <h2 class="section-title">인기 관광지</h2>
+        <div class="place-list">
+            <!-- 관광지 카드 -->
+            <div class="place-card">
+                <img src="/images/location_image1.png" alt="장소 이미지" />
+                <p>다낭</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/location_image2.png" alt="장소 이미지" />
+                <p>방콕</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/location_image1.png" alt="장소 이미지" />
+                <p>다낭</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/location_image2.png" alt="장소 이미지" />
+                <p>방콕</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/location_image1.png" alt="장소 이미지" />
+                <p>다낭</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/location_image2.png" alt="장소 이미지" />
+                <p>방콕</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/location_image1.png" alt="장소 이미지" />
+                <p>다낭</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/location_image2.png" alt="장소 이미지" />
+                <p>방콕</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/location_image1.png" alt="장소 이미지" />
+                <p>다낭</p>
+            </div>
+            <div class="place-card">
+                <img src="/images/location_image2.png" alt="장소 이미지" />
+                <p>방콕</p>
+            </div>
         </div>
     </div>
 </div>
@@ -174,29 +179,35 @@
 <!-- 채팅 버튼 -->
 <div id="chat-toggle-btn" >
     <button onclick="toggleChat()">
-        <img id="chat-btn-logo" src="chatbot_logo.png" alt="채팅하기"/>
+        <img class="chat-btn-logo" src="/images/chatbot_logo.png" alt="채팅하기"/>
     </button>
 </div>
 
 <!-- 채팅 모달 -->
 <div id="chat-modal" style="display: none">
     <div id="chat-modal-header">
-        <button onclick="toggleChat()">X</button>
+            <img class="chat-btn-logo" src="/images/chatbot_logo.png" alt="채팅하기"/>
+            <div>
+                <div class="chat-modal-header-title">떠나개</div>
+                <button>운영시간 보기</button>
+            </div>
     </div>
     <div id="chat-modal-body">
-        <div class="bot-message">무엇을 도와드릴까요?</div>
+        <div class="chat-message bot-message">무엇을 도와드릴까요?</div>
     </div>
     <div id="chat-modal-input">
-        <input type="text" placeholder="메세지를 확인하세요" />
-        <button>보내기</button>
+        <input id="chat-input" type="text" placeholder="메세지를 입력하세요." />
+        <button onclick="sendMessage()">보내기</button>
     </div>
 </div>
 
 <!-- 푸터 -->
 <footer>
+    <div class="container">
     &copy; 2025 떠나개. 반려동물과 함께하는 행복한 여행을 응원합니다.
+    </div>
 </footer>
 
-<script src="index.js"></script>
+<script src="/scripts/main.js"></script>
 </body>
 </html>
