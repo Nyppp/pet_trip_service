@@ -1,12 +1,16 @@
+tourapi:
+  service-key: "bSScng/3usRy3I/o/X8+nudWEsf51V58EU9h5wQ6AU90UYD0f4bsCbZqYlTEp0FX7oDEbuppdUGV7S+mSror6A=="
+  base-url: "https://apis.data.go.kr/B551011/KorPetTourService"
+  app-name: "PetTripApp"
+  os: "ETC"
 spring:
-  h2:
-    console:
-      enabled: ${H2_CONSOLE_ENABLED:true} # 기본값 true
-      path: ${H2_CONSOLE_PATH:/h2-console}
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:local}
+    url: jdbc:postgresql://localhost:5432/pet_trip_service
+    username: postgres
+    password: 200905
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
