@@ -1,10 +1,10 @@
 package com.oreumi.pet_trip_service.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "place")
@@ -16,22 +16,21 @@ public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")  // 생략 가능하지만 명시함
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "category_code", nullable = false)
-    private Integer categoryCode;
+    @Column(name = "category_code", length = 30)
+    private String categoryCode;
 
-    @Column(name = "category_name", nullable = false)
+    @Column(name = "category_name", length = 30)
     private String categoryName;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address", length = 200)
     private String address;
 
     @Column(name = "lat", nullable = false)
@@ -40,15 +39,15 @@ public class Place {
     @Column(name = "lng", nullable = false)
     private Double lng;
 
-    @Column(name = "phone")
+    @Column(name = "phone", length = 50)
     private String phone;
 
-    @Column(name = "rating")
-    private Double rating = 0.0;
+    @Column(name = "rating", nullable = false)
+    private Double rating = 0.0; // 기본값
 
-    @Column(name = "liked")
-    private Integer liked = 0;
+    @Column(name = "liked", nullable = false)
+    private Integer liked = 0; // 기본값
 
-    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlaceImg> images = new ArrayList<>();
+    @Column(name = "homepage_url", columnDefinition = "TEXT")
+    private String homepageUrl;
 }
