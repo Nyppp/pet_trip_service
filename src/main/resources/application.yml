@@ -1,16 +1,20 @@
 tourapi:
-  service-key: "bSScng/3usRy3I/o/X8+nudWEsf51V58EU9h5wQ6AU90UYD0f4bsCbZqYlTEp0FX7oDEbuppdUGV7S+mSror6A=="
-  base-url: "https://apis.data.go.kr/B551011/KorPetTourService"
-  app-name: "PetTripApp"
+  service-key: ${API_KEY}
+  base-url: ${API_BASE_URL}
+  app-name: ${APP_NAME}
   os: "ETC"
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/pet_trip_service
-    username: postgres
-    password: 200905
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+server:
+  port: ${SERVER_PORT}
