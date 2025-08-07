@@ -1,5 +1,6 @@
 package com.oreumi.pet_trip_service.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oreumi.pet_trip_service.DTO.api.AreaBasedListResponse;
 import com.oreumi.pet_trip_service.DTO.api.DetailCommonResponse;
@@ -32,12 +33,18 @@ public class PlaceDataCollector {
 
         // 1. 목록 요청
         String areaListJson = tourApiService.callApi("/areaBasedList", params);
-        AreaBasedListResponse areaResponse = objectMapper.readValue(areaListJson, AreaBasedListResponse.class);
+        AreaBasedListResponse areaResponse;
+        try {
+            areaResponse = objectMapper.readValue(areaListJson, AreaBasedListResponse.class);
+        } catch (JsonProcessingException e) {
+            System.out.println("비어있음");
+            return;
+        }
         List<AreaBasedListResponse.Item> items = areaResponse.getResponse().getBody().getItems().getItem();
 
         for (AreaBasedListResponse.Item item : items) {
             long contentId = item.getContentid();
-
+            System.out.println(contentId);
             // 2. 상세정보 요청
             Map<String, String> detailParams = new HashMap<>();
             detailParams.put("contentId", String.valueOf(contentId));
