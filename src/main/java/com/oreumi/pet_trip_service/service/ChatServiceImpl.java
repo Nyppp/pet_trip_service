@@ -30,6 +30,7 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
 
+    // 임시 답변 기능
     @Override
     public String getChatbotReply(String userMessage) {
         if (userMessage.contains("안녕")) {

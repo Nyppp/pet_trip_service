@@ -26,6 +26,7 @@ public class ChatController {
         return "";
     }
 
+    // 채팅방 생성
     @PostMapping
     public ResponseEntity<Long> chatRoomCreated(@RequestBody ChatDTO chatRequest) {
         Long userId = Long.parseLong(chatRequest.getSender());
@@ -33,14 +34,16 @@ public class ChatController {
         return ResponseEntity.ok(room.getId());
     }
 
+    // 채팅 조회
     @GetMapping("/{roomId}/message")
     public String chatFind(@PathVariable Long roomId) {
         return "";
     }
 
+    // 채팅 생성
     @PostMapping("/{roomId}/message")
     public ResponseEntity<ChatDTO> chatCreated(@PathVariable Long roomId, @RequestBody ChatDTO chatRequest) {
-        System.out.println("사용자 메세지: " + chatRequest.getMessage());
+        System.out.println("사용자 메세지: " + chatRequest.getMessage() + chatRequest.getSendAt());
         chatService.saveChat(roomId, chatRequest, false);
 
         String reply = chatService.AlanAiReply(chatRequest.getMessage());
@@ -52,6 +55,7 @@ public class ChatController {
         return ResponseEntity.ok(new ChatDTO("chatbot", reply, LocalDateTime.now()));
     }
 
+    // 채팅 삭제
     @DeleteMapping("/messages/{messageId}")
     public String chatDelete(@PathVariable Long messageId) {
         return "";

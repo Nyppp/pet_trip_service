@@ -31,15 +31,6 @@ function sendMessage() {
     if (!message.trim()) return;
 
     // 요청
-//    fetch('/chatrooms/1/message', {
-//        method: 'POST',
-//        headers: {
-//            'Content-Type': 'application/json'
-//        },
-//        body: JSON.stringify({message})
-//    })
-//    .then(response => response.json())
-//    .then(data => {
     fetch('/chatrooms/1/message', {
             method: 'POST',
             headers: {
