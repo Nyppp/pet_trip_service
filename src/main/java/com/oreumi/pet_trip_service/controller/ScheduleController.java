@@ -4,8 +4,12 @@ package com.oreumi.pet_trip_service.controller;
 import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.service.ScheduleService;
+import com.oreumi.pet_trip_service.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,17 +17,23 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("/schedule")
+@RequiredArgsConstructor
 public class ScheduleController {
     private final ScheduleService scheduleService;
+    private final UserService userService;
 
-    public ScheduleController(ScheduleService scheduleService) {
-        this.scheduleService = scheduleService;
-    }
 
     @GetMapping
-    public String showScheduleList(Model model){
+    public String showScheduleList(Authentication auth, Model model){
+        String email = auth.getName();
+
+        model.addAttribute("user", userService.findUserByEmail(email));
+
+        log.info(userService.findUserByEmail(email).orElseThrow().getEmail());
+
         return "/schedule/schedule_list";
     }
 
