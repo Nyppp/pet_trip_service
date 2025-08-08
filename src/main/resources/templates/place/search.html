@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>장소 검색</title>
+    <link rel="stylesheet" href="/css/search.css">
+</head>
+<body>
+
+<main class="container">
+
+    <!-- 🔍 검색창 -->
+    <section class="search-bar">
+        <form action="/search" method="get" class="search-form">
+            <select name="category">
+                <option value="">전체 카테고리</option>
+                <option value="32">숙박</option>
+                <option value="12">관광지</option>
+                <option value="14">문화시설</option>
+                <option value="15">축제/공연/행사</option>
+                <option value="28">레포츠</option>
+                <option value="38">쇼핑</option>
+                <option value="39">음식점</option>
+            </select>
+            <input type="text" name="keyword" placeholder="장소명 또는 지역 검색">
+            <button type="submit">검색</button>
+            <button type="button" class="nearby-btn">내 주변 관광지</button>
+        </form>
+    </section>
+
+    <!-- 📌 전체 레이아웃 -->
+    <div class="content-wrapper">
+
+        <!-- 왼쪽 필터 영역 -->
+        <aside class="filter-sidebar">
+            <h3>정렬</h3>
+            <label><input type="radio" name="sort" value="likes" checked> 찜순</label>
+            <label><input type="radio" name="sort" value="reviews"> 리뷰순</label>
+            <label><input type="radio" name="sort" value="rating"> 별점순</label>
+
+            <hr>
+
+            <h3>카테고리</h3>
+            <label><input type="checkbox"> 숙박</label>
+            <label><input type="checkbox"> 관광지</label>
+            <label><input type="checkbox"> 문화시설</label>
+            <label><input type="checkbox"> 축제/공연/행사</label>
+            <label><input type="checkbox"> 레포츠</label>
+            <label><input type="checkbox"> 쇼핑</label>
+            <label><input type="checkbox"> 음식점</label>
+        </aside>
+
+        <!-- 오른쪽 검색 결과 -->
+        <section class="search-results">
+
+            <!-- 카드 1 -->
+            <div class="result-card">
+                <img src="https://via.placeholder.com/250x160" alt="장소 이미지">
+                <div class="card-info">
+                    <div class="card-header">
+                        <h3 class="place-name">서울신라호텔</h3>
+                        <button type="button" class="like-btn liked">❤️</button>
+                    </div>
+                    <p class="category">숙소 > 호텔 > 관광호텔</p>
+                    <div class="rating">⭐ 4.8 (112 리뷰) · 35 찜</div>
+                    <p class="animal-type">동반 가능: 소형견</p>
+                    <p class="desc">반려견과 함께 머물 수 있는 고급 호텔, 다양한 편의시설을 제공합니다.</p>
+                </div>
+            </div>
+
+            <!-- 카드 2 -->
+            <div class="result-card">
+                <img src="https://via.placeholder.com/250x160" alt="장소 이미지">
+                <div class="card-info">
+                    <div class="card-header">
+                        <h3 class="place-name">강릉 반려견 카페</h3>
+                        <button type="button" class="like-btn">🤍</button>
+                    </div>
+                    <p class="category">카페 > 애견카페</p>
+                    <div class="rating">⭐ 4.5 (52 리뷰) · 20 찜</div>
+                    <p class="animal-type">동반 가능: 중형견</p>
+                    <p class="desc">바다 전망이 아름다운 애견 카페, 반려견 놀이공간이 있습니다.</p>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+</body>
+</html>

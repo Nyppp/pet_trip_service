@@ -1,0 +1,20 @@
+tourapi:
+  service-key: ${API_KEY}
+  base-url: ${API_BASE_URL}
+  app-name: ${APP_NAME}
+  os: "ETC"
+
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: ${SERVER_PORT}

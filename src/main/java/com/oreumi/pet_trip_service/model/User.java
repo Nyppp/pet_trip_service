@@ -1,5 +1,7 @@
 package com.oreumi.pet_trip_service.model;
 
+import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
+import com.oreumi.pet_trip_service.model.Enum.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
     
     @Id
@@ -24,7 +27,7 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
     
-    @Column(name = "nickname", length = 20, nullable = false, unique = true)
+    @Column(name = "nickname", length = 255, nullable = false, unique = true)
     private String nickname;
     
     @Enumerated(EnumType.STRING)

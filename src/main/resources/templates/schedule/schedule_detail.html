@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>여행 스케줄 플래너</title>
+    <style>
+        body {
+          font-family: sans-serif;
+          margin: 0;
+          padding: 0;
+        }
+        header {
+          background-color: #3f51b5;
+          color: white;
+          padding: 1rem;
+          text-align: center;
+        }
+        .date-tabs {
+          display: flex;
+          overflow-x: auto;
+          border-bottom: 1px solid #ddd;
+          background-color: #f9f9f9;
+        }
+        .date-tab {
+          padding: 1rem;
+          cursor: pointer;
+        }
+        .date-tab.active {
+          background-color: #e0e0e0;
+          font-weight: bold;
+        }
+        .planner-body {
+          padding: 1.5rem;
+        }
+        .location-card {
+          border: 1px solid #ccc;
+          padding: 1rem;
+          margin-bottom: 1rem;
+          border-radius: 8px;
+          background-color: #fff;
+        }
+        .add-location {
+          margin-top: 1rem;
+          padding: 0.5rem 1rem;
+          border: none;
+          background-color: #3f51b5;
+          color: white;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        .footer {
+          text-align: center;
+          margin: 2rem 0;
+        }
+    </style>
+    <script th:src="@{/scripts/scheduleItemList.js}"></script>
+</head>
+<body>
+
+<header>
+    <h1 th:text="${schedule.title}">여행 스케줄 플래너</h1>
+</header>
+
+<div class="date-tabs">
+</div>
+
+<div id="planner-body" class="planner-body">
+
+    <!-- 일정 추가 버튼 -->
+    <a th:href="@{/schedule/{id}/items/new(id=${schedule.id})}" class="add-location">+ 장소 추가</a>
+</div>
+
+<div class="footer">
+    <a th:href="@{/schedule}" class="add-location">스케쥴 리스트로 돌아가기</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>일정 아이템 상세</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background-color: #f0f2f5;
+    }
+    .item_container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .item_header {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    .item_info {
+      margin-bottom: 1rem;
+    }
+    .item_info span {
+      font-weight: bold;
+    }
+    .button_group {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .button_group a,
+    .button_group form button {
+      padding: 0.6rem 1.2rem;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+    }
+    .edit_button {
+      background-color: #3f51b5;
+    }
+    .delete_button {
+      background-color: #f44336;
+    }
+  </style>
+</head>
+<body>
+
+<div class="item_container">
+  <div th:text="${item.title}" class="item_header">남이섬</div>
+
+  <div class="item_info">
+    <p th:text="'시작 시간: ' + ${item.startTime}"></p>
+    <p th:text="'종료 시간: ' + ${item.endTime}"></p>
+    <p th:text="'메모: ' + ${item.memo}"></p>
+  </div>
+
+  <div class="button_group">
+    <a th:href="@{/schedule/{scheduleId}/items/{itemId}/edit(scheduleId=${item.schedule.id}, itemId=${item.id})}" class="edit_button">수정</a>
+
+    <a th:href="@{/schedule/{scheduleId}(scheduleId=${item.schedule.id})}" class="edit_button">일정 리스트로 돌아가기</a>
+
+    <form action="/schedules/1/items/5" method="POST" onsubmit="return confirm('정말 삭제할까요?');">
+      <input type="hidden" name="_method" value="DELETE" />
+      <button type="submit" class="delete_button">삭제</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
