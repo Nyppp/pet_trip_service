@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인 - 펫트립</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
+  </head>
+  <body>
+    <div class="login-container">
+      <!-- 제목 제거됨 -->
+
+      <!-- 성공 메시지 -->
+      <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+      <form th:action="@{/login}" method="post">
+        <div class="form-group">
+          <label for="email" class="form-label">이메일</label>
+          <input type="email" id="email" name="email" class="form-input" placeholder="이메일을 입력하세요" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">비밀번호</label>
+          <input type="password" id="password" name="password" class="form-input" placeholder="비밀번호를 입력하세요" required />
+        </div>
+
+        <button type="submit" class="btn-primary">로그인</button>
+      </form>
+
+      <div class="signup-link">계정이 없으신가요? <a th:href="@{/signup}">회원가입</a></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원가입 - 펫트립</title>
+    <link rel="stylesheet" th:href="@{/css/common/common.css}" />
+    <link rel="stylesheet" th:href="@{/css/signup.css}" />
+  </head>
+  <body>
+    <div class="signup-container">
+      <!-- 제목 제거됨 -->
+
+      <!-- 오류 메시지 -->
+      <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+      <!-- 성공 메시지 -->
+      <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+      <form th:action="@{/signup}" th:object="${userSignupDto}" method="post">
+        <!-- 이메일 -->
+        <div class="form-group">
+          <label for="email" class="form-label">이메일 <span style="color: red">*</span></label>
+          <input type="email" th:field="*{email}" id="email" class="form-input" placeholder="example@email.com" required />
+          <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div class="form-group">
+          <label for="password" class="form-label">비밀번호 <span style="color: red">*</span></label>
+          <input type="password" th:field="*{password}" id="password" class="form-input" placeholder="8-20자, 영문/숫자/특수문자 각 1개 이상" required />
+          <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></span>
+          <small style="color: #666; font-size: 11px"> ※ 사용불가 특수문자: &lt; &gt; / \ _ </small>
+        </div>
+
+        <!-- 비밀번호 확인 -->
+        <div class="form-group">
+          <label for="passwordConfirm" class="form-label">비밀번호 확인 <span style="color: red">*</span></label>
+          <input type="password" th:field="*{passwordConfirm}" id="passwordConfirm" class="form-input" placeholder="비밀번호를 다시 입력하세요" required />
+          <span id="password-match-result" class="error-message"></span>
+          <span th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}" class="error-message"></span>
+        </div>
+
+        <!-- 닉네임 -->
+        <div class="form-group">
+          <label for="nickname" class="form-label">닉네임 <span style="color: red">*</span></label>
+          <input type="text" th:field="*{nickname}" id="nickname" class="form-input" placeholder="2-20자, 한글/영문/숫자만 가능" required />
+          <span th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" class="error-message"></span>
+        </div>
+
+        <button type="submit" class="btn-primary" id="submit-btn">회원가입</button>
+      </form>
+
+      <div class="login-link">이미 계정이 있으신가요? <a th:href="@{/login}">로그인</a></div>
+    </div>
+
+    <script>
+      // 비밀번호 입력 필드에서 특수문자 제한
+      function restrictSpecialChars(event) {
+        const forbiddenChars = ["<", ">", "/", "\\", "_"];
+        if (forbiddenChars.includes(event.key)) {
+          event.preventDefault();
+          alert("사용할 수 없는 특수문자입니다: " + event.key);
+        }
+      }
+
+      // 비밀번호 일치 확인
+      function checkPasswordMatch() {
+        const password = document.getElementById("password").value;
+        const passwordConfirm = document.getElementById("passwordConfirm").value;
+        const resultSpan = document.getElementById("password-match-result");
+
+        if (password && passwordConfirm) {
+          if (password === passwordConfirm) {
+            resultSpan.textContent = "비밀번호가 일치합니다.";
+            resultSpan.className = "success-message";
+          } else {
+            resultSpan.textContent = "비밀번호가 일치하지 않습니다.";
+            resultSpan.className = "error-message";
+          }
+        } else {
+          resultSpan.textContent = "";
+        }
+      }
+
+      // 이벤트 리스너 등록
+      document.getElementById("password").addEventListener("keydown", restrictSpecialChars);
+      document.getElementById("passwordConfirm").addEventListener("input", checkPasswordMatch);
+    </script>
+  </body>
+</html>
