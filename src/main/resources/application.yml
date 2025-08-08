@@ -18,3 +18,7 @@ spring:
 
 server:
   port: ${SERVER_PORT}
+
+alanApi:
+  ai:
+    client-id: ${ALAN_AI_CLIENT_ID}

@@ -43,7 +43,7 @@ public class ChatController {
         System.out.println("사용자 메세지: " + chatRequest.getMessage());
         chatService.saveChat(roomId, chatRequest, false);
 
-        String reply = chatService.getChatbotReply(chatRequest.getMessage());
+        String reply = chatService.AlanAiReply(chatRequest.getMessage());
         System.out.println("챗봇 응답: " + reply);
 
         ChatDTO botMessage = new ChatDTO("chatbot", reply, LocalDateTime.now());

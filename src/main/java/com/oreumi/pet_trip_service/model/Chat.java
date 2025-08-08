@@ -23,7 +23,7 @@ public class Chat {
     @JoinColumn(name = "chatroom_id", nullable = false)
     private ChatRoom chatRoom;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "chat_bot", nullable = false)
