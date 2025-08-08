@@ -13,4 +13,5 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     // 중복 채팅방 생성 방지
     Optional<ChatRoom> findByUserId(Long userId);
 
+    Optional<ChatRoom> findById(Long roomId);
 }
