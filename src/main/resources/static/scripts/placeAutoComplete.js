@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const input = document.getElementById("place-search");
-  const list = document.getElementById("autocomplete-list");
+  const input = document.getElementById("place_search");
+  const list = document.getElementById("autocomplete_list");
 
   input.addEventListener("input", async () => {
     const keyword = input.value.trim();
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch(/api/places/search?q=${encodeURIComponent(keyword)});
+      const res = await fetch(`/api/search?q=${encodeURIComponent(keyword)}`);
       const places = await res.json();
 
       list.innerHTML = "";

@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface PlaceRepository extends JpaRepository<Place, Long> {
     Optional<Place> findByNameAndAddress(String name, String address);
 
-    List<Place> findTop10ByNameContainingIgnoreCase(String keyword);
+    List<Place> findAllByNameContainingIgnoreCase(String keyword);
 }

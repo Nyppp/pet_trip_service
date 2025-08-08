@@ -4,13 +4,11 @@ import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
 import com.oreumi.pet_trip_service.DTO.ScheduleItemDTO;
 import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
 import com.oreumi.pet_trip_service.model.Enum.UserStatus;
+import com.oreumi.pet_trip_service.model.PlaceImg;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.model.ScheduleItem;
 import com.oreumi.pet_trip_service.model.User;
-import com.oreumi.pet_trip_service.repository.PlaceRepository;
-import com.oreumi.pet_trip_service.repository.ScheduleItemRepository;
-import com.oreumi.pet_trip_service.repository.ScheduleRepository;
-import com.oreumi.pet_trip_service.repository.UserRepository;
+import com.oreumi.pet_trip_service.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,13 +25,15 @@ public class ScheduleService {
     private final ScheduleItemRepository scheduleItemRepository;
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
+    private final PlaceImgRepository placeImgRepository;
 
 
-    public ScheduleService(ScheduleRepository scheduleRepository, ScheduleItemRepository scheduleItemRepository, UserRepository userRepository, PlaceRepository placeRepository) {
+    public ScheduleService(ScheduleRepository scheduleRepository, ScheduleItemRepository scheduleItemRepository, UserRepository userRepository, PlaceRepository placeRepository, PlaceImgRepository placeImgRepository) {
         this.scheduleRepository = scheduleRepository;
         this.scheduleItemRepository = scheduleItemRepository;
         this.userRepository = userRepository;
         this.placeRepository = placeRepository;
+        this.placeImgRepository = placeImgRepository;
     }
 
 
@@ -169,7 +169,9 @@ public class ScheduleService {
         List<ScheduleItemDTO> scheduleItemDTOList = new ArrayList<>();
 
         for(ScheduleItem item : schedule.getScheduleItems()){
-            ScheduleItemDTO dto = new ScheduleItemDTO(item.getId(), item.getPlace().getId(), item.getStartTime(), item.getEndTime(), item.getMemo());
+            ScheduleItemDTO dto = new ScheduleItemDTO(item);
+            PlaceImg placeImg = placeImgRepository.findFirstByPlaceIdAndMainImgTrue(dto.getPlaceId()).orElseThrow();
+            dto.setPlaceImgUrl(placeImg.getUrl());
             scheduleItemDTOList.add(dto);
         }
 

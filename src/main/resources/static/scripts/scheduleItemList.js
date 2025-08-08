@@ -29,7 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 .forEach(item =>{
                     const itemDiv = document.createElement("div");
                     itemDiv.innerHTML = `
-                    <h3>${item.title}</h3>
+                    <img src="${item.placeImgUrl}"></img>
+                    <h3>${item.placeName}</h3>
                     <p>일정 시각 : ${item.startTime.substring(11,16)} ~ ${item.endTime.substring(11,16)}</p>
                     <p>메모 : ${item.memo}</p>
 

@@ -18,6 +18,6 @@ public class PlaceApiController {
 
     @GetMapping("/search")
     public List<Place> searchPlaces(@RequestParam("q") String keyword) {
-        return placeRepository.findTop10ByNameContainingIgnoreCase(keyword);
+        return placeRepository.findAllByNameContainingIgnoreCase(keyword);
     }
 }

@@ -54,7 +54,8 @@
 <body>
 
 <div class="item_container">
-  <div th:text="${item.title}" class="item_header">남이섬</div>
+  <img th:src="${imgUrl}" class="item_mainImg">남이섬</img>
+  <div th:text="${item.place.name}" class="item_header">남이섬</div>
 
   <div class="item_info">
     <p th:text="'시작 시간: ' + ${item.startTime}"></p>

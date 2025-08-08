@@ -5,8 +5,10 @@ import com.oreumi.pet_trip_service.DTO.ScheduleItemDTO;
 import com.oreumi.pet_trip_service.model.Place;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.model.ScheduleItem;
+import com.oreumi.pet_trip_service.service.PlaceImgService;
 import com.oreumi.pet_trip_service.service.ScheduleService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,12 +22,10 @@ import java.util.Map;
 @Controller
 @Slf4j
 @RequestMapping("/schedule")
+@RequiredArgsConstructor
 public class ScheduleItemController {
     private final ScheduleService scheduleService;
-
-    public ScheduleItemController(ScheduleService scheduleService) {
-        this.scheduleService = scheduleService;
-    }
+    private final PlaceImgService placeImgService;
 
     @GetMapping("/{id}")
     public String showScheduleItemList(@PathVariable("id") Long scheduleId,
@@ -66,7 +66,9 @@ public class ScheduleItemController {
                                          Model model){
 
         ScheduleItem scheduleItem = scheduleService.findScheduleItemByItemId(itemId).orElseThrow();
+        String imgUrl = placeImgService.findMainImgUrlByScheduleItemId(itemId);
         model.addAttribute("item", scheduleItem);
+        model.addAttribute("imgUrl", imgUrl);
 
         return "/schedule/schedule_item/schedule_item_detail";
     }
@@ -80,13 +82,7 @@ public class ScheduleItemController {
         //해당 값들 모델에 전달 하고, create 뷰 리턴
         ScheduleItem scheduleItem = scheduleService.findScheduleItemByItemId(itemId).orElseThrow();
 
-        ScheduleItemDTO scheduleItemDTO = new ScheduleItemDTO(
-                scheduleItem.getId(),
-                scheduleItem.getPlace().getId(),
-                scheduleItem.getStartTime(),
-                scheduleItem.getEndTime(),
-                scheduleItem.getMemo()
-        );
+        ScheduleItemDTO scheduleItemDTO = new ScheduleItemDTO(scheduleItem);
 
         model.addAttribute("schedule", scheduleService.findScheduleByScheduleId(scheduleId).orElseThrow());
         model.addAttribute("scheduleItemDTO", scheduleItemDTO);
