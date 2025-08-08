@@ -40,8 +40,8 @@ function sendMessage() {
         const chatBody = document.getElementById('chat-modal-body');
         const botReply = document.createElement('div');
         botReply.classList.add('chat-message', 'bot-message');
-        console.log(data.reply);
-        botReply.textContent = data.reply;
+        console.log(data.message);
+        botReply.textContent = data.message;
 
         chatBody.appendChild(botReply);
         input.value = '';

@@ -1,18 +1,20 @@
 package com.oreumi.pet_trip_service.controller;
 
 
-import com.oreumi.pet_trip_service.DTO.ChatRequest;
-import com.oreumi.pet_trip_service.DTO.ChatResponse;
+import com.oreumi.pet_trip_service.DTO.ChatDTO;
+import com.oreumi.pet_trip_service.model.ChatRoom;
+import com.oreumi.pet_trip_service.model.User;
+import com.oreumi.pet_trip_service.repository.UserRepository;
 import com.oreumi.pet_trip_service.service.ChatService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/chatrooms")
-@RequiredArgsConstructor // 필수 생성자 생성인듯
+@RequiredArgsConstructor
 public class ChatController {
 
 
@@ -25,8 +27,10 @@ public class ChatController {
     }
 
     @PostMapping
-    public String chatRoomCreated(@RequestBody ChatRequest dto) {
-        return "";
+    public ResponseEntity<Long> chatRoomCreated(@RequestBody ChatDTO chatRequest) {
+        Long userId = Long.parseLong(chatRequest.getSender());
+        ChatRoom room = chatService.createChatRoomForUser(userId);
+        return ResponseEntity.ok(room.getId());
     }
 
     @GetMapping("/{roomId}/message")
@@ -35,17 +39,22 @@ public class ChatController {
     }
 
     @PostMapping("/{roomId}/message")
-    public ResponseEntity<ChatResponse> chatCreated(@PathVariable Long roomId, @RequestBody ChatRequest chatRequest) {
+    public ResponseEntity<ChatDTO> chatCreated(@PathVariable Long roomId, @RequestBody ChatDTO chatRequest) {
         System.out.println("사용자 메세지: " + chatRequest.getMessage());
+        chatService.saveChat(roomId, chatRequest, false);
 
         String reply = chatService.getChatbotReply(chatRequest.getMessage());
         System.out.println("챗봇 응답: " + reply);
 
-        return ResponseEntity.ok(new ChatResponse(reply));
+        ChatDTO botMessage = new ChatDTO("chatbot", reply, LocalDateTime.now());
+        chatService.saveChat(roomId, botMessage, true);
+
+        return ResponseEntity.ok(new ChatDTO("chatbot", reply, LocalDateTime.now()));
     }
 
     @DeleteMapping("/messages/{messageId}")
     public String chatDelete(@PathVariable Long messageId) {
         return "";
     }
+
 }
