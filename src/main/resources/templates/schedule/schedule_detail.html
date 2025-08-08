@@ -12,13 +12,19 @@
     <h1 th:text="${schedule.title}">여행 스케줄 플래너</h1>
 </header>
 
-<div class="date-tabs">
+<div class="planner_toolbar">
+    <a th:href="@{/schedule/{id}/items/new(id=${schedule.id})}" class="add-location">+ 장소 추가</a>
+
+    <div class="filter-bar">
+        <label for="date_filter">날짜</label>
+        <select id="date_filter">
+        </select>
+    </div>
 </div>
+
 
 <div id="planner-body" class="planner-body">
 
-    <!-- 일정 추가 버튼 -->
-    <a th:href="@{/schedule/{id}/items/new(id=${schedule.id})}" class="add-location">+ 장소 추가</a>
 </div>
 
 <div class="footer">

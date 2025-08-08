@@ -28,12 +28,63 @@ header {
 .planner-body {
   padding: 1.5rem;
 }
-.location-card {
-  border: 1px solid #ccc;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border-radius: 8px;
-  background-color: #fff;
+.location-card{
+  display:flex;
+  gap:16px;
+  padding:16px;
+  border-radius:12px;
+  background:var(--white);
+  border:1px solid var(--gray_main);
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
+}
+
+.location-thumb{
+  width:160px;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
+  flex-shrink:0;
+  background:var(--gray_light);
+}
+
+.location-body{ flex:1; min-width:0; }
+
+.location-title{
+  margin:0 0 6px 0;
+  font-size:18px;
+  font-weight:700;
+  color:var(--black_main);
+}
+
+.location-memo,
+.location-time{
+  margin:0 0 4px 0;
+  font-size:14px;
+  color:var(--gray_700);
+}
+
+.location-memo .label,
+.location-time .label{
+  display:inline-block;
+  min-width:42px;
+  font-weight:600;
+  color:var(--gray_800);
+  margin-right:6px;
+}
+
+.location-link{
+  display:inline-block;
+  margin-top:8px;
+  font-weight:600;
+  color:var(--blue_main);
+  text-decoration:none;
+}
+.location-link:hover{ text-decoration:underline; }
+
+/* 반응형: 모바일에선 세로 배치 */
+@media (max-width:640px){
+  .location-card{ flex-direction:column; }
+  .location-thumb{ width:100%; height:180px; }
 }
 .add-location {
   margin-top: 1rem;
@@ -48,3 +99,55 @@ header {
   text-align: center;
   margin: 2rem 0;
 }
+
+/* 상단 바 */
+.planner_toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 0;
+  margin:8px 0 16px;
+  /* 스크롤 때 상단 고정하고 싶으면 아래 3줄 켜기 */
+  /* position: sticky;
+  top: 60px;       /* 헤더 높이에 맞게 조정 */
+  /* background: var(--white); z-index: 10; */
+  border-bottom:1px solid var(--gray_main);
+}
+
+/* 왼쪽 영역: 라벨 + 셀렉트 */
+.toolbar-left{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+#date_filter{
+  height:36px;
+  padding:0 10px;
+  border:1px solid var(--gray_main);
+  border-radius:6px;
+  background:#fff;
+  min-width:160px;
+}
+
+/* 버튼 공통 */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:36px;
+  padding:0 14px;
+  border-radius:8px;
+  font-weight:600;
+  text-decoration:none;
+  border:1px solid transparent;
+  cursor:pointer;
+}
+
+/* 파란 버튼 */
+.add-place-btn{
+  background:var(--blue_main);
+  color:#fff;
+}
+.add-place-btn:hover{ filter:brightness(.95); }

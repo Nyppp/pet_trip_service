@@ -3,74 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <title>일정 아이템 상세</title>
+  <link rel="stylesheet" href="/css/common/common.css">
+  <link rel="stylesheet" href="/css/schedule/scheduleItemDetail.css">
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 2rem;
-      background-color: #f0f2f5;
-    }
-    .item_container {
-      background-color: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .item_header {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 1rem;
-    }
-    .item_info {
-      margin-bottom: 1rem;
-    }
-    .item_info span {
-      font-weight: bold;
-    }
-    .button_group {
-      margin-top: 2rem;
-      display: flex;
-      gap: 1rem;
-    }
-    .button_group a,
-    .button_group form button {
-      padding: 0.6rem 1.2rem;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      color: white;
-    }
-    .edit_button {
-      background-color: #3f51b5;
-    }
-    .delete_button {
-      background-color: #f44336;
-    }
+
   </style>
   <script th:src="@{/scripts/scheduleItemDetail.js}"></script>
 </head>
 <body>
+<div class="page_wrap">
 
-<div class="item_container">
-  <img th:src="${imgUrl}" class="item_mainImg">남이섬</img>
-  <div th:text="${item.place.name}" class="item_header">남이섬</div>
+  <div class="item_card">
+    <!-- 메인이미지 -->
+    <img class="item_main_img"
+         th:src="${imgUrl} ?: ''"
+         alt="장소 이미지"/>
 
-  <div class="item_info">
-    <p th:text="'시작 시간: ' + ${item.startTime}"></p>
-    <p th:text="'종료 시간: ' + ${item.endTime}"></p>
-    <p th:text="'메모: ' + ${item.memo}"></p>
+    <div class="item_body">
+      <!-- 타이틀 -->
+      <h1 class="item_title" th:text="${item.place.name}">장소 이름</h1>
+
+      <!-- 메타 정보 -->
+      <div class="item_meta">
+        <p class="item_row">
+          <span class="label">시작 시간</span>
+          <span class="text" th:text="${#temporals.format(item.startTime,'yyyy-MM-dd HH:mm')}">2025-08-22 02:47</span>
+        </p>
+        <p class="item_row">
+          <span class="label">종료 시간</span>
+          <span class="text" th:text="${#temporals.format(item.endTime,'yyyy-MM-dd HH:mm')}">2025-08-22 07:47</span>
+        </p>
+        <p class="item_row">
+          <span class="label">메모</span>
+          <span class="text" th:text="${item.memo}">메모 내용</span>
+        </p>
+      </div>
+
+      <!-- 액션 버튼 -->
+      <div class="button_group">
+        <a class="btn btn_primary"
+           th:href="@{/schedule/{sid}/items/{iid}/edit(sid=${item.schedule.id}, iid=${item.id})}">수정</a>
+
+        <a class="btn btn_secondary"
+           th:href="@{/schedule/{sid}(sid=${item.schedule.id})}">일정 리스트로 돌아가기</a>
+
+        <button type="button" class="btn btn_danger"
+                th:onclick="'deleteScheduleItem(' + ${item.schedule.id} + ',' + ${item.id} + ')'">삭제</button>
+      </div>
+    </div>
   </div>
 
-  <div class="button_group">
-    <a th:href="@{/schedule/{scheduleId}/items/{itemId}/edit(scheduleId=${item.schedule.id}, itemId=${item.id})}" class="edit_button">수정</a>
-
-    <a th:href="@{/schedule/{scheduleId}(scheduleId=${item.schedule.id})}" class="edit_button">일정 리스트로 돌아가기</a>
-
-    <button type="submit" class="delete_button"
-            th:onclick="'deleteScheduleItem(' + ${scheduleId} + ',' + ${itemId}+')'">삭제</button>
-  </div>
 </div>
 </body>
 </html>
