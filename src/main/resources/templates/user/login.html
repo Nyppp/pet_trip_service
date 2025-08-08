@@ -27,6 +27,17 @@
         <button type="submit" class="btn-primary">로그인</button>
       </form>
 
+      <!-- 소셜 로그인 버튼 -->
+      <div class="oauth-section">
+        <div class="divider">
+          <span>또는</span>
+        </div>
+        <a th:href="@{/oauth2/google}" class="btn-google">
+          <span class="google-icon">G</span>
+          구글로 로그인
+        </a>
+      </div>
+
       <div class="signup-link">계정이 없으신가요? <a th:href="@{/signup}">회원가입</a></div>
     </div>
   </body>
