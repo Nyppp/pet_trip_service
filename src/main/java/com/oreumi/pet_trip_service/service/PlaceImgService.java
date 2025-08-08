@@ -18,11 +18,7 @@ public class PlaceImgService {
     private final ScheduleItemRepository scheduleItemRepository;
 
     public String findMainImgUrlByScheduleItemId(Long scheduleItemId){
-        ScheduleItem scheduleItem = scheduleItemRepository.findById(scheduleItemId).orElseThrow();
-
-        Place place = scheduleItem.getPlace();
-
-        PlaceImg placeImg = placeImgRepository.findFirstByPlaceIdAndMainImgTrue(place.getId()).orElseThrow();
-        return placeImg.getUrl();
+        String url = placeImgRepository.findMainImgUrlByScheduleItemId(scheduleItemId).orElseThrow();
+        return url;
     }
 }
