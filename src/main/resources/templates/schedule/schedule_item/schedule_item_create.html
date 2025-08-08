@@ -3,57 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <title>일정 아이템 추가</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 2rem;
-      background-color: #fafafa;
-    }
-    .form_group {
-      margin-bottom: 1.5rem;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.3rem;
-      font-weight: bold;
-    }
-    input, textarea {
-      padding: 0.5rem;
-      width: 100%;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    .submit_button {
-      padding: 0.75rem 1.5rem;
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .autocomplete_list {
-      position: absolute;
-      max-height: 200px;     /* 표시 높이 제한 */
-      overflow-y: auto;      /* 넘치면 스크롤 생성 */
-      background: white;
-      border: 1px solid #ccc;
-      width: 100%;
-      z-index: 10;
-      padding: 0;
-      margin: 0;
-    }
-
-    .autocomplete_list li {
-      padding: 8px;
-      cursor: pointer;
-    }
-
-    .autocomplete_list li:hover {
-      background-color: #f0f0f0;
-    }
-  </style>
   <script th:src="@{/scripts/timeInputControl.js}"></script>
   <script th:src="@{/scripts/placeAutoComplete.js}"></script>
+  <link rel="stylesheet" href="/css/schedule/scheduleItemCreate.css">
 </head>
 <body>
 <div id="schedule-data"
@@ -65,8 +17,7 @@
 
 <h1>🗺️ 일정에 장소 추가</h1>
 
-<form th:action="@{${formAction}}" method="POST"
-  th:object="${scheduleItemDTO}">
+<form th:action="@{${formAction}}" method="POST" th:object="${scheduleItemDTO}">
   <div class="form_group">
     <label for="place_search">장소 검색</label>
     <input type="text" id="place_search" class="place_search"
@@ -90,7 +41,7 @@
   <div class="form_group">
     <label for="memo">메모</label>
     <textarea id="memo" name="memo" th:field="*{memo}"
-              rows="3" placeholder="예: 반려견 산책 코스 추천" ></textarea>
+              rows="3" placeholder="예: 반려견 산책 코스 추천" maxlength="500"></textarea>
   </div>
 
   <button type="submit" class="submit_button">장소 추가</button>
