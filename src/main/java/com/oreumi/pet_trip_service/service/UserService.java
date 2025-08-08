@@ -2,28 +2,49 @@ package com.oreumi.pet_trip_service.service;
 
 import com.oreumi.pet_trip_service.DTO.UserSignupDto;
 import com.oreumi.pet_trip_service.model.User;
+import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
+import com.oreumi.pet_trip_service.model.Enum.UserStatus;
+import com.oreumi.pet_trip_service.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-public interface UserService {
+@Service
+@RequiredArgsConstructor
+public class UserService {
     
-    /**
-     * 회원가입 처리
-     * @param signupDto 회원가입 정보
-     * @return 생성된 사용자 엔티티
-     * @throws IllegalArgumentException 이메일 또는 닉네임 중복 시
-     */
-    User signUp(UserSignupDto signupDto);
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     
-    /**
-     * 이메일 중복 체크
-     * @param email 확인할 이메일
-     * @return 중복 여부 (true: 중복, false: 사용 가능)
-     */
-    boolean isEmailExists(String email);
+    @Transactional
+    public User signUp(UserSignupDto signupDto) {
+        // 이메일 중복 체크
+        if (userRepository.existsByEmail(signupDto.getEmail())) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
+        
+        // 닉네임 중복 체크
+        if (userRepository.existsByNickname(signupDto.getNickname())) {
+            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+        }
+        
+        // 비밀번호 확인 체크
+        if (!signupDto.getPassword().equals(signupDto.getPasswordConfirm())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        
+        
+        // 사용자 엔티티 생성
+        User user = new User();
+        user.setEmail(signupDto.getEmail());
+        user.setPassword(passwordEncoder.encode(signupDto.getPassword()));
+        user.setNickname(signupDto.getNickname());
+        user.setStatus(UserStatus.ACTIVE);
+        user.setProvider(AuthProvider.LOCAL);
+        
+        return userRepository.save(user);
+    }
     
-    /**
-     * 닉네임 중복 체크
-     * @param nickname 확인할 닉네임
-     * @return 중복 여부 (true: 중복, false: 사용 가능)
-     */
-    boolean isNicknameExists(String nickname);
-}
+
+} 
