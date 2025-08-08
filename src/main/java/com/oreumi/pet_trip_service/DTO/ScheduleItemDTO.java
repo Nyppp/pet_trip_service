@@ -1,5 +1,6 @@
 package com.oreumi.pet_trip_service.DTO;
 
+import com.oreumi.pet_trip_service.model.ScheduleItem;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -16,14 +17,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ScheduleItemDTO {
     private Long id;
-    @NotBlank
-    private String title;
 
-    @FutureOrPresent
+    private Long placeId;
+
+    private String placeName;
+
+    private String placeImgUrl;
+
     private LocalDateTime startTime;
 
-    @Future
     private LocalDateTime endTime;
 
     private String memo;
+
+    public ScheduleItemDTO(ScheduleItem item){
+        this.id = item.getId();
+        this.placeId = item.getPlace().getId();
+        this.placeName = item.getPlace().getName();
+        this.startTime = item.getStartTime();
+        this.endTime = item.getEndTime();
+        this.memo = item.getMemo();
+    }
 }

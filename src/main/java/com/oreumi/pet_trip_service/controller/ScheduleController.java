@@ -4,6 +4,7 @@ package com.oreumi.pet_trip_service.controller;
 import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.service.ScheduleService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,9 +29,14 @@ public class ScheduleController {
 
     @GetMapping("/new")
     public String showScheduleForm(Model model){
-        
+        String formAction = String.format("/schedule/new");
+
         //스케쥴 새로 만들기
         model.addAttribute("scheduleDTO", new ScheduleDTO());
+        model.addAttribute("formAction", formAction);
+
+
+
         return "/schedule/schedule_create";
     }
 
@@ -40,6 +46,15 @@ public class ScheduleController {
 
         //새로 만들기와 차이 : 수정하기 버튼으로 진입 + PathVariable로 id 넘겨줌
         //서비스 구현 > id 접근 후, 내용 수정하여 저장
+        String formAction = String.format("/schedule/" + scheduleId + "/edit");
+        model.addAttribute("formAction", formAction);
+
+        Schedule schedule = scheduleService.findScheduleByScheduleId(scheduleId)
+                .orElseThrow(()->new EntityNotFoundException("스케쥴을 찾을 수 없습니다."));
+
+        ScheduleDTO dto = new ScheduleDTO(schedule);
+
+        model.addAttribute("scheduleDTO", dto);
 
         return "/schedule/schedule_create";
     }
@@ -58,11 +73,9 @@ public class ScheduleController {
         return "redirect:/schedule";
     }
 
-    @PatchMapping("/{id}/edit")
+    @PostMapping("/{id}/edit")
     public String editSchedule(@PathVariable("id") Long scheduleId,
-                               @RequestParam String title,
-                               @RequestParam LocalDate startDate,
-                               @RequestParam LocalDate endDate,
+                               @Valid @ModelAttribute ScheduleDTO scheduleDTO,
                                Model model){
         //새로 생성과 동일하게 적용
         //하위에 있던 스케쥴 리스트 > 날짜가 바뀌면서 어떻게 처리할지?
@@ -70,6 +83,8 @@ public class ScheduleController {
         //1. 하위 스케쥴 모두 제거
         //2. 날짜 범위를 벗어난 스케쥴 모두 제거
 
-        return "/schedule/schedule_list";
+        scheduleService.editSchedule(scheduleId, scheduleDTO);
+
+        return "redirect:/schedule";
     }
 }
