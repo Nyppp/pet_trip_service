@@ -170,8 +170,10 @@ public class ScheduleService {
 
         for(ScheduleItem item : schedule.getScheduleItems()){
             ScheduleItemDTO dto = new ScheduleItemDTO(item);
-            PlaceImg placeImg = placeImgRepository.findFirstByPlaceIdAndMainImgTrue(dto.getPlaceId()).orElseThrow();
-            dto.setPlaceImgUrl(placeImg.getUrl());
+            PlaceImg placeImg = placeImgRepository.findFirstByPlaceIdAndMainImgTrue(dto.getPlaceId()).orElse(null);
+            if(placeImg != null){
+                dto.setPlaceImgUrl(placeImg.getUrl());
+            }
             scheduleItemDTOList.add(dto);
         }
 

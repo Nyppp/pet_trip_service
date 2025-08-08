@@ -21,9 +21,9 @@ public class ScheduleDTO {
     private Long id;
     @NotBlank
     private String title;
-    @FutureOrPresent
+
     private LocalDate startDate;
-    @Future
+
     private LocalDate endDate;
     
     public ScheduleDTO(Schedule schedule){

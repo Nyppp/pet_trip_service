@@ -24,10 +24,8 @@ public class ScheduleItemDTO {
 
     private String placeImgUrl;
 
-    @FutureOrPresent
     private LocalDateTime startTime;
 
-    @Future
     private LocalDateTime endTime;
 
     private String memo;
