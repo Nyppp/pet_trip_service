@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import com.oreumi.pet_trip_service.model.Enum.UserStatus;
 
 @Service
 @RequiredArgsConstructor
@@ -48,12 +51,67 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                 .orElseGet(() -> {
                     User newUser = new User();
                     newUser.setEmail(email);
-                    newUser.setNickname(name);
+                    newUser.setNickname(createUniqueNickname(name));
                     newUser.setProfileImg(picture);
                     newUser.setProvider(AuthProvider.GOOGLE);
                     newUser.setProviderId(providerId);
                     newUser.setPassword(""); // OAuth 사용자는 비밀번호 없음
+                    newUser.setStatus(UserStatus.ACTIVE);
                     return userRepository.save(newUser);
                 });
+    }
+    
+    /**
+     * Google 이름 + timestamp로 고유한 닉네임 생성
+     */
+    private String createUniqueNickname(String googleName) {
+        // Google 이름에서 공백 제거 및 특수문자 처리 (한글, 영문, 숫자만 허용)
+        String baseName = googleName.replaceAll("[^a-zA-Z0-9가-힣]", "");
+        
+        // baseName이 비어있으면 기본값 사용
+        if (baseName.isEmpty()) {
+            baseName = "User";
+        }
+        
+        // timestamp 생성 (yyyyMMddHHmmss 형식)
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        
+        String nickname = baseName + timestamp;
+        
+        // 닉네임 길이가 20자를 초과하면 조정
+        if (nickname.length() > 20) {
+            // baseName을 줄여서 총 길이가 20자 이하가 되도록 조정
+            int maxBaseLength = 20 - timestamp.length();
+            if (maxBaseLength > 0) {
+                baseName = baseName.substring(0, Math.min(baseName.length(), maxBaseLength));
+                nickname = baseName + timestamp;
+            } else {
+                // baseName이 너무 짧으면 timestamp만 사용
+                nickname = "User" + timestamp;
+            }
+        }
+        
+        // 중복 검사 및 처리
+        return ensureUniqueNickname(nickname);
+    }
+
+    //닉네임 중복 검사
+    private String ensureUniqueNickname(String baseNickname) {
+        String nickname = baseNickname;
+        int counter = 1;
+        
+        // 중복 검사
+        while (userRepository.existsByNickname(nickname)) {
+            nickname = baseNickname + counter;
+            counter++;
+            
+            // 무한 루프 방지 (최대 1000번 시도)
+            if (counter > 1000) {
+                nickname = "User" + System.nanoTime();
+                break;
+            }
+        }
+        
+        return nickname;
     }
 } 
