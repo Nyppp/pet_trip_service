@@ -1,7 +1,6 @@
 package com.oreumi.pet_trip_service.controller;
 
 import com.oreumi.pet_trip_service.DTO.UserSignupDto;
-import com.oreumi.pet_trip_service.model.User;
 import com.oreumi.pet_trip_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -43,7 +42,7 @@ public class Usercontroller {
         
         try {
             // 회원가입 처리
-            User user = userService.signUp(userSignupDto);
+            userService.signUp(userSignupDto);
             
             redirectAttributes.addFlashAttribute("successMessage", "회원가입이 완료되었습니다. 로그인해 주세요.");
             return "redirect:/login";
@@ -132,7 +131,30 @@ public class Usercontroller {
     }
 
     @GetMapping("/login")
-    public String loginForm() {
+    public String loginForm(@RequestParam(value = "error", required = false) String error,
+                           @RequestParam(value = "logout", required = false) String logout,
+                           Model model) {
+        
+        if (error != null) {
+            if ("true".equals(error)) {
+                model.addAttribute("errorMessage", "이메일 또는 비밀번호가 올바르지 않습니다.");
+            } else if ("oauth2".equals(error)) {
+                model.addAttribute("errorMessage", "소셜 로그인 중 오류가 발생했습니다.");
+            }
+        }
+        
+        if (logout != null) {
+            model.addAttribute("successMessage", "성공적으로 로그아웃되었습니다.");
+        }
+        
         return "user/login";
+    }
+    
+    /**
+     * 구글 로그인 시작
+     */
+    @GetMapping("/oauth2/google")
+    public String googleLogin() {
+        return "redirect:/oauth2/authorization/google";
     }
 }
