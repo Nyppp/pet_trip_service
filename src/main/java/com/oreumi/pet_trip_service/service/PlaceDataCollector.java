@@ -11,6 +11,7 @@ import com.oreumi.pet_trip_service.repository.PlaceImgRepository;
 import com.oreumi.pet_trip_service.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.oreumi.pet_trip_service.model.Enum.Category;
 
 import java.util.*;
 
@@ -78,11 +79,18 @@ public class PlaceDataCollector {
             place.setAddress(item.getAddr1());
             place.setDescription(overview);
             place.setCategoryCode(item.getCat3());
-            place.setCategoryName(item.getCat3());
+            String categoryName = null;
+            try {
+                categoryName = Category.valueOf(item.getCat3()).getDescription();
+                place.setCategoryName(categoryName);
+            } catch (IllegalArgumentException e) {
+                place.setCategoryName("기타");
+            }
+            place.setCategoryName(categoryName);
             place.setLat(item.getMapy().isEmpty() ? 0.0 : Double.parseDouble(item.getMapy()));
             place.setLng(item.getMapx().isEmpty() ? 0.0 : Double.parseDouble(item.getMapx()));
             place.setPhone(item.getTel());
-            place.setHomepageUrl(homepage);
+            place.setHomepageUrl(extractFirstUrl(homepage));
 
             Place savedPlace = placeRepository.save(place);
 
@@ -126,5 +134,18 @@ public class PlaceDataCollector {
 
             Thread.sleep(100);
         }
+    }
+    private String extractFirstUrl(String raw) {
+        if (raw == null || raw.isBlank()) return null;
+
+        // http:// 또는 https:// 로 시작하는 URL 추출
+        java.util.regex.Matcher matcher = java.util.regex.Pattern
+                .compile("(https?://[^\\s\"<>]+)")
+                .matcher(raw);
+
+        if (matcher.find()) {
+            return matcher.group(1); // 첫 번째 URL 반환
+        }
+        return null;
     }
 }

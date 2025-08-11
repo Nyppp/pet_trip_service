@@ -1,4 +1,4 @@
-package com.oreumi.pet_trip_service.service;
+package com.oreumi.pet_trip_service.security;
 
 import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
 import com.oreumi.pet_trip_service.model.User;
@@ -30,10 +30,11 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         
         // 구글 로그인 처리
         if ("google".equals(userRequest.getClientRegistration().getRegistrationId())) {
-            processGoogleUser(oAuth2User);
-            //return 커스텀UserPrincipal;
+            User user = processGoogleUser(oAuth2User);
+            return CustomUserPrincipal.create(user, oAuth2User.getAttributes());
         }
         
+        // 다른 OAuth2 제공자의 경우 기본 처리
         return oAuth2User;
     }
 
@@ -41,7 +42,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
      * 구글 사용자 정보 처리 및 저장
      */
     @Transactional
-    private void processGoogleUser(OAuth2User oAuth2User) {
+    private User processGoogleUser(OAuth2User oAuth2User) {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         
         String email = (String) attributes.get("email");
@@ -50,7 +51,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         String providerId = (String) attributes.get("sub");
 
         // 기존 사용자 확인 또는 새 사용자 생성
-        userRepository.findByEmail(email)
+        return userRepository.findByEmail(email)
                 .orElseGet(() -> {
                     User newUser = new User();
                     newUser.setEmail(email);
@@ -122,4 +123,4 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         // 안전한 랜덤 비밀번호 생성 (UUID + 타임스탬프)
         return UUID.randomUUID().toString() + "-" + System.currentTimeMillis();
     }
-} 
+}

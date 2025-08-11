@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>장소 상세 정보</title>
     <link rel="stylesheet" href="/css/place.css">
+    <link rel="stylesheet" href="/css/common/common.css">
 </head>
 <body>
 
@@ -13,20 +14,82 @@
     <!-- 상단 영역 -->
     <section class="top-section">
         <div class="image-area">
-            <img src="https://via.placeholder.com/500x350" alt="장소 대표 이미지">
+            <div class="slider" id="place-slider">
+                <button class="nav prev" aria-label="이전 사진">‹</button>
+
+                <div class="slides">
+                    <img th:each="img,iter : ${place.imageUrls}"
+                         th:src="${img}"
+                         alt="장소 이미지"
+                         onerror="this.src='https://via.placeholder.com/500x350'"
+                         th:classappend="${iter.index} == 0 ? 'active' : ''">
+                </div>
+
+                <button class="nav next" aria-label="다음 사진">›</button>
+            </div>
+
+            <div class="dots" id="place-slider-dots"
+                 th:if="${place.imageUrls != null and place.imageUrls.size() > 1}">
+                <button th:each="img,iter : ${place.imageUrls}"
+                        th:attr="data-index=${iter.index}"
+                        th:classappend="${iter.index} == 0 ? 'active' : ''"
+                        aria-label="해당 사진으로 이동"></button>
+            </div>
         </div>
+
         <div class="info-area">
-            <h1 class="place-title">서울신라호텔</h1>
-            <p class="category">숙소 &gt; 호텔 &gt; 관광호텔</p>
-            <div class="rating">⭐⭐⭐⭐⭐ <span>(112)</span></div>
-            <p><strong>주소:</strong> 서울 중구 동호로 249</p>
-            <p><strong>전화번호:</strong> 02-2233-3131</p>
-            <p><strong>영업시간:</strong> 09:00 ~ 18:00</p>
-            <p class="description">
-                다양한 편의시설을 호텔 안에서 즐길 수 있습니다. 품질 있는
-                편안한 서비스를 제공합니다.
+            <h1 class="place-title" th:text="${place.name}">서울신라호텔</h1>
+            <p class="category" th:text="${place.categoryPath}">숙소 > 호텔 > 관광호텔</p>
+            <div class="rating" th:if="${place != null}">
+                <!-- 별 5개 중 채움 비율: rating(0~5) × 20% -->
+                <div class="stars"
+                     th:style="|--percent: ${ (place.rating != null ? place.rating : 0) * 20 }%|"
+                     aria-label="별점"></div>
+
+                <span class="rating-number"
+                      th:text="${place.rating != null ? #numbers.formatDecimal(place.rating,1,1) : '0.0'}">0.0</span>
+                <span class="review-count"
+                      th:if="${place.liked != null and place.liked > 0}"
+                      th:text="'(' + ${place.liked} + ')'">(0)</span>
+            </div>
+
+            <!-- 라벨/값 줄만 meta-row -->
+            <p class="meta-row">
+                <strong>주소</strong>
+                <span th:text="${!#strings.isEmpty(place.address) ? place.address : '정보 없음'}">정보 없음</span>
             </p>
-            <button class="add-schedule-btn">스케줄에 추가</button>
+            <p class="meta-row">
+                <strong>전화번호</strong>
+                <a th:if="${!#strings.isEmpty(place.phone)}"
+                   th:href="'tel:' + ${place.phone}"
+                   th:text="${place.phone}">000-0000-0000</a>
+                <span th:if="${#strings.isEmpty(place.phone)}">정보 없음</span>
+            </p>
+            <p class="meta-row">
+                <strong>사이트</strong>
+
+                <a th:if="${place.homepageUrl != null and !#strings.isEmpty(place.homepageUrl)}"
+                   th:href="${place.homepageUrl}" target="_blank" rel="noopener noreferrer">공식 홈페이지</a>
+
+                <span th:if="${place.homepageUrl == null or #strings.isEmpty(place.homepageUrl)}">
+    정보 없음
+  </span>
+            </p>
+
+            <!-- 설명 + 더보기 버튼을 한 래퍼로 -->
+            <div class="desc-wrap" th:if="${!#strings.isEmpty(place.description)}">
+                <p id="place-description" class="description" th:text="${place.description}">상세정보</p>
+                <button id="toggle-description-btn" class="more-btn" type="button"
+                        aria-expanded="false" aria-controls="place-description">더보기
+                </button>
+            </div>
+            <div class="cta-row">
+                <button type="button"
+                        class="add-schedule-btn"
+                        id="add-schedule-btn">
+                    스케줄에 추가
+                </button>
+            </div>
         </div>
     </section>
 
@@ -78,7 +141,8 @@
             </div>
         </div>
     </section>
-</main>
 
+</main>
+<script src="/scripts/place.js"></script>
 </body>
 </html>
