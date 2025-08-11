@@ -10,9 +10,6 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 public enum Category {
-    /* =========================
-     * cat1 (대분류, level = 1)
-     * ========================= */
     A01("자연", 1),
     A02("인문·문화·예술·역사", 1),
     A03("레포츠", 1),
@@ -21,9 +18,6 @@ public enum Category {
     B02("숙박", 1),
     C01("여행코스", 1),
 
-    /* =========================
-     * cat2 (중분류, level = 2)
-     * ========================= */
     // A01
     A0101("자연관광지", 2),
     A0102("관광자원", 2),
@@ -62,10 +56,6 @@ public enum Category {
     C0116("캠핑코스", 2),
     C0117("맛코스", 2),
 
-    /* =========================
-     * cat3 (소분류, level = 3)
-     * ========================= */
-    // A01-01 자연관광지
     A01010100("국립공원", 3),
     A01010200("도립공원", 3),
     A01010300("군립공원", 3),
@@ -231,12 +221,10 @@ public enum Category {
     private final String description;
     private final int level;
 
-    /** 코드 값은 enum 상수명과 동일하게 name()으로 사용 */
     public String getCode() {
         return this.name();
     }
 
-    /** 코드 → enum (DB/요청에서 코드 문자열이 들어올 때) */
     public static Category fromCode(String code) {
         try {
             return Category.valueOf(code);
@@ -245,7 +233,6 @@ public enum Category {
         }
     }
 
-    /** 라벨 → enum */
     public static Category fromDescription(String description) {
         for (Category c : values()) {
             if (c.description.equals(description)) return c;
@@ -253,7 +240,6 @@ public enum Category {
         throw new IllegalArgumentException("Invalid Category description: " + description);
     }
 
-    /** 접두어로 같은 그룹 조회 (ex. "A02" → A02 전체, "A0201" → 역사관광지 하위) */
     public static List<Category> startsWith(String prefix) {
         return Arrays.stream(values())
                 .filter(v -> v.name().startsWith(prefix))
@@ -263,9 +249,7 @@ public enum Category {
     public boolean isLevel(int target) {
         return this.level == target;
     }
-    /**
-     * cat3 코드에서 cat1 코드 추출
-     */
+
     public static Category getCat1FromCat3(Category cat3Code) {
         if (cat3Code.getLevel() != 3) {
             throw new IllegalArgumentException("cat3 코드만 입력 가능합니다.");
@@ -274,9 +258,6 @@ public enum Category {
         return Category.valueOf(cat1Code);
     }
 
-    /**
-     * cat3 코드에서 cat2 코드 추출
-     */
     public static Category getCat2FromCat3(Category cat3Code) {
         if (cat3Code.getLevel() != 3) {
             throw new IllegalArgumentException("cat3 코드만 입력 가능합니다.");
