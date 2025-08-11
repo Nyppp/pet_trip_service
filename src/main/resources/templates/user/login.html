@@ -13,6 +13,9 @@
       <!-- 성공 메시지 -->
       <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
 
+      <!-- 오류 메시지 -->
+      <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
       <form th:action="@{/login}" method="post">
         <div class="form-group">
           <label for="email" class="form-label">이메일</label>
@@ -26,6 +29,17 @@
 
         <button type="submit" class="btn-primary">로그인</button>
       </form>
+
+      <!-- 소셜 로그인 버튼 -->
+      <div class="oauth-section">
+        <div class="divider">
+          <span>또는</span>
+        </div>
+        <a th:href="@{/oauth2/google}" class="btn-google">
+          <span class="google-icon">G</span>
+          구글로 로그인
+        </a>
+      </div>
 
       <div class="signup-link">계정이 없으신가요? <a th:href="@{/signup}">회원가입</a></div>
     </div>
