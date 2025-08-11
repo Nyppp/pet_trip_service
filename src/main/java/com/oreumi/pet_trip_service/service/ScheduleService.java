@@ -2,9 +2,6 @@ package com.oreumi.pet_trip_service.service;
 
 import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
 import com.oreumi.pet_trip_service.DTO.ScheduleItemDTO;
-import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
-import com.oreumi.pet_trip_service.model.Enum.UserStatus;
-import com.oreumi.pet_trip_service.model.PlaceImg;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.model.ScheduleItem;
 import com.oreumi.pet_trip_service.model.User;
@@ -38,30 +35,17 @@ public class ScheduleService {
 
 
     @Transactional
-    public Schedule saveSchedule(ScheduleDTO scheduleDTO){
-        Schedule schedule = new Schedule();
+    public Schedule saveSchedule(Long userId, ScheduleDTO scheduleDTO){
+        if(!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("유저 정보를 찾을 수 없습니다.");
+        }
 
+        Schedule schedule = new Schedule();
         schedule.setTitle(scheduleDTO.getTitle());
         schedule.setStartDate(scheduleDTO.getStartDate());
         schedule.setEndDate(scheduleDTO.getEndDate());
         schedule.setCreatedAt(LocalDateTime.now());
-
-        //임시 코드 (유저 정보 관련 없이, 우선 스케쥴만 등록 처리)
-        //개발 좀 되고나서 반드시 지우도록!!!!!!!!!!!
-        if(!userRepository.existsById(1L)) {
-            User dummyUser = new User(); //더미용 유저 데이터 생성
-            dummyUser.setEmail("testuser@example.com");
-            dummyUser.setPassword("encoded_dummy_password");
-            dummyUser.setNickname("여행왕초보");
-            dummyUser.setStatus(UserStatus.ACTIVE);
-            dummyUser.setProvider(AuthProvider.LOCAL);
-            dummyUser.setProviderId(null);
-            dummyUser.setProfileImg(null);
-
-            userRepository.save(dummyUser);
-        }
-
-        schedule.setUser(userRepository.findById(1L).orElseThrow());
+        schedule.setUser(userRepository.findById(userId).orElseThrow());
 
         return scheduleRepository.save(schedule);
     }
@@ -97,7 +81,7 @@ public class ScheduleService {
         return scheduleItemRepository.save(scheduleItem);
     }
 
-    public Schedule editSchedule(Long scheduleId, ScheduleDTO dto){
+    public Schedule updateSchedule(Long scheduleId, ScheduleDTO dto){
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new EntityNotFoundException());
 
@@ -155,6 +139,30 @@ public class ScheduleService {
 
         return scheduleDTOList;
     }
+
+    public List<ScheduleDTO> findAllSchedulesByUserId(Long userId){
+        User user = userRepository.findById(userId).orElseThrow();
+        List<Schedule> scheduleList = scheduleRepository.findAll();
+
+        List<ScheduleDTO> scheduleDTOList = new ArrayList<>();
+
+        for (Schedule schedule : scheduleList){
+            if(schedule.getUser() != user){
+                continue;
+            }
+
+            ScheduleDTO scheduleDTO = new ScheduleDTO(
+                    schedule.getId(),
+                    schedule.getTitle(),
+                    schedule.getStartDate(),
+                    schedule.getEndDate()
+            );
+            scheduleDTOList.add(scheduleDTO);
+        }
+
+        return scheduleDTOList;
+    }
+
 
     public Optional<Schedule> findScheduleByScheduleId(Long id){
         return scheduleRepository.findById(id);
