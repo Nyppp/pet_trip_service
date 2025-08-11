@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <title>일정 아이템 추가</title>
+  <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}"/>
+  <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+
   <script th:src="@{/scripts/timeInputControl.js}"></script>
   <script th:src="@{/scripts/placeAutoComplete.js}"></script>
   <link rel="stylesheet" href="/css/schedule/scheduleItemCreate.css">
@@ -15,7 +18,7 @@
      style="display: none;">
 </div>
 
-<h1>🗺️ 일정에 장소 추가</h1>
+<h1 th:text="${isNew} ? '🗺️ 일정에 장소 추가' : '🗺️ 장소/날짜 수정 하기'"></h1>
 
 <form th:action="@{${formAction}}" method="POST" th:object="${scheduleItemDTO}">
   <div class="form_group">
