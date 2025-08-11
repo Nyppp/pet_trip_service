@@ -1,6 +1,6 @@
 package com.oreumi.pet_trip_service.service;
 
-import com.oreumi.pet_trip_service.DTO.UserSignupDto;
+import com.oreumi.pet_trip_service.DTO.UserSignupDTO;
 import com.oreumi.pet_trip_service.model.User;
 import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
 import com.oreumi.pet_trip_service.model.Enum.UserStatus;
@@ -18,7 +18,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     
     @Transactional
-    public User signUp(UserSignupDto signupDto) {
+    public User signUp(UserSignupDTO signupDto) {
         // 이메일 중복 체크
         if (userRepository.existsByEmail(signupDto.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");

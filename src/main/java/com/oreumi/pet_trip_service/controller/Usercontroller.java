@@ -1,6 +1,6 @@
 package com.oreumi.pet_trip_service.controller;
 
-import com.oreumi.pet_trip_service.DTO.UserSignupDto;
+import com.oreumi.pet_trip_service.DTO.UserSignupDTO;
 import com.oreumi.pet_trip_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,7 +21,7 @@ public class Usercontroller {
      */
     @GetMapping("/signup")
     public String signupForm(Model model) {
-        model.addAttribute("userSignupDto", new UserSignupDto());
+        model.addAttribute("userSignupDto", new UserSignupDTO());
         return "user/signup";
     }
     
@@ -29,7 +29,7 @@ public class Usercontroller {
      * 회원가입 처리
      */
     @PostMapping("/signup")
-    public String signup(@ModelAttribute UserSignupDto userSignupDto,
+    public String signup(@ModelAttribute UserSignupDTO userSignupDto,
                         Model model,
                         RedirectAttributes redirectAttributes) {
         
@@ -59,7 +59,7 @@ public class Usercontroller {
     /**
      * 회원가입 데이터 유효성 검사
      */
-    private String validateUserSignup(UserSignupDto userSignupDto) {
+    private String validateUserSignup(UserSignupDTO userSignupDto) {
         // 이메일 검증
         if (userSignupDto.getEmail() == null || userSignupDto.getEmail().trim().isEmpty()) {
             return "이메일은 필수입니다.";
