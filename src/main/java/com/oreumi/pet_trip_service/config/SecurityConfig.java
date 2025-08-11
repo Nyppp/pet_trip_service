@@ -1,7 +1,7 @@
 package com.oreumi.pet_trip_service.config;
 
-import com.oreumi.pet_trip_service.service.OAuth2UserService;
-import com.oreumi.pet_trip_service.service.CustomUserDetailsService;
+import com.oreumi.pet_trip_service.security.OAuth2UserService;
+import com.oreumi.pet_trip_service.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
