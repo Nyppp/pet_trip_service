@@ -1,4 +1,4 @@
-package com.oreumi.pet_trip_service.service;
+package com.oreumi.pet_trip_service.service.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

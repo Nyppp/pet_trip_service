@@ -1,5 +1,6 @@
 package com.oreumi.pet_trip_service.model;
 
+import com.oreumi.pet_trip_service.model.Enum.Category;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,4 +51,24 @@ public class Place {
 
     @Column(name = "homepage_url", columnDefinition = "TEXT")
     private String homepageUrl;
+
+    @Transient
+    public Category getCategoryEnum() {
+        return Category.fromCode(this.categoryCode); // enum name() 기반
+    }
+
+    @Transient
+    public Category getCat1() {
+        return Category.getCat1FromCat3(getCategoryEnum());
+    }
+
+    @Transient
+    public Category getCat2() {
+        return Category.getCat2FromCat3(getCategoryEnum());
+    }
+
+    @Transient
+    public String getCategoryName() {
+        return getCategoryEnum().getDescription();
+    }
 }

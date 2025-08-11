@@ -1,6 +1,6 @@
 package com.oreumi.pet_trip_service.controller;
 
-import com.oreumi.pet_trip_service.service.PlaceBatchCollector;
+import com.oreumi.pet_trip_service.service.api.PlaceBatchCollector;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

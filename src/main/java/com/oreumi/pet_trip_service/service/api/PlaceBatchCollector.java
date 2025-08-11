@@ -1,4 +1,4 @@
-package com.oreumi.pet_trip_service.service;
+package com.oreumi.pet_trip_service.service.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,8 @@ public class PlaceBatchCollector {
 
     // 콘텐츠 타입
     private static final int[] CONTENT_TYPE_IDS = {
-//            12//, // 관광지
-            14//, // 문화시설
+            12//, // 관광지
+//            14//, // 문화시설
 //            15, // 축제/공연/행사
 //            25, // 여행코스
 //            28, // 레포츠
