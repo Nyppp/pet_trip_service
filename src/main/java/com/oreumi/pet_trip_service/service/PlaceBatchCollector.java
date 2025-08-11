@@ -1,4 +1,4 @@
-package com.oreumi.pet_trip_service.service.api;
+package com.oreumi.pet_trip_service.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
