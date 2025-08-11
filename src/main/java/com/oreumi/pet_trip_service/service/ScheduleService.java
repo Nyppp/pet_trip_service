@@ -4,12 +4,12 @@ import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
 import com.oreumi.pet_trip_service.DTO.ScheduleItemDTO;
 import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
 import com.oreumi.pet_trip_service.model.Enum.UserStatus;
+import com.oreumi.pet_trip_service.model.PlaceImg;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.model.ScheduleItem;
 import com.oreumi.pet_trip_service.model.User;
-import com.oreumi.pet_trip_service.repository.ScheduleItemRepository;
-import com.oreumi.pet_trip_service.repository.ScheduleRepository;
-import com.oreumi.pet_trip_service.repository.UserRepository;
+import com.oreumi.pet_trip_service.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +24,16 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ScheduleItemRepository scheduleItemRepository;
     private final UserRepository userRepository;
+    private final PlaceRepository placeRepository;
+    private final PlaceImgRepository placeImgRepository;
 
 
-    public ScheduleService(ScheduleRepository scheduleRepository, ScheduleItemRepository scheduleItemRepository, UserRepository userRepository) {
+    public ScheduleService(ScheduleRepository scheduleRepository, ScheduleItemRepository scheduleItemRepository, UserRepository userRepository, PlaceRepository placeRepository, PlaceImgRepository placeImgRepository) {
         this.scheduleRepository = scheduleRepository;
         this.scheduleItemRepository = scheduleItemRepository;
         this.userRepository = userRepository;
+        this.placeRepository = placeRepository;
+        this.placeImgRepository = placeImgRepository;
     }
 
 
@@ -67,7 +71,7 @@ public class ScheduleService {
         ScheduleItem scheduleItem = new ScheduleItem();
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow();
 
-        scheduleItem.setTitle(scheduleItemDTO.getTitle());
+        scheduleItem.setPlace(placeRepository.findById(scheduleItemDTO.getPlaceId()).orElseThrow());
         scheduleItem.setStartTime(scheduleItemDTO.getStartTime());
         scheduleItem.setEndTime(scheduleItemDTO.getEndTime());
         scheduleItem.setMemo(scheduleItemDTO.getMemo());
@@ -85,13 +89,51 @@ public class ScheduleService {
         ScheduleItem scheduleItem = scheduleItemRepository.findById(scheduleItemId).orElseThrow();
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow();
 
-        scheduleItem.setTitle(scheduleItemDTO.getTitle());
+        scheduleItem.setPlace(placeRepository.findById(scheduleItemDTO.getPlaceId()).orElseThrow());
         scheduleItem.setMemo(scheduleItemDTO.getMemo());
         scheduleItem.setStartTime(scheduleItemDTO.getStartTime());
         scheduleItem.setEndTime(scheduleItemDTO.getEndTime());
 
         return scheduleItemRepository.save(scheduleItem);
+    }
 
+    public Schedule editSchedule(Long scheduleId, ScheduleDTO dto){
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        // 일정 정보 수정
+        schedule.setTitle(dto.getTitle());
+        schedule.setStartDate(dto.getStartDate());
+        schedule.setEndDate(dto.getEndDate());
+
+        schedule.getScheduleItems().removeIf(item ->
+                item.getStartTime().toLocalDate().isBefore(dto.getStartDate()) ||
+                        item.getEndTime().toLocalDate().isAfter(dto.getEndDate()));
+
+        return scheduleRepository.save(schedule);
+    }
+
+    public void deleteSchdule(Long scheduleId){
+        if(scheduleRepository.existsById(scheduleId)){
+            scheduleRepository.deleteById(scheduleId);
+        }else{
+            throw new EntityNotFoundException("스케쥴 데이터를 찾을 수 없습니다.");
+        }
+    }
+
+    public void deleteSchduleItem(Long scheduleId,Long scheduleItemId){
+        if(!scheduleRepository.existsById(scheduleId)){
+            throw new EntityNotFoundException("스케쥴 데이터를 찾을 수 없습니다.");
+        }
+
+
+
+
+        if(scheduleItemRepository.existsById(scheduleItemId)){
+            scheduleItemRepository.deleteById(scheduleItemId);
+        }else{
+            throw new EntityNotFoundException("일정 데이터를 찾을 수 없습니다.");
+        }
     }
 
 
@@ -127,7 +169,10 @@ public class ScheduleService {
         List<ScheduleItemDTO> scheduleItemDTOList = new ArrayList<>();
 
         for(ScheduleItem item : schedule.getScheduleItems()){
-            ScheduleItemDTO dto = new ScheduleItemDTO(item.getId(), item.getTitle(), item.getStartTime(), item.getEndTime(), item.getMemo());
+            ScheduleItemDTO dto = new ScheduleItemDTO(item);
+            placeImgRepository.findMainImgUrlByScheduleItemId(item.getId())
+                            .ifPresent(url -> dto.setPlaceImgUrl(url));
+
             scheduleItemDTOList.add(dto);
         }
 

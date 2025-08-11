@@ -1,0 +1,90 @@
+:root{
+      /* 공용 변수 없을 때를 위한 최소 기본값 */
+      --blue_main:#2C5A82; --gray_main:#d9d9d9; --gray_light:#f1f1f1; --black_main:#333; --white:#fff;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      font-family: Pretendard, sans-serif;
+      background:#f5f6f8;
+      margin:0;
+      padding:24px;
+    }
+
+    .page_wrap{
+      max-width:980px;
+      margin:0 auto;
+    }
+
+    .item_card{
+      background:var(--white);
+      border:1px solid var(--gray_main);
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 2px 8px rgba(0,0,0,.06);
+    }
+
+    .item_main_img{
+      width:100%;
+      aspect-ratio: 16 / 9;      /* 비율 고정 */
+      object-fit:cover;           /* 잘림 허용 */
+      background:var(--gray_light);
+      display:block;
+    }
+
+    .item_body{
+      padding:20px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    .item_title{
+      font-size:22px;
+      font-weight:800;
+      color:var(--black_main);
+      margin:0;
+    }
+
+    .item_meta{
+      display:grid;
+      gap:6px;
+      color:#444;
+      font-size:14px;
+      line-height:1.6;
+    }
+    .item_row .label{
+      display:inline-block;
+      min-width:86px;
+      font-weight:700;
+      color:#555;
+    }
+    .item_row .text{ white-space:pre-line; }
+
+    .button_group{
+      display:flex;
+      gap:10px;
+      margin-top:4px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height:40px;
+      padding:0 16px;
+      border-radius:8px;
+      border:1px solid transparent;
+      font-weight:700;
+      text-decoration:none;
+      cursor:pointer;
+    }
+    .btn_primary{ background:var(--blue_main); color:#fff; }
+    .btn_secondary{ background:#eef3f8; color:#16324f; border-color:#e0e6ee; }
+    .btn_danger{ background:#e24d4d; color:#fff; }
+
+    /* 모바일 여백 */
+    @media (max-width:640px){
+      body{ padding:16px; }
+      .item_body{ padding:16px; }
+      .item_title{ font-size:20px; }
+    }
