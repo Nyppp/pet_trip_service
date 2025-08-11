@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
 import com.oreumi.pet_trip_service.model.Enum.UserStatus;
 
 @Service
@@ -55,7 +57,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                     newUser.setProfileImg(picture);
                     newUser.setProvider(AuthProvider.GOOGLE);
                     newUser.setProviderId(providerId);
-                    newUser.setPassword(""); // OAuth 사용자는 비밀번호 없음
+                    newUser.setPassword(generateSecureRandomPassword()); // OAuth 사용자는 비밀번호 없음
                     newUser.setStatus(UserStatus.ACTIVE);
                     return userRepository.save(newUser);
                 });
@@ -113,5 +115,10 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         }
         
         return nickname;
+    }
+
+    private String generateSecureRandomPassword() {
+        // 안전한 랜덤 비밀번호 생성 (UUID + 타임스탬프)
+        return UUID.randomUUID().toString() + "-" + System.currentTimeMillis();
     }
 } 
