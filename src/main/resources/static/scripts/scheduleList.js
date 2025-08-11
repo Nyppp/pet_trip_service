@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", () =>{
-    fetch("/api/schedules")
+
+    const pathParts = window.location.pathname.split("/");
+    const userId = pathParts[2];
+
+    fetch(`/api/${userId}/schedules`)
     .then(res=>res.json())
     .then(data =>{
         const scheduleList = document.getElementById("schedule_list");

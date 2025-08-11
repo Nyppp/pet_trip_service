@@ -10,10 +10,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -36,6 +39,34 @@ public class ScheduleApiController {
     public ResponseEntity<List<ScheduleDTO>> getAllSchedules(){
          List<ScheduleDTO> schedules = scheduleService.findAllSchedules();
          return ResponseEntity.ok(schedules);
+    }
+
+    @Operation(summary = "특정 유저의 모든 스케쥴 조회", description = "특정 유저의 등록된 모든 스케쥴 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ScheduleDTO.class))),
+            @ApiResponse(responseCode = "500", description = "서버 오류",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping("/{id}/schedules")
+    public ResponseEntity<List<ScheduleDTO>> getAllSchedulesByUserId(@PathVariable Long id){
+        List<ScheduleDTO> schedules = scheduleService.findAllSchedulesByUserId(id);
+        return ResponseEntity.ok(schedules);
+    }
+
+    @PostMapping("/{id}/schedules")
+    public ResponseEntity<Void> createSchedule(@PathVariable Long id,
+                                              @RequestBody @Valid ScheduleDTO scheduleDTO,
+                                              UriComponentsBuilder uriBuilder){
+        Schedule schedule = scheduleService.saveSchedule(id, scheduleDTO);
+        URI location = uriBuilder
+                .path("/users/{id}/schedules/{scheduleId}")
+                .buildAndExpand(id, schedule.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
 
