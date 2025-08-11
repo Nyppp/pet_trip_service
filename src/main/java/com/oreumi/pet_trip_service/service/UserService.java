@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -33,8 +35,7 @@ public class UserService {
         if (!signupDto.getPassword().equals(signupDto.getPasswordConfirm())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        
-        
+
         // 사용자 엔티티 생성
         User user = new User();
         user.setEmail(signupDto.getEmail());
@@ -44,6 +45,10 @@ public class UserService {
         user.setProvider(AuthProvider.LOCAL);
         
         return userRepository.save(user);
+    }
+
+    public Optional<User> findUserByEmail(String email){
+        return userRepository.findByEmail(email);
     }
     
 

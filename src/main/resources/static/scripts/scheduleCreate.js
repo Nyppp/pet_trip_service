@@ -1,29 +1,61 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const startDateInput = document.getElementById("start_date");
-  const endDateInput = document.getElementById("end_date");
+(() => {
+  const form = document.getElementById('schedule_form');
+  if (!form) return;
 
-  // 오늘 날짜로 시작일 제한
-  const today = new Date().toISOString().split("T")[0];
-  startDateInput.setAttribute("min", today);
+  const userId     = form.dataset.userId;
+  const scheduleId = form.dataset.scheduleId; // 생성이면 빈값/undefined
+  const isNew      = form.dataset.isNew === 'true';
 
-  // 초기에는 종료일 비활성화
-  endDateInput.disabled = true;
+  const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
-  startDateInput.addEventListener("change", () => {
-    const selectedStartDate = startDateInput.value;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-    if (selectedStartDate) {
-      // 종료일 활성화 & 최소값 설정
-      endDateInput.disabled = false;
-      endDateInput.setAttribute("min", selectedStartDate);
+    // th:field로 바인딩된 name으로 FormData 생성
+    const fd = new FormData(form);
+    const payload = Object.fromEntries(fd.entries());
+    // 필요 시 타입 보정 (예: 날짜 포맷/문자열 트림 등)
 
-      // 종료일이 시작일보다 이전이면 초기화
-      if (endDateInput.value && endDateInput.value < selectedStartDate) {
-        endDateInput.value = selectedStartDate;
+    const url = isNew
+      ? `/api/users/${userId}/schedules`                                  // 생성
+      : `/api/users/${userId}/schedules/${encodeURIComponent(scheduleId)}`; // 수정
+
+    const method = isNew ? 'POST' : 'PATCH';
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers,
+        body: JSON.stringify(payload)
+      });
+
+      if (res.status === 201) {
+        // 생성 + Location 헤더 있는 경우
+        const location = res.headers.get('Location');
+        // 바로 상세로 갈지, 리스트로 갈지 선택
+        window.location.href = `/users/${userId}/schedules`;
+        return;
       }
-    } else {
-      endDateInput.disabled = true;
-      endDateInput.value = "";
+
+      if (res.status === 204) {
+        // 바디 없는 성공
+        window.location.href = `/users/${userId}/schedules`;
+        return;
+      }
+
+      // 그 외 상태: 메시지 파싱 시도
+      let msg;
+      const text = await res.text();
+      try { msg = JSON.parse(text); } catch { msg = text; }
+      alert(`요청 실패 (${res.status}): ${typeof msg === 'string' ? msg : (msg.message || 'Unknown error')}`);
+
+    } catch (err) {
+      console.error(err);
+      alert('네트워크 오류가 발생했습니다.');
     }
   });
-});
+})();

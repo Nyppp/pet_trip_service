@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", () =>{
-    fetch("/api/schedules")
+
+    const pathParts = window.location.pathname.split("/");
+    const userId = pathParts[2];
+
+    fetch(`/api/users/${userId}/schedules`)
     .then(res=>res.json())
     .then(data =>{
         const scheduleList = document.getElementById("schedule_list");
@@ -63,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () =>{
             const updateButton = document.createElement("a"); //
             updateButton.textContent = "수정";
             updateButton.className = "update_button";
-            updateButton.href = `/schedule/${schedule.id}/edit`;
+            updateButton.href = `/users/${userId}/schedules/${schedule.id}/edit`;
 
             cardDiv.appendChild(titleLink);
             cardDiv.appendChild(dateDiv);
