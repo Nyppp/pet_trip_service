@@ -21,7 +21,7 @@
       ? `/api/users/${userId}/schedules`                                  // 생성
       : `/api/users/${userId}/schedules/${encodeURIComponent(scheduleId)}`; // 수정
 
-    const method = isNew ? 'POST' : 'PUT';
+    const method = isNew ? 'POST' : 'PATCH';
 
     const headers = { 'Content-Type': 'application/json' };
     if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;

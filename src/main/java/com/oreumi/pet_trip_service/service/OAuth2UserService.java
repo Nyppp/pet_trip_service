@@ -31,6 +31,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         // 구글 로그인 처리
         if ("google".equals(userRequest.getClientRegistration().getRegistrationId())) {
             processGoogleUser(oAuth2User);
+            //return 커스텀UserPrincipal;
         }
         
         return oAuth2User;

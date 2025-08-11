@@ -16,9 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.List;
-
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -37,7 +34,7 @@ public class ScheduleController {
         User user = userService.findUserByEmail(email).orElseThrow();
 
         if(!user.getId().equals(userId)) throw new AccessDeniedException("스케쥴 접근 권한이 없습니다.");
-        model.addAttribute("user", user);
+        model.addAttribute("userId", userId);
 
         log.info(user.getEmail());
 
@@ -87,8 +84,20 @@ public class ScheduleController {
         //1. 하위 스케쥴 모두 제거
         //2. 날짜 범위를 벗어난 스케쥴 모두 제거
 
-        scheduleService.editSchedule(scheduleId, scheduleDTO);
+        scheduleService.updateSchedule(scheduleId, scheduleDTO);
 
         return "redirect:/users/" + userId + "/schedules";
+    }
+
+    @GetMapping("/users/{id}/schedules/{scheduleId}")
+    public String showScheduleItemList(@PathVariable("id") Long scheduleId,
+                                       Model model){
+        //스케쥴 객체 로딩
+        Schedule schedule = scheduleService.findScheduleByScheduleId(scheduleId)
+                .orElseThrow();
+
+        model.addAttribute("schedule", schedule);
+
+        return "/schedule/schedule_detail";
     }
 }

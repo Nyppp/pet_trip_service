@@ -2,9 +2,6 @@ package com.oreumi.pet_trip_service.service;
 
 import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
 import com.oreumi.pet_trip_service.DTO.ScheduleItemDTO;
-import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
-import com.oreumi.pet_trip_service.model.Enum.UserStatus;
-import com.oreumi.pet_trip_service.model.PlaceImg;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.model.ScheduleItem;
 import com.oreumi.pet_trip_service.model.User;
@@ -84,7 +81,7 @@ public class ScheduleService {
         return scheduleItemRepository.save(scheduleItem);
     }
 
-    public Schedule editSchedule(Long scheduleId, ScheduleDTO dto){
+    public Schedule updateSchedule(Long scheduleId, ScheduleDTO dto){
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new EntityNotFoundException());
 

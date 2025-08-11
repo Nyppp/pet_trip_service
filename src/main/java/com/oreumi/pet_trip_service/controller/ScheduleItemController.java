@@ -27,17 +27,7 @@ public class ScheduleItemController {
     private final ScheduleService scheduleService;
     private final PlaceImgService placeImgService;
 
-    @GetMapping("/{id}")
-    public String showScheduleItemList(@PathVariable("id") Long scheduleId,
-                                       Model model){
-        //스케쥴 객체 로딩
-        Schedule schedule = scheduleService.findScheduleByScheduleId(scheduleId)
-                .orElseThrow();
 
-        model.addAttribute("schedule", schedule);
-
-        return "/schedule/schedule_detail";
-    }
 
     @GetMapping("/{id}/items/new")
     public String showScheduleItemForm(@PathVariable("id") Long scheduleId,
