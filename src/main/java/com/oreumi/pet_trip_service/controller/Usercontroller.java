@@ -131,7 +131,22 @@ public class Usercontroller {
     }
 
     @GetMapping("/login")
-    public String loginForm() {
+    public String loginForm(@RequestParam(value = "error", required = false) String error,
+                           @RequestParam(value = "logout", required = false) String logout,
+                           Model model) {
+        
+        if (error != null) {
+            if ("true".equals(error)) {
+                model.addAttribute("errorMessage", "이메일 또는 비밀번호가 올바르지 않습니다.");
+            } else if ("oauth2".equals(error)) {
+                model.addAttribute("errorMessage", "소셜 로그인 중 오류가 발생했습니다.");
+            }
+        }
+        
+        if (logout != null) {
+            model.addAttribute("successMessage", "성공적으로 로그아웃되었습니다.");
+        }
+        
         return "user/login";
     }
     

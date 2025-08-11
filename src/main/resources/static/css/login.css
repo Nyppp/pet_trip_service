@@ -78,6 +78,12 @@
   border: 1px solid #c3e6cb;
 }
 
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
 /* OAuth 소셜 로그인 스타일 */
 .oauth-section {
   margin-top: 20px;
