@@ -24,7 +24,6 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
     private final UserService userService;
 
-
     @GetMapping
     public String showScheduleList(@PathVariable Long userId,
                                    Authentication auth,

@@ -130,20 +130,7 @@ public class ScheduleApiController {
     }
 
 
-//    @Operation(summary = "특정 스케쥴 내 모든 일정 조회", description = "스케쥴 내 모든 일정을 조회합니다.")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "조회 성공",
-//                    content = @Content(mediaType = "application/json",
-//                            schema = @Schema(implementation = ScheduleItemDTO.class))),
-//            @ApiResponse(responseCode = "500", description = "서버 오류",
-//                    content = @Content(mediaType = "application/json",
-//                            schema = @Schema(implementation = ErrorResponse.class)))
-//    })
-//    @GetMapping("/schedules/{scheduleId}/items")
-//    public ResponseEntity<List<ScheduleItemDTO>> getAllItemsBySchedule(@PathVariable Long scheduleId){
-//        List<ScheduleItemDTO> scheduleItems = scheduleService.findAllScheduleItems(scheduleId);
-//        return ResponseEntity.ok(scheduleItems);
-//    }
+
 //
 //
 //

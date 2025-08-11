@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const pathSegments = window.location.pathname.split('/');
     const scheduleId = pathSegments[2]; // "1"이 됨
 
-    fetch(`/api/schedules/${scheduleId}/scheduleItems`)
+    fetch(`/api/schedules/${scheduleId}/items`)
         .then(res => res.json())
         .then(data => {
             const groupedByDate = {};

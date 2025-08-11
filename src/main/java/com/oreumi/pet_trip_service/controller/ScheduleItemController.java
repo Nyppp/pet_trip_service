@@ -7,6 +7,7 @@ import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.model.ScheduleItem;
 import com.oreumi.pet_trip_service.service.PlaceImgService;
 import com.oreumi.pet_trip_service.service.ScheduleService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +22,24 @@ import java.util.Map;
 
 @Controller
 @Slf4j
-@RequestMapping("/schedule")
+@RequestMapping("/users/{userId}/schedules")
 @RequiredArgsConstructor
 public class ScheduleItemController {
     private final ScheduleService scheduleService;
     private final PlaceImgService placeImgService;
 
+    @GetMapping("/{scheduleId}")
+    public String showScheduleItemList(@PathVariable Long userId,
+                                       @PathVariable Long scheduleId,
+                                         Model model){
 
+        Schedule schedule = scheduleService.findScheduleByScheduleId(scheduleId)
+                .orElseThrow(()->new EntityNotFoundException("스케쥴을 찾을 수 없습니다."));
+        model.addAttribute("userId", userId);
+        model.addAttribute("schedule" , schedule);
+
+        return "/schedule/schedule_detail";
+    }
 
     @GetMapping("/{id}/items/new")
     public String showScheduleItemForm(@PathVariable("id") Long scheduleId,
