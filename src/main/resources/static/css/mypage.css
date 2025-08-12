@@ -1,0 +1,211 @@
+/* 마이페이지 레이아웃 */
+.mypage-container {
+  display: flex;
+  min-height: calc(100vh - 80px); /* 헤더 높이 제외 */
+  background-color: var(--gray_050);
+  padding: 30px;
+  gap: 30px;
+}
+
+/* 왼쪽 사이드바 */
+.sidebar {
+  width: 250px;
+  background-color: var(--white);
+  padding: 30px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray_200);
+  height: fit-content;
+}
+
+.sidebar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li {
+  margin-bottom: 5px;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 25px;
+  color: var(--gray_600);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.sidebar-nav a:hover {
+  background-color: var(--gray_200);
+  color: var(--black_main);
+}
+
+.sidebar-nav a.active {
+  background-color: var(--orange_main);
+  color: var(--white);
+  font-weight: 600;
+}
+
+.sidebar-nav a::after {
+  content: ">";
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* 메인 콘텐츠 영역 */
+.main-content {
+  flex: 1;
+  padding: 40px;
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray_200);
+}
+
+.content-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--black_main);
+  margin-bottom: 40px;
+}
+
+/* 프로필 섹션 */
+.profile-section {
+  max-width: 600px;
+}
+
+.profile-image-section {
+  margin-bottom: 30px;
+}
+
+.profile-image-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--black_main);
+  margin-bottom: 15px;
+}
+
+.profile-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--gray_200);
+  background-color: var(--beige_light);
+}
+
+/* 입력 필드 스타일 */
+.input-group {
+  margin-bottom: 25px;
+}
+
+.input-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--black_main);
+  margin-bottom: 10px;
+}
+
+.input-field {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 15px;
+  border: 2px solid var(--gray_200);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+  position: relative;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--orange_main);
+}
+
+.input-field:disabled {
+  background-color: var(--gray_100);
+  color: var(--gray_500);
+}
+
+/* 입력 필드 클리어 버튼 */
+.input-wrapper {
+  position: relative;
+  display: inline-block;
+  max-width: 400px;
+}
+
+.clear-button {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: var(--gray_400);
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-button:hover {
+  color: var(--gray_600);
+}
+
+/* 저장 버튼 */
+.save-button {
+  background-color: var(--blue_main);
+  color: var(--white);
+  border: none;
+  padding: 15px 40px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
+
+.save-button:hover {
+  background-color: var(--blue_hover);
+}
+
+.save-button:disabled {
+  background-color: var(--gray_300);
+  cursor: not-allowed;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .mypage-container {
+    flex-direction: column;
+    padding: 15px;
+    gap: 20px;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  .main-content {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .content-title {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+}

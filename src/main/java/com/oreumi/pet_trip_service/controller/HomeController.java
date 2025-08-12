@@ -12,9 +12,4 @@ public class HomeController {
     public String home() {
         return "main/main";
     }
-
-    @GetMapping("/mypage")
-    public String mypage() {
-        return "user/mypage";
-    }
 }
