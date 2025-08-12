@@ -104,6 +104,24 @@ public class ScheduleItemApiController {
         return ResponseEntity.created(location).build();
     }
 
+    @Operation(
+            summary = "스케쥴 일정 수정",
+            description = "지정한 일정의 일부 필드를 수정합니다. 바디에서 생략된 필드는 변경되지 않습니다.",
+            parameters = {
+                    @Parameter(name = "scheduleId", in = ParameterIn.PATH, required = true,
+                            description = "스케줄 ID", example = "1"),
+                    @Parameter(name = "itemId", in = ParameterIn.PATH, required = true,
+                            description = "일정 ID", example = "3")
+            }
+    )
+    @PatchMapping("/schedules/{scheduleId}/items/{itemId}/edit")
+    public ResponseEntity<?> updateScheduleItem(@PathVariable Long scheduleId,
+                                                @PathVariable Long itemId,
+                                                @RequestBody @Valid ScheduleItemDTO scheduleItemDTO){
+        scheduleService.updateScheduleItem(scheduleId, itemId, scheduleItemDTO);
+        return ResponseEntity.noContent().build();
+    }
+
     @Operation(summary = "특정 스케쥴 일정 삭제", description = "특정 스케쥴내의 일정을 삭제합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "삭제 성공"),
@@ -117,4 +135,6 @@ public class ScheduleItemApiController {
         scheduleService.deleteSchduleItem(scheduleId, itemId);
         return ResponseEntity.noContent().build();
     }
+
+
 }

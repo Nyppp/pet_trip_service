@@ -57,7 +57,7 @@
       }
 
       // 수정 / 리스트 URL 구성
-      $edit.href = `/items/${itemId}/edit`;
+      $edit.href = `/users/${userId}/schedules/${data.scheduleId}/items/${itemId}/edit`;
       $list.href = `/users/${userId}/schedules/${data.scheduleId}`;
     } catch (e) {
       console.error(e);

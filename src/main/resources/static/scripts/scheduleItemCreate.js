@@ -20,7 +20,7 @@
 
     const url = isNew
       ? `/api/users/${userId}/schedules/${scheduleId}/items`                                  // 생성
-      : `/api/users/${userId}/schedules/${scheduleId}/items/${itemId}`; // 수정
+      : `/api/schedules/${scheduleId}/items/${itemId}/edit`; // 수정
 
     const method = isNew ? 'POST' : 'PATCH';
 

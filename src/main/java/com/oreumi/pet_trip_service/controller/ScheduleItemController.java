@@ -76,26 +76,5 @@ public class ScheduleItemController {
         model.addAttribute("isNew", false);
 
         return "/schedule/schedule_item/schedule_item_create";
-
-    }
-
-    @PostMapping("/{scheduleId}/items/{itemId}/edit")
-    public String editScheduleItem(@PathVariable Long scheduleId,
-                                   @PathVariable Long itemId,
-                                   @Valid @ModelAttribute ScheduleItemDTO scheduleItemDTO,
-                                   Model model){
-
-        //파라미터들 받아서 스케쥴아이템 생성 후 > 스케쥴에 저장
-        //전달하면서, 스케쥴 id + 아이템 id 전달
-        scheduleService.updateScheduleItem(scheduleId, itemId, scheduleItemDTO);
-
-        return "redirect:/schedule/{scheduleId}";
-    }
-
-    @DeleteMapping("/{scheduleId}/items/{itemId}")
-    public String deleteScheduleItem(@PathVariable Long scheduleId){
-        //해당 아이템 제거 후, 스케쥴 > 아이템 리스트로 리턴
-
-        return "redirect:/schedule/{scheduleId}";
     }
 }
