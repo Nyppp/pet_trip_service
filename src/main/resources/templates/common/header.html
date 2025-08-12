@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <body>
+    <!-- 공통 헤더 조각 -->
+    <header th:fragment="siteHeader">
+      <!-- 공통/헤더 스타일 -->
+      <link rel="stylesheet" th:href="@{/css/common/common.css}" />
+      <link rel="stylesheet" th:href="@{/css/header.css}" />
+
+      <div class="header-wrap">
+        <!-- 로고: 메인으로 이동 -->
+        <a href="/" class="logo" aria-label="홈으로 이동">
+          <img src="/images/project_logo.png" alt="로고" />
+        </a>
+
+        <!-- 중앙 타이틀 -->
+        <h1 class="site-title">
+          <span class="title-black">떠나개 - 즐거운</span>
+          <span class="title-orange">반려여행</span>
+        </h1>
+
+        <!-- 우측 액션 버튼 -->
+        <nav class="header-actions" aria-label="헤더 내비게이션">
+          <!-- 로그인하지 않은 경우 -->
+          <a sec:authorize="!isAuthenticated()" href="/login" class="btn btn-blue">로그인</a>
+
+          <!-- 로그인한 경우 -->
+          <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" style="display: inline">
+            <button type="submit" class="btn btn-blue">로그아웃</button>
+          </form>
+
+          <a sec:authorize="isAuthenticated()" href="/mypage" class="btn btn-blue">마이페이지</a>
+          <a sec:authorize="isAuthenticated()" th:href="@{/users/{userId}/schedules(userId=${#authentication.principal.user.id})}" class="btn btn-orange"
+            >일정만들개 <img src="/images/schedule_button.png" alt="발바닥" class="paw-icon"
+          /></a>
+          <a sec:authorize="!isAuthenticated()" href="/login" class="btn btn-orange"
+            >일정만들개 <img src="/images/schedule_button.png" alt="발바닥" class="paw-icon"
+          /></a>
+        </nav>
+      </div>
+    </header>
+  </body>
+</html>
