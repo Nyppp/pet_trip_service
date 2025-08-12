@@ -29,21 +29,16 @@ public class ChatService {
     @Value("${alanApi.ai.client-id}")
     private String clientId;;
 
+    @Value("${alanApi.ai.url}")
+    private String alanAiUrl;;
+
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    // 임시 답변 기능
-    public String getChatbotReply(String userMessage) {
-        if (userMessage.contains("안녕")) {
-            return "안녕하세요! 무엇을 도와드릴까요?";
-        }
-        return "죄송합니다. 이해하지 못했어요.";
-    }
-
     public String AlanAiReply(String userMessage) {
         try {
-            String url = "https://kdt-api-function.azurewebsites.net/api/v1/question?content=" +
+            String url = alanAiUrl +
                     URLEncoder.encode(userMessage, StandardCharsets.UTF_8) +
                     "&client_id=" + clientId;
             RestTemplate restTemplate = new RestTemplate();
