@@ -91,6 +91,11 @@
   margin-bottom: 15px;
 }
 
+.profile-image-container {
+  position: relative;
+  display: inline-block;
+}
+
 .profile-image {
   width: 120px;
   height: 120px;
@@ -98,6 +103,61 @@
   object-fit: cover;
   border: 3px solid var(--gray_200);
   background-color: var(--beige_light);
+  transition: all 0.3s ease;
+}
+
+.profile-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile-image-container:hover .profile-image-overlay {
+  opacity: 1;
+}
+
+.profile-image-upload-btn {
+  color: white;
+  background-color: var(--orange_main);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.profile-image-upload-btn:hover {
+  background-color: var(--orange_dark);
+}
+
+.upload-message {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.upload-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.upload-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
 /* 입력 필드 스타일 */

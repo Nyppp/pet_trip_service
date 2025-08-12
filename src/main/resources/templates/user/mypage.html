@@ -38,7 +38,19 @@
           <!-- 프로필 이미지 섹션 -->
           <div class="profile-image-section">
             <label class="profile-image-label">프로필 이미지</label>
-            <img th:src="${user?.profileImg != null ? user.profileImg : '/images/chatbot_logo.png'}" alt="프로필 이미지" class="profile-image" />
+            <div class="profile-image-container">
+              <img
+                th:src="${user?.profileImg != null ? user.profileImg : '/images/chatbot_logo.png'}"
+                alt="프로필 이미지"
+                class="profile-image"
+                id="profileImage"
+                th:data-original-src="${user?.profileImg != null ? user.profileImg : '/images/chatbot_logo.png'}"
+              />
+              <div class="profile-image-overlay">
+                <label for="profileImageInput" class="profile-image-upload-btn">이미지 수정</label>
+                <input type="file" id="profileImageInput" accept="image/*" style="display: none" />
+              </div>
+            </div>
           </div>
 
           <!-- 닉네임 입력 필드 -->

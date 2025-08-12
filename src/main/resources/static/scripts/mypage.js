@@ -1,5 +1,8 @@
 // 마이페이지 JavaScript
 
+// 전역 변수로 선택된 이미지 파일 저장
+let selectedImageFile = null;
+
 // 입력 필드 클리어 함수
 function clearInput(fieldId) {
   document.getElementById(fieldId).value = "";
@@ -32,25 +35,59 @@ function saveUserInfo() {
   saveButton.disabled = true;
   saveButton.textContent = "저장 중...";
 
-  // 서버로 데이터 전송
+  // 통합 업데이트 요청
+  updateUserInfoWithImage(selectedImageFile, nickname, saveButton);
+}
+
+// 사용자 정보 통합 업데이트 (이미지 + 닉네임)
+function updateUserInfoWithImage(imageFile, nickname, saveButton) {
   const formData = new FormData();
+
+  // 이미지가 있는 경우에만 추가
+  if (imageFile) {
+    formData.append("image", imageFile);
+  }
+
+  // 닉네임 추가
   formData.append("nickname", nickname);
 
-  fetch("/mypage/update", {
+  // 업로드 메시지 표시
+  showMessage("사용자 정보를 업데이트하는 중...", "info");
+
+  fetch("/api/user/update", {
     method: "POST",
     body: formData,
   })
-    .then((response) => response.text())
-    .then((result) => {
-      if (result === "success") {
-        showMessage("정보가 성공적으로 저장되었습니다.", "success");
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        // 성공 시 이미지 URL 업데이트 (이미지가 업로드된 경우)
+        if (data.imageUrl) {
+          document.getElementById("profileImage").src = data.imageUrl;
+          // 원래 이미지 URL 업데이트
+          document.getElementById("profileImage").setAttribute("data-original-src", data.imageUrl);
+        }
+
+        showMessage(data.message, "success");
+        // 선택된 이미지 파일 초기화
+        selectedImageFile = null;
       } else {
-        showMessage("저장 중 오류가 발생했습니다.", "error");
+        // 실패 시 원래 이미지로 복원
+        const originalImage = document.getElementById("profileImage").getAttribute("data-original-src");
+        if (originalImage) {
+          document.getElementById("profileImage").src = originalImage;
+        }
+        showMessage(data.message, "error");
       }
     })
     .catch((error) => {
       console.error("Error:", error);
-      showMessage("네트워크 오류가 발생했습니다.", "error");
+      // 실패 시 원래 이미지로 복원
+      const originalImage = document.getElementById("profileImage").getAttribute("data-original-src");
+      if (originalImage) {
+        document.getElementById("profileImage").src = originalImage;
+      }
+      showMessage("사용자 정보 업데이트 중 오류가 발생했습니다.", "error");
     })
     .finally(() => {
       // 저장 버튼 다시 활성화
@@ -96,6 +133,30 @@ function showMessage(message, type) {
   messageDiv.textContent = message;
 
   // 스타일 적용
+  let backgroundColor, color, borderColor;
+
+  switch (type) {
+    case "success":
+      backgroundColor = "#d4edda";
+      color = "#155724";
+      borderColor = "#c3e6cb";
+      break;
+    case "error":
+      backgroundColor = "#f8d7da";
+      color = "#721c24";
+      borderColor = "#f5c6cb";
+      break;
+    case "info":
+      backgroundColor = "#d1ecf1";
+      color = "#0c5460";
+      borderColor = "#bee5eb";
+      break;
+    default:
+      backgroundColor = "#d1ecf1";
+      color = "#0c5460";
+      borderColor = "#bee5eb";
+  }
+
   messageDiv.style.cssText = `
         position: fixed;
         top: 20px;
@@ -105,11 +166,9 @@ function showMessage(message, type) {
         font-weight: 600;
         z-index: 1000;
         animation: slideIn 0.3s ease;
-        ${
-          type === "success"
-            ? "background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;"
-            : "background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;"
-        }
+        background-color: ${backgroundColor};
+        color: ${color};
+        border: 1px solid ${borderColor};
     `;
 
   document.body.appendChild(messageDiv);
@@ -125,6 +184,15 @@ function showMessage(message, type) {
       }, 300);
     }
   }, 3000);
+}
+
+// 프로필 이미지 미리보기 함수
+function previewProfileImage(file) {
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    document.getElementById("profileImage").src = e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 // 페이지 로드 시 초기화
@@ -151,6 +219,33 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // 프로필 이미지 업로드 이벤트 리스너
+  const profileImageInput = document.getElementById("profileImageInput");
+  if (profileImageInput) {
+    // 원래 이미지 URL 저장
+    const profileImage = document.getElementById("profileImage");
+    profileImage.setAttribute("data-original-src", profileImage.src);
+
+    profileImageInput.addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        // 이미지 파일 유효성 검사
+        if (!validateImageFile(file)) {
+          return;
+        }
+
+        // 선택된 이미지 파일 저장
+        selectedImageFile = file;
+
+        // 미리보기만 표시 (업로드하지 않음)
+        previewProfileImage(file);
+
+        // 미리보기 메시지 표시
+        showMessage("이미지가 선택되었습니다. 저장하기 버튼을 눌러 저장하세요.", "info");
+      }
+    });
+  }
+
   // 사이드바 네비게이션 활성화
   const currentPath = window.location.pathname;
   const sidebarLinks = document.querySelectorAll(".sidebar-nav a");
@@ -163,6 +258,30 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
+// 이미지 파일 유효성 검사
+function validateImageFile(file) {
+  // 파일 크기 검사 (2MB 이하)
+  if (file.size > 2 * 1024 * 1024) {
+    showMessage("이미지 파일 크기는 2MB 이하여야 합니다.", "error");
+    return false;
+  }
+
+  // 파일 타입 검증
+  if (!file.type.startsWith("image/")) {
+    showMessage("이미지 파일만 선택 가능합니다.", "error");
+    return false;
+  }
+
+  // 허용된 이미지 형식 검사
+  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+  if (!allowedTypes.includes(file.type)) {
+    showMessage("JPG, JPEG, PNG, GIF 형식의 이미지만 선택 가능합니다.", "error");
+    return false;
+  }
+
+  return true;
+}
 
 // CSS 애니메이션 추가
 const style = document.createElement("style");
