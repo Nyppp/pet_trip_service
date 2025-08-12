@@ -29,6 +29,9 @@ public class ChatService {
     @Value("${alanApi.ai.client-id}")
     private String clientId;;
 
+    @Value("${alanApi.ai.url}")
+    private String alanAiUrl;;
+
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
@@ -43,7 +46,7 @@ public class ChatService {
 
     public String AlanAiReply(String userMessage) {
         try {
-            String url = "https://kdt-api-function.azurewebsites.net/api/v1/question?content=" +
+            String url = alanAiUrl +
                     URLEncoder.encode(userMessage, StandardCharsets.UTF_8) +
                     "&client_id=" + clientId;
             RestTemplate restTemplate = new RestTemplate();
