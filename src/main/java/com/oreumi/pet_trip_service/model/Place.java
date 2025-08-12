@@ -52,6 +52,12 @@ public class Place {
     @Column(name = "homepage_url", columnDefinition = "TEXT")
     private String homepageUrl;
 
+    @Column(name="ai_review", columnDefinition="TEXT")
+    private String aiReview;
+
+    @Column(name="ai_pet", columnDefinition="TEXT")
+    private String aiPet;
+
     @Transient
     public Category getCategoryEnum() {
         return Category.fromCode(this.categoryCode); // enum name() 기반

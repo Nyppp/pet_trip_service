@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/css/common/common.css">
 </head>
 <body>
-
+<div th:replace="~{common/header :: siteHeader}"></div>
 <main class="container">
 
     <!-- 상단 영역 -->
@@ -93,14 +93,33 @@
         </div>
     </section>
 
-    <!-- AI 리뷰 요약 -->
-    <section class="ai-review">
-        <h2>AI 리뷰 요약</h2>
-        <ul>
-            <li>다양한 편의시설을 호텔 안에서 즐길 수 있습니다.</li>
-            <li>고품질의 서비스를 제공합니다.</li>
-            <li>뷰가 아름답고 매력적인 장소입니다.</li>
-        </ul>
+    <section class="ai-split" th:attr="data-pid=${place.id}">
+        <div class="ai-card ai-card--one">
+            <div class="ai-card-header">
+                <h2>ALAN AI 요약</h2>
+                <button id="ai-update-btn" type="button" class="add-schedule-btn ai-card-btn">
+                    업데이트
+                </button>
+            </div>
+
+            <div class="ai-2col">
+                <div class="ai-col">
+                    <h3>리뷰</h3>
+                    <div id="ai-review" class="ai-raw"
+                         th:text="${#strings.isEmpty(place.aiReview) ? 'AI 요약이 아직 없어요.' : place.aiReview}">
+                        AI 요약이 아직 없어요.
+                    </div>
+                </div>
+
+                <div class="ai-col">
+                    <h3>반려동물 정보</h3>
+                    <div id="ai-pet" class="ai-raw"
+                         th:text="${#strings.isEmpty(place.aiPet) ? 'AI 반려동물 정보가 아직 없어요.' : place.aiPet}">
+                        AI 반려동물 정보가 아직 없어요.
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <section class="user-reviews">
