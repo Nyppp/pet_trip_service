@@ -44,6 +44,10 @@ public class PlaceDto {
 
     private String homepageUrl;
 
+    private String aiReview;
+
+    private String aiPet;
+
     private List<String> imageUrls;
 
     public String getCategoryPath() {
