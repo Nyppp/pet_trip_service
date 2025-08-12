@@ -99,4 +99,6 @@ public class CustomUserPrincipal implements UserDetails, OAuth2User {
         // fallback으로 이메일 사용
         return user.getEmail();
     }
+
+
 }
