@@ -8,13 +8,18 @@ import com.oreumi.pet_trip_service.security.CustomUserPrincipal;
 import com.oreumi.pet_trip_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @Controller
@@ -94,13 +99,20 @@ public class UserController {
      * 마이페이지 표시
      */
     @GetMapping("/mypage")
-    public String mypage(Model model, Authentication authentication) {
-        // 현재 로그인한 사용자 정보를 모델에 추가
+    public String mypage(Model model, Authentication authentication, HttpServletResponse response) {
+        // 현재 로그인한 사용자 정보를 DB에서 최신으로 조회
         if (authentication != null && authentication.getPrincipal() instanceof CustomUserPrincipal) {
             CustomUserPrincipal userPrincipal = (CustomUserPrincipal) authentication.getPrincipal();
-            User user = userPrincipal.getUser();
+            Long userId = userPrincipal.getUser().getId();
+            
+            // DB에서 최신 사용자 정보 조회
+            User user = userService.findById(userId);
             model.addAttribute("user", user);
         }
+        // 캐시 방지 헤더 설정
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
         return "user/mypage";
     }
     
@@ -161,14 +173,18 @@ public class UserController {
     @PostMapping("/mypage/update")
     @ResponseBody
     public String updateUserInfo(@RequestParam String nickname,
-                                Authentication authentication) {
+                                Authentication authentication,
+                                HttpServletRequest request) {
         try {
             if (authentication != null && authentication.getPrincipal() instanceof CustomUserPrincipal) {
                 CustomUserPrincipal userPrincipal = (CustomUserPrincipal) authentication.getPrincipal();
                 User user = userPrincipal.getUser();
                 
                 // Service 계층에서 업데이트 처리
-                userService.updateUserInfo(user.getId(), nickname);
+                User updatedUser = userService.updateUserInfo(user.getId(), nickname);
+                
+                // Authentication 세션 업데이트
+                updateAuthenticationSession(updatedUser, request);
                 
                 return "success";
             } else {
@@ -189,7 +205,8 @@ public class UserController {
     public ResponseEntity<ImageResponseDTO> updateUserInfoWithImage(
             @RequestParam(value = "image", required = false) MultipartFile imageFile,
             @RequestParam(value = "nickname", required = false) String nickname,
-            Authentication authentication) {
+            Authentication authentication,
+            HttpServletRequest request) {
         
         try {
             if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserPrincipal)) {
@@ -211,6 +228,9 @@ public class UserController {
             
             // 이미지와 닉네임 통합 업데이트
             User updatedUser = userService.updateUserInfoWithImage(user.getId(), userUpdateDTO);
+            
+            // Authentication 세션 업데이트
+            updateAuthenticationSession(updatedUser, request);
             
             return ResponseEntity.ok(ImageResponseDTO.builder()
                 .success(true)
@@ -237,5 +257,24 @@ public class UserController {
                     .message("알 수 없는 오류가 발생했습니다.")
                     .build());
         }
+    }
+    
+    /**
+     * Authentication 세션 업데이트
+     */
+    private void updateAuthenticationSession(User updatedUser, HttpServletRequest request) {
+        // 새로운 CustomUserPrincipal 생성
+        CustomUserPrincipal newUserPrincipal = CustomUserPrincipal.create(updatedUser);
+        
+        // 새로운 Authentication 객체 생성
+        UsernamePasswordAuthenticationToken newAuth = 
+            new UsernamePasswordAuthenticationToken(newUserPrincipal, null, newUserPrincipal.getAuthorities());
+        
+        // SecurityContext 업데이트
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+        
+        // 세션에 SecurityContext 저장
+        HttpSession session = request.getSession();
+        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
     }
 }

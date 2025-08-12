@@ -148,6 +148,14 @@ public class UserService {
     }
     
     /**
+     * 사용자 ID로 최신 정보 조회
+     */
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    }
+    
+    /**
      * 사용자 정보 업데이트 (마이페이지용)
      */
     @Transactional

@@ -61,6 +61,11 @@ function updateUserInfoWithImage(imageFile, nickname, saveButton) {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
+        // 닉네임 필드 최신값 반영
+        if (nickname) {
+          const nicknameInput = document.getElementById("nickname");
+          if (nicknameInput) nicknameInput.value = nickname;
+        }
         // 성공 시 이미지 URL 업데이트 (이미지가 업로드된 경우)
         if (data.imageUrl) {
           document.getElementById("profileImage").src = data.imageUrl;
@@ -197,6 +202,15 @@ function previewProfileImage(file) {
 
 // 페이지 로드 시 초기화
 document.addEventListener("DOMContentLoaded", function () {
+  // 브라우저의 폼 값 복원 방지: 서버에서 내려온 초기 value로 강제 설정
+  const allInputs = document.querySelectorAll(".input-field");
+  allInputs.forEach((el) => {
+    const initial = el.getAttribute("value");
+    if (initial !== null) {
+      el.value = initial;
+    }
+  });
+
   // 입력 필드에 이벤트 리스너 추가
   const inputs = document.querySelectorAll(".input-field");
   inputs.forEach((input) => {
