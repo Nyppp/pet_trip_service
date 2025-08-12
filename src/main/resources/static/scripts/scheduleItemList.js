@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     const pathSegments = window.location.pathname.split('/');
-    const scheduleId = pathSegments[2]; // "1"이 됨
+    const userId = pathSegments[2];
+    const scheduleId = pathSegments[4];
 
-    fetch(`/api/schedules/${scheduleId}/items`)
+    fetch(`/api/users/${userId}/schedules/${scheduleId}/items`)
         .then(res => res.json())
         .then(data => {
             const groupedByDate = {};

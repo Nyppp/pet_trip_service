@@ -41,12 +41,14 @@ public class ScheduleItemController {
         return "/schedule/schedule_detail";
     }
 
-    @GetMapping("/{id}/items/new")
-    public String showScheduleItemForm(@PathVariable("id") Long scheduleId,
+    @GetMapping("/{scheduleId}/items/new")
+    public String showScheduleItemForm(@PathVariable Long userId,
+                                       @PathVariable Long scheduleId,
                                        Model model){
         model.addAttribute("schedule", scheduleService.findScheduleByScheduleId(scheduleId).orElseThrow());
         model.addAttribute("scheduleItemDTO", new ScheduleItemDTO());
-        String formAction = String.format("/schedule/%d/items/new", scheduleId);
+        model.addAttribute("userId", userId);
+        model.addAttribute("isNew", true);
         return "/schedule/schedule_item/schedule_item_create";
     }
 
@@ -76,7 +78,8 @@ public class ScheduleItemController {
     }
 
     @GetMapping("/{scheduleId}/items/{itemId}/edit")
-    public String showEditScheduleItemForm(@PathVariable Long scheduleId,
+    public String showEditScheduleItemForm(@PathVariable Long userId,
+                                           @PathVariable Long scheduleId,
                                            @PathVariable Long itemId,
                                            Model model){
 
@@ -86,11 +89,11 @@ public class ScheduleItemController {
 
         ScheduleItemDTO scheduleItemDTO = new ScheduleItemDTO(scheduleItem);
 
+        model.addAttribute("userId", userId);
         model.addAttribute("schedule", scheduleService.findScheduleByScheduleId(scheduleId).orElseThrow());
         model.addAttribute("scheduleItemDTO", scheduleItemDTO);
 
-        String formAction = String.format("/schedule/%d/items/%d/edit", scheduleId, itemId);
-        model.addAttribute("formAction", formAction);
+        model.addAttribute("isNew", false);
 
         return "/schedule/schedule_item/schedule_item_create";
 

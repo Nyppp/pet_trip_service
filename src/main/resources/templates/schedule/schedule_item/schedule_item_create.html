@@ -9,6 +9,7 @@
   <script th:src="@{/scripts/timeInputControl.js}"></script>
   <script th:src="@{/scripts/placeAutoComplete.js}"></script>
   <link rel="stylesheet" href="/css/schedule/scheduleItemCreate.css">
+  <script defer th:src="@{/scripts/scheduleItemCreate.js}"></script>
 </head>
 <body>
 <div id="schedule-data"
@@ -20,7 +21,12 @@
 
 <h1 th:text="${isNew} ? '🗺️ 일정에 장소 추가' : '🗺️ 장소/날짜 수정 하기'"></h1>
 
-<form th:action="@{${formAction}}" method="POST" th:object="${scheduleItemDTO}">
+<form id="schedule_form"
+      th:object="${scheduleItemDTO}"
+      th:data-user-id="${userId}"
+      th:data-schedule-id="${schedule.id}"
+      th:data-item-id="${scheduleItemDTO.id}"
+      th:data-is-new="${isNew}">
   <div class="form_group">
     <label for="place_search">장소 검색</label>
     <input type="text" id="place_search" class="place_search"
@@ -47,7 +53,7 @@
               rows="3" placeholder="예: 반려견 산책 코스 추천" maxlength="500"></textarea>
   </div>
 
-  <button type="submit" class="submit_button">장소 추가</button>
+  <button type="submit" class="submit_button" th:text="${isNew} ? '장소 생성' : '장소 수정'">장소 추가</button>
 </form>
 
 </body>
