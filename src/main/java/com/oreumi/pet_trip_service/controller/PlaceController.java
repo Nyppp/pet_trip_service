@@ -1,6 +1,6 @@
 package com.oreumi.pet_trip_service.controller;
 
-import com.oreumi.pet_trip_service.DTO.PlaceDto;
+import com.oreumi.pet_trip_service.DTO.PlaceDTO;
 import com.oreumi.pet_trip_service.model.Place;
 import com.oreumi.pet_trip_service.service.PlaceService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class PlaceController {
 
     @GetMapping("/place/{placeId}")
     public String placeDetail(@PathVariable Long placeId, Model model) {
-        PlaceDto place = placeService.getPlaceDetail(placeId);
+        PlaceDTO place = placeService.getPlaceDetail(placeId);
         model.addAttribute("place", place);
         return "place/place";
     }

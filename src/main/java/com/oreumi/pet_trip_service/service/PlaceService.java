@@ -1,6 +1,6 @@
 package com.oreumi.pet_trip_service.service;
 
-import com.oreumi.pet_trip_service.DTO.PlaceDto;
+import com.oreumi.pet_trip_service.DTO.PlaceDTO;
 import com.oreumi.pet_trip_service.model.Place;
 import com.oreumi.pet_trip_service.model.PlaceImg;
 import com.oreumi.pet_trip_service.repository.PlaceImgRepository;
@@ -21,7 +21,7 @@ public class PlaceService {
     private final PlaceImgRepository placeImgRepository;
     private final ChatService chatService;
 
-    public PlaceDto getPlaceDetail(Long placeId) {
+    public PlaceDTO getPlaceDetail(Long placeId) {
         // 1. 장소 조회
         Place place = placeRepository.findById(placeId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 장소를 찾을 수 없습니다. ID: " + placeId));
@@ -32,7 +32,7 @@ public class PlaceService {
                 .collect(Collectors.toList());
 
         // 3. DTO 변환
-        return new PlaceDto(
+        return new PlaceDTO(
                 place.getId(),
                 place.getName(),
                 place.getDescription(),
