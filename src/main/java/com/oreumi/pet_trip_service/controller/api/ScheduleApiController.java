@@ -53,9 +53,9 @@ public class ScheduleApiController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @GetMapping("/users/{id}/schedules")
-    public ResponseEntity<List<ScheduleDTO>> getAllSchedulesByUserId(@PathVariable Long id){
-        List<ScheduleDTO> schedules = scheduleService.findAllSchedulesByUserId(id);
+    @GetMapping("/users/{userId}/schedules")
+    public ResponseEntity<List<ScheduleDTO>> getAllSchedulesByUserId(@PathVariable Long userId){
+        List<ScheduleDTO> schedules = scheduleService.findAllSchedulesByUserId(userId);
         return ResponseEntity.ok(schedules);
     }
 
@@ -84,14 +84,14 @@ public class ScheduleApiController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             )
     })
-    @PostMapping("/users/{id}/schedules")
-    public ResponseEntity<Void> createSchedule(@PathVariable Long id,
+    @PostMapping("/users/{userId}/schedules")
+    public ResponseEntity<Void> createSchedule(@PathVariable Long userId,
                                               @RequestBody @Valid ScheduleDTO scheduleDTO,
                                               UriComponentsBuilder uriBuilder){
-        Schedule schedule = scheduleService.saveSchedule(id, scheduleDTO);
+        Schedule schedule = scheduleService.saveSchedule(userId, scheduleDTO);
         URI location = uriBuilder
-                .path("/users/{id}/schedules/{scheduleId}")
-                .buildAndExpand(id, schedule.getId())
+                .path("/users/{userId}/schedules/{scheduleId}")
+                .build()
                 .toUri();
 
         return ResponseEntity.created(location).build();
@@ -131,20 +131,4 @@ public class ScheduleApiController {
 
 
 
-//
-//
-//
-//    @Operation(summary = "특정 스케쥴 일정 삭제", description = "특정 스케쥴내의 일정을 삭제합니다.")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "204", description = "삭제 성공"),
-//            @ApiResponse(responseCode = "500", description = "서버 오류",
-//                    content = @Content(mediaType = "application/json",
-//                            schema = @Schema(implementation = ErrorResponse.class)))
-//    })
-//    @DeleteMapping("/schedules/{scheduleId}/items/{itemId}")
-//    public ResponseEntity<?> deleteSchedule(@PathVariable Long scheduleId,
-//                                            @PathVariable Long itemId){
-//        scheduleService.deleteSchduleItem(scheduleId, itemId);
-//        return ResponseEntity.noContent().build();
-//    }
 }

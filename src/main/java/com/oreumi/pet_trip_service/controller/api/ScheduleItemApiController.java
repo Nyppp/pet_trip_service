@@ -3,6 +3,8 @@ import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
 import com.oreumi.pet_trip_service.DTO.ScheduleItemDTO;
 import com.oreumi.pet_trip_service.error.ErrorResponse;
 import com.oreumi.pet_trip_service.model.Schedule;
+import com.oreumi.pet_trip_service.model.ScheduleItem;
+import com.oreumi.pet_trip_service.service.PlaceImgService;
 import com.oreumi.pet_trip_service.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleItemApiController {
     private final ScheduleService scheduleService;
+    private final PlaceImgService placeImgService;
 
 
     @Operation(summary = "특정 스케쥴 내 모든 일정 조회", description = "스케쥴 내 모든 일정을 조회합니다.")
@@ -38,11 +41,28 @@ public class ScheduleItemApiController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @GetMapping("/users/{userId}/schedules/{scheduleId}/items")
-    public ResponseEntity<List<ScheduleItemDTO>> getAllItemsBySchedule(@PathVariable Long userId,
-                                                                       @PathVariable Long scheduleId){
+    @GetMapping("/schedules/{scheduleId}/items")
+    public ResponseEntity<List<ScheduleItemDTO>> getAllItemsBySchedule(@PathVariable Long scheduleId){
         List<ScheduleItemDTO> scheduleItems = scheduleService.findAllScheduleItems(scheduleId);
         return ResponseEntity.ok(scheduleItems);
+    }
+
+    @Operation(summary = "일정 상세 내용 조회", description = "특정 일정에 대한 상세 내용을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ScheduleItemDTO.class))),
+            @ApiResponse(responseCode = "500", description = "서버 오류",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping("/items/{itemId}")
+    public ResponseEntity<ScheduleItemDTO> getScheduleItemDetail(@PathVariable Long itemId){
+        ScheduleItem scheduleItem = scheduleService.findScheduleItemByItemId(itemId).orElseThrow();
+
+        ScheduleItemDTO scheduleItemDTO = new ScheduleItemDTO(scheduleItem);
+        scheduleItemDTO.setPlaceImgUrl(placeImgService.findMainImgUrlByScheduleItemId(itemId));
+        return ResponseEntity.ok(scheduleItemDTO);
     }
 
     @Operation(summary = "스케쥴 일정 생성", description = "스케쥴 ID 기준으로 일정을 생성합니다.")
@@ -82,5 +102,19 @@ public class ScheduleItemApiController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    @Operation(summary = "특정 스케쥴 일정 삭제", description = "특정 스케쥴내의 일정을 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "삭제 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @DeleteMapping("/schedules/{scheduleId}/items/{itemId}")
+    public ResponseEntity<?> deleteSchedule(@PathVariable Long scheduleId,
+                                            @PathVariable Long itemId){
+        scheduleService.deleteSchduleItem(scheduleId, itemId);
+        return ResponseEntity.noContent().build();
     }
 }

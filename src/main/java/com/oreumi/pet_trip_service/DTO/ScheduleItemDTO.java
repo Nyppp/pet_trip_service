@@ -17,21 +17,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ScheduleItemDTO {
     private Long id;
-
+    private Long scheduleId;
     private Long placeId;
-
     private String placeName;
-
     private String placeImgUrl;
-
     private LocalDateTime startTime;
-
     private LocalDateTime endTime;
-
     private String memo;
 
     public ScheduleItemDTO(ScheduleItem item){
         this.id = item.getId();
+        this.scheduleId = item.getSchedule().getId();
         this.placeId = item.getPlace().getId();
         this.placeName = item.getPlace().getName();
         this.startTime = item.getStartTime();

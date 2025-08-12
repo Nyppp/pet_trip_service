@@ -52,28 +52,8 @@ public class ScheduleItemController {
         return "/schedule/schedule_item/schedule_item_create";
     }
 
-
-    @PostMapping("/{id}/items/new")
-    public String createNewScheduleItem(@PathVariable("id") Long scheduleId,
-                                        @Valid @ModelAttribute ScheduleItemDTO scheduleItemDTO,
-                                        Model model){
-
-        //파라미터들 받아서 스케쥴아이템 생성 후 > 스케쥴에 저장
-        scheduleService.saveScheduleItem(scheduleId, scheduleItemDTO);
-
-        return "redirect:/schedule/{id}";
-    }
-
     @GetMapping("/{scheduleId}/items/{itemId}")
-    public String showScheduleItemDetail(@PathVariable Long scheduleId,
-                                         @PathVariable Long itemId,
-                                         Model model){
-
-        ScheduleItem scheduleItem = scheduleService.findScheduleItemByItemId(itemId).orElseThrow();
-        String imgUrl = placeImgService.findMainImgUrlByScheduleItemId(itemId);
-        model.addAttribute("item", scheduleItem);
-        model.addAttribute("imgUrl", imgUrl);
-
+    public String showScheduleItemDetail(){
         return "/schedule/schedule_item/schedule_item_detail";
     }
 
