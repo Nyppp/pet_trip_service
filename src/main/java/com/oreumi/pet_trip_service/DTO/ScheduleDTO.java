@@ -1,6 +1,7 @@
 package com.oreumi.pet_trip_service.DTO;
 
 import com.oreumi.pet_trip_service.model.Schedule;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -18,12 +19,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleDTO {
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
     @NotBlank
     private String title;
-
     private LocalDate startDate;
-
     private LocalDate endDate;
     
     public ScheduleDTO(Schedule schedule){

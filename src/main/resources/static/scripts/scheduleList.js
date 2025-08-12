@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 
             const titleLink = document.createElement("a");
             titleLink.className = "schedule_title";
-            titleLink.href = `/schedule/${schedule.id}`;
+            titleLink.href = `/users/${userId}/schedules/${schedule.id}`;
             titleLink.textContent = schedule.title;
 
             const dateDiv = document.createElement("div");

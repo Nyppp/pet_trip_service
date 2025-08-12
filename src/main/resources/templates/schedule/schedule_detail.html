@@ -13,7 +13,8 @@
 </header>
 
 <div class="planner_toolbar">
-    <a th:href="@{/schedule/{id}/items/new(id=${schedule.id})}" class="add-location">+ 장소 추가</a>
+    <a th:href="@{/users/{userId}/schedules/{scheduleId}/items/new
+    (userId=${userId}, scheduleId=${schedule.id})}" class="add-location">+ 장소 추가</a>
 
     <div class="filter-bar">
         <label for="date_filter">날짜</label>

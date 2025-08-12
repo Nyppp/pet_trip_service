@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     const pathSegments = window.location.pathname.split('/');
-    const scheduleId = pathSegments[2]; // "1"이 됨
+    const userId = pathSegments[2];
+    const scheduleId = pathSegments[4];
 
-    fetch(`/api/schedules/${scheduleId}/scheduleItems`)
+    fetch(`/api/schedules/${scheduleId}/items`)
         .then(res => res.json())
         .then(data => {
             const groupedByDate = {};
@@ -73,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // 링크
                     const link = document.createElement("a");
                     link.className = "location-link";
-                    link.href = `/schedule/${scheduleId}/items/${item.id}`;
+                    link.href = `/users/${userId}/schedules/${scheduleId}/items/${item.id}`;
                     link.textContent = "일정 상세보기";
 
                     // 조립
