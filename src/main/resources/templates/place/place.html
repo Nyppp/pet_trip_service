@@ -52,7 +52,7 @@
                             aria-label="찜하기 토글">
                         <img id="like-img"
                              width="24" height="24" alt=""
-                             th:src="@{/images/{f}(f=${likedByMe} ? 'heart_filled.svg' : 'heart_outline.svg')}" />
+                             th:src="@{/images/{f}(f=${likedByMe} ? 'heart_filled.svg' : 'heart_outline.svg')}"/>
                     </button>
                     <div id="like-count" class="like-count" th:text="${place.liked}">0</div>
                 </div>
@@ -66,11 +66,10 @@
                 <span class="rating-number"
                       th:text="${place.rating != null ? #numbers.formatDecimal(place.rating,1,1) : '0.0'}">0.0</span>
                 <span class="review-count"
-                      th:if="${place.liked != null and place.liked > 0}"
-                      th:text="'(' + ${place.liked} + ')'">(0)</span>
+                      th:if="${place.reviewCount != null and place.reviewCount > 0}"
+                      th:text="|(${place.reviewCount})|">(0)</span>
             </div>
 
-            <!-- 라벨/값 줄만 meta-row -->
             <p class="meta-row">
                 <strong>주소</strong>
                 <span th:text="${!#strings.isEmpty(place.address) ? place.address : '정보 없음'}">정보 없음</span>
@@ -88,12 +87,9 @@
                 <a th:if="${place.homepageUrl != null and !#strings.isEmpty(place.homepageUrl)}"
                    th:href="${place.homepageUrl}" target="_blank" rel="noopener noreferrer">공식 홈페이지</a>
 
-                <span th:if="${place.homepageUrl == null or #strings.isEmpty(place.homepageUrl)}">
-    정보 없음
-  </span>
+                <span th:if="${place.homepageUrl == null or #strings.isEmpty(place.homepageUrl)}">정보 없음</span>
             </p>
 
-            <!-- 설명 + 더보기 버튼을 한 래퍼로 -->
             <div class="desc-wrap" th:if="${!#strings.isEmpty(place.description)}">
                 <p id="place-description" class="description" th:text="${place.description}">상세정보</p>
                 <button id="toggle-description-btn" class="more-btn" type="button"
@@ -140,45 +136,173 @@
     </section>
 
     <section class="user-reviews">
-        <h2>사용자 리뷰</h2>
+        <div class="section-header">
+            <h2>사용자 리뷰</h2>
+            <button id="open-review-modal" class="add-schedule-btn ai-card-btn" th:if="${!reviewedByMe}">
+                리뷰작성
+            </button>
 
-        <div class="review">
-            <div class="review-header">
-                <img src="https://via.placeholder.com/40" alt="user profile" class="profile-img">
-                <div class="review-info">
-                    <span class="username">username</span>
-                    <span class="review-rating">⭐⭐⭐⭐⭐</span>
-                    <span class="review-date">2일 전</span>
-                </div>
-            </div>
-            <p class="review-content">
-                위치도 좋고 서비스도 훌륭했어요. 강아지와 함께 편하게 머물 수 있었습니다.
-            </p>
-            <div class="review-images">
-                <img src="https://via.placeholder.com/100" alt="리뷰 이미지 1">
-                <img src="https://via.placeholder.com/100" alt="리뷰 이미지 2">
-            </div>
+            <span class="already-review" th:if="${reviewedByMe}" title="리뷰 작성 완료">
+                리뷰 작성 완료
+            </span>
         </div>
 
-        <div class="review">
+        <div th:if="${#lists.isEmpty(reviews)}" class="hint">
+            아직 리뷰가 없어요. 첫 후기를 남겨주세요.
+        </div>
+
+        <div th:each="r : ${reviews}" class="review">
             <div class="review-header">
-                <img src="https://via.placeholder.com/40" alt="user profile" class="profile-img">
+                <img class="profile-img"
+                     th:if="${#strings.isEmpty(r.userProfileImageUrl)}"
+                     th:src="@{/images/schedule_button.png}"
+                     alt="user profile"/>
+
+                <img class="profile-img"
+                     th:unless="${#strings.isEmpty(r.userProfileImageUrl)}"
+                     th:src="${r.userProfileImageUrl}"
+                     alt="user profile"/>
+
                 <div class="review-info">
-                    <span class="username">username</span>
-                    <span class="review-rating">⭐⭐⭐⭐</span>
-                    <span class="review-date">5일 전</span>
+                    <span class="username" th:text="${r.nickname}">username</span>
+
+                    <span class="stars-ro sm"
+                          th:style="|--percent: calc(${r.rating} * 20%)|"
+                          th:aria-label="|별점 ${r.rating}점|"></span>
+                    <span class="rating-num"
+                          th:text="${#numbers.formatDecimal(r.rating, 1, 1)}">3.5</span>
+
+                    <span class="review-date"
+                          th:text="${#temporals.format(r.createdAt, 'yyyy.MM.dd')}">2025.08.13</span>
                 </div>
             </div>
-            <p class="review-content">
-                시설이 깨끗하고 반려견 친화적인 분위기입니다.
+
+            <div class="review-sub">
+      <span th:each="p, st : ${r.petInfos}">
+        <span th:text="${p.type}">개</span>
+        <span th:if="${p.breed != null && !#strings.isEmpty(p.breed)}"
+              th:text="| · ${p.breed}|"> · 포메라니안</span>
+        <span th:text="| · ${#numbers.formatDecimal(p.weightKg, 1, 1)}kg|"> · 3.5kg</span>
+        <span th:if="${!st.last}"> / </span>
+      </span>
+            </div>
+
+            <p class="review-content" th:text="${r.content}">
+                내용...
             </p>
-            <div class="review-images">
-                <img src="https://via.placeholder.com/100" alt="리뷰 이미지 1">
+
+            <div class="review-images"
+                 th:if="${r.images != null and !#lists.isEmpty(r.images)}">
+                <img th:each="img : ${r.images}"
+                     th:src="${img}" alt="리뷰 이미지"
+                     style="width:240px;height:240px;object-fit:cover;border-radius:8px;">
             </div>
         </div>
     </section>
+    <div id="review-modal" class="modal hidden" aria-hidden="true" role="dialog" aria-labelledby="review-modal-title">
+        <div class="modal-backdrop"></div>
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h3 id="review-modal-title">리뷰 작성</h3>
+                <button id="close-review-modal" class="modal-close" aria-label="닫기">×</button>
+            </div>
 
+            <form id="review-form">
+                <!-- 별점 -->
+                <div class="form-row">
+                    <label class="label">별점</label>
+                    <div id="rating-stars" class="stars" data-value="0" aria-label="별점 선택">
+                        <!-- 1~5 -->
+                        <button type="button" class="star" data-v="1" aria-label="1점">★</button>
+                        <button type="button" class="star" data-v="2" aria-label="2점">★</button>
+                        <button type="button" class="star" data-v="3" aria-label="3점">★</button>
+                        <button type="button" class="star" data-v="4" aria-label="4점">★</button>
+                        <button type="button" class="star" data-v="5" aria-label="5점">★</button>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="label" for="review-content">리뷰 내용</label>
+                    <textarea id="review-content" rows="6" maxlength="1000"
+                              placeholder="좋았던 점, 아쉬웠던 점 등을 자유롭게 적어주세요. (최대 1000자)"></textarea>
+                    <div class="char-count"><span id="content-len">0</span>/1000</div>
+                </div>
+
+                <div class="form-row">
+                    <label class="label">반려동물 정보</label>
+
+                    <div id="pet-list" class="pet-list" aria-live="polite">
+                        <div class="pet-item">
+                            <select class="pet-type" aria-label="종류(대분류)">
+                                <option value="개">개</option>
+                                <option value="고양이">고양이</option>
+                                <option value="기타">기타</option>
+                            </select>
+                            <input class="pet-breed" type="text" maxlength="50" placeholder="세부 종(예: 포메라니안)">
+                            <div style="display:flex;align-items:center;gap:6px;">
+                                <input class="pet-weight" type="number" min="0.1" max="100" step="0.1"
+                                       placeholder="무게(kg)" aria-label="무게(kg)">
+                                <span>kg</span>
+                            </div>
+                            <button type="button" class="pet-remove" aria-label="반려동물 정보 삭제">✕</button>
+                        </div>
+                    </div>
+
+                    <div class="pet-controls" style="margin-top:8px;display:flex;gap:8px;align-items:center;">
+                        <button type="button" id="add-pet" class="btn btn-outline btn-sm" data-max="5">
+                            + 반려동물 정보 추가
+                        </button>
+                        <small class="hint">* 최소 1개, 최대 5개까지 추가할 수 있어요.</small>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="label">사진 (선택)</label>
+                    <div class="images-grid">
+                        <label class="img-slot">
+                            <input type="file" accept="image/*" class="img-input" hidden>
+                            <span class="img-placeholder">+ 사진</span>
+                            <img class="img-preview" alt="" hidden>
+                        </label>
+                        <label class="img-slot">
+                            <input type="file" accept="image/*" class="img-input" hidden>
+                            <span class="img-placeholder">+ 사진</span>
+                            <img class="img-preview" alt="" hidden>
+                        </label>
+                        <label class="img-slot">
+                            <input type="file" accept="image/*" class="img-input" hidden>
+                            <span class="img-placeholder">+ 사진</span>
+                            <img class="img-preview" alt="" hidden>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" id="cancel-review" class="btn btn-secondary">취소</button>
+                    <button type="submit" class="btn btn-primary">등록</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <template id="pet-item-template">
+        <div class="pet-item">
+            <select class="pet-type" aria-label="종류(대분류)">
+                <option value="개">개</option>
+                <option value="고양이">고양이</option>
+                <option value="기타">기타</option>
+            </select>
+            <input class="pet-breed" type="text" maxlength="50" placeholder="세부 종(예: 포메라니안)">
+            <div style="display:flex;align-items:center;gap:6px;">
+                <input class="pet-weight" type="number" min="0.1" max="100" step="0.1" placeholder="무게(kg)"
+                       aria-label="무게(kg)">
+                <span>kg</span>
+            </div>
+            <button type="button" class="pet-remove" aria-label="반려동물 정보 삭제">✕</button>
+        </div>
+    </template>
 </main>
 <script src="/scripts/place.js"></script>
+<script src="/scripts/reviewCreate.js"></script>
 </body>
 </html>
