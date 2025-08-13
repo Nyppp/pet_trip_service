@@ -114,6 +114,27 @@ function validateUserInfo(nickname) {
     return false;
   }
 
+  // 자음만 포함하는지 체크 (ㄱ-ㅎ)
+  const consonantPattern = /^[ㄱ-ㅎ]+$/;
+  if (consonantPattern.test(nickname)) {
+    showMessage("자음만으로는 닉네임을 만들 수 없습니다. 완성된 글자를 입력해주세요.", "error");
+    return false;
+  }
+
+  // 모음만 포함하는지 체크 (ㅏ-ㅣ)
+  const vowelPattern = /^[ㅏ-ㅣ]+$/;
+  if (vowelPattern.test(nickname)) {
+    showMessage("모음만으로는 닉네임을 만들 수 없습니다. 완성된 글자를 입력해주세요.", "error");
+    return false;
+  }
+
+  // 자음과 모음이 섞여있는지 체크
+  const consonantVowelMixPattern = /.*[ㄱ-ㅎㅏ-ㅣ].*/;
+  if (consonantVowelMixPattern.test(nickname)) {
+    showMessage("완성되지 않은 한글이 포함되어 있습니다. 완성된 글자를 입력해주세요.", "error");
+    return false;
+  }
+
   // 닉네임 특수문자 제한 (한글, 영문, 숫자만 허용)
   const nicknamePattern = /^[a-zA-Z0-9가-힣]+$/;
   if (!nicknamePattern.test(nickname)) {
