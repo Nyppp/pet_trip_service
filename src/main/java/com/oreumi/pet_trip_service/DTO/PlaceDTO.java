@@ -49,6 +49,8 @@ public class PlaceDTO {
 
     private List<String> imageUrls;
 
+    private Long reviewCount;
+
     public String getCategoryPath() {
         try {
             Category cat3 = Category.fromCode(this.categoryCode);
