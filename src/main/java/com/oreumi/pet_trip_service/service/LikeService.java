@@ -68,8 +68,6 @@ public class LikeService {
     }
 
 
-
-
     //사용자가 찜한 장소 목록을 이미지 정보와 함께 PlaceDTO로 조회
     public List<PlaceDTO> getLikedPlacesWithImagesByUser(Long userId) {
         List<Like> likes = likeRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
@@ -99,7 +97,8 @@ public class LikeService {
                 place.getHomepageUrl(),
                 place.getAiReview(),
                 place.getAiPet(),
-                imageUrls
+                imageUrls,
+                0L  // reviewCount 기본값
         );
     }
 }
