@@ -13,6 +13,7 @@
     <script defer th:src="@{/scripts/scheduleCreate.js}"></script>
 </head>
 <body>
+<div th:replace="~{common/header :: siteHeader}"></div>
 
 <h1 th:text="${isNew} ? '📌 새 여행 일정 만들기' : '📌 일정 수정 하기'"></h1>
 

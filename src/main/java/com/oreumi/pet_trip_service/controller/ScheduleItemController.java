@@ -1,11 +1,13 @@
 package com.oreumi.pet_trip_service.controller;
 
+import com.oreumi.pet_trip_service.DTO.PlaceDTO;
 import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
 import com.oreumi.pet_trip_service.DTO.ScheduleItemDTO;
 import com.oreumi.pet_trip_service.model.Place;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.model.ScheduleItem;
 import com.oreumi.pet_trip_service.service.PlaceImgService;
+import com.oreumi.pet_trip_service.service.PlaceService;
 import com.oreumi.pet_trip_service.service.ScheduleService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -27,6 +29,7 @@ import java.util.Map;
 public class ScheduleItemController {
     private final ScheduleService scheduleService;
     private final PlaceImgService placeImgService;
+    private final PlaceService placeService;
 
     @GetMapping("/{scheduleId}")
     public String showScheduleItemList(@PathVariable Long userId,
@@ -44,9 +47,19 @@ public class ScheduleItemController {
     @GetMapping("/{scheduleId}/items/new")
     public String showScheduleItemForm(@PathVariable Long userId,
                                        @PathVariable Long scheduleId,
+                                       @RequestParam(required = false) Long placeId,
                                        Model model){
         model.addAttribute("schedule", scheduleService.findScheduleByScheduleId(scheduleId).orElseThrow());
-        model.addAttribute("scheduleItemDTO", new ScheduleItemDTO());
+
+        ScheduleItemDTO scheduleItemDTO = new ScheduleItemDTO();
+        if(placeId != null){
+            PlaceDTO placeDTO = placeService.getPlaceDetail(placeId);
+
+            scheduleItemDTO.setPlaceName(placeDTO.getName());
+            scheduleItemDTO.setPlaceId(placeDTO.getId());
+        }
+
+        model.addAttribute("scheduleItemDTO", scheduleItemDTO);
         model.addAttribute("userId", userId);
         model.addAttribute("isNew", true);
         return "/schedule/schedule_item/schedule_item_create";

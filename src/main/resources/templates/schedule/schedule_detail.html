@@ -7,10 +7,11 @@
     <link rel="stylesheet" th:href="@{/css/schedule/scheduleDetail.css}"/>
 </head>
 <body>
+<div th:replace="~{common/header :: siteHeader}"></div>
 
-<header>
+<div class="schedule_title_bar">
     <h1 th:text="${schedule.title}">여행 스케줄 플래너</h1>
-</header>
+</div>
 
 <div class="planner_toolbar">
     <a th:href="@{/users/{userId}/schedules/{scheduleId}/items/new
