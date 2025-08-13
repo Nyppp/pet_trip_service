@@ -26,7 +26,7 @@ public class ScheduleController {
 
     @GetMapping
     public String showScheduleList(@PathVariable Long userId,
-                                   @RequestParam Long placeId,
+                                   @RequestParam(required = false) Long placeId,
                                    Authentication auth,
                                    Model model){
 

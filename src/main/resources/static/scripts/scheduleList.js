@@ -89,12 +89,13 @@ document.addEventListener("DOMContentLoaded", () =>{
                   // (선택) 혼란 줄이려면 수정/삭제 숨기기
                   // updateButton.style.display = "none";
                   // deleteButton.style.display = "none";
+            }else{
+                actionDiv.appendChild(updateButton);
+                actionDiv.appendChild(deleteButton);
             }
 
             cardDiv.appendChild(titleLink);
             cardDiv.appendChild(dateDiv);
-            actionDiv.appendChild(updateButton);
-            actionDiv.appendChild(deleteButton);
             cardDiv.appendChild(actionDiv);
             scheduleList.appendChild(cardDiv);
         });
