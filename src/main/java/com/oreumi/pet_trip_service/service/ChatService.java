@@ -36,14 +36,6 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    // 임시 답변 기능
-    public String getChatbotReply(String userMessage) {
-        if (userMessage.contains("안녕")) {
-            return "안녕하세요! 무엇을 도와드릴까요?";
-        }
-        return "죄송합니다. 이해하지 못했어요.";
-    }
-
     public String AlanAiReply(String userMessage) {
         try {
             String url = alanAiUrl +

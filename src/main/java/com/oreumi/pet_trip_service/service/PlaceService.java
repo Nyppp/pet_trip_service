@@ -5,6 +5,7 @@ import com.oreumi.pet_trip_service.model.Place;
 import com.oreumi.pet_trip_service.model.PlaceImg;
 import com.oreumi.pet_trip_service.repository.PlaceImgRepository;
 import com.oreumi.pet_trip_service.repository.PlaceRepository;
+import com.oreumi.pet_trip_service.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,19 +21,18 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final PlaceImgRepository placeImgRepository;
     private final ChatService chatService;
+    private final ReviewRepository reviewRepository;
 
     public PlaceDTO getPlaceDetail(Long placeId) {
-        // 1. 장소 조회
         Place place = placeRepository.findById(placeId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 장소를 찾을 수 없습니다. ID: " + placeId));
 
-        // 2. 해당 장소의 이미지 리스트 조회
         List<String> imageUrls = placeImgRepository.findByPlace(place).stream()
                 .map(PlaceImg::getUrl)
                 .collect(Collectors.toList());
+        long rc = reviewRepository.countByPlaceId(placeId);
 
-        // 3. DTO 변환
-        return new PlaceDTO(
+        PlaceDTO dto = new PlaceDTO(
                 place.getId(),
                 place.getName(),
                 place.getDescription(),
@@ -47,16 +47,15 @@ public class PlaceService {
                 place.getHomepageUrl(),
                 place.getAiReview(),
                 place.getAiPet(),
-                imageUrls
+                imageUrls,
+                rc
         );
-    }
-    /** 비어있는 항목만 생성 */
-    @Transactional
-    public Place generateAndSaveAiSummaries(Long placeId) {
-        return generateAndSaveAiSummaries(placeId, false);
+
+        dto.setReviewCount(reviewRepository.countByPlaceId(placeId));
+
+        return dto;
     }
 
-    /** force=true 이면 항상 재생성, false면 비어있는 항목만 생성 */
     @Transactional
     public Place generateAndSaveAiSummaries(Long placeId, boolean force) {
         Place p = placeRepository.findById(placeId)
