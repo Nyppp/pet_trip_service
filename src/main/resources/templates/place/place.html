@@ -97,7 +97,11 @@
                 </button>
             </div>
             <div class="cta-row">
-                <button type="button"
+                <button
+                        type="button"
+                        th:onclick="${userId != null} ?
+                            |location.href='@{/users/{userId}/schedules(placeId=${place.id}, userId=${userId})}'| :
+                            |location.href='@{/login}'|"
                         class="add-schedule-btn"
                         id="add-schedule-btn">
                     스케줄에 추가

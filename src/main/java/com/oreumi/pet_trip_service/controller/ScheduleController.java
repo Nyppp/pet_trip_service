@@ -26,6 +26,7 @@ public class ScheduleController {
 
     @GetMapping
     public String showScheduleList(@PathVariable Long userId,
+                                   @RequestParam(required = false) Long placeId,
                                    Authentication auth,
                                    Model model){
 
@@ -35,19 +36,21 @@ public class ScheduleController {
         if(!user.getId().equals(userId)) throw new AccessDeniedException("스케쥴 접근 권한이 없습니다.");
         model.addAttribute("userId", userId);
 
-        log.info(user.getEmail());
+        model.addAttribute("placeId", placeId);
 
         return "/schedule/schedule_list";
     }
 
     @GetMapping("/new")
     public String showScheduleForm(@PathVariable Long userId,
+                                   @RequestParam(required = false) Long placeId,
                                    Model model){
         String formAction = String.format("/schedule/new");
 
         //스케쥴 새로 만들기
         model.addAttribute("scheduleDTO", new ScheduleDTO());
         model.addAttribute("isNew", true);
+        model.addAttribute("placeId", placeId);
 
         return "/schedule/schedule_create";
     }
