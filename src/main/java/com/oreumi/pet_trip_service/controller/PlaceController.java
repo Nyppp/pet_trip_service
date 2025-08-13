@@ -2,12 +2,12 @@ package com.oreumi.pet_trip_service.controller;
 
 import com.oreumi.pet_trip_service.DTO.PlaceDTO;
 import com.oreumi.pet_trip_service.model.Place;
-import com.oreumi.pet_trip_service.model.User;
+import com.oreumi.pet_trip_service.security.CustomUserPrincipal;
+import com.oreumi.pet_trip_service.service.LikeService;
 import com.oreumi.pet_trip_service.service.PlaceService;
-import com.oreumi.pet_trip_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PlaceController {
     private final PlaceService placeService;
-    private final UserService userService;
+    private final LikeService likeService;
 
     @GetMapping("/search")
     public String search() {
@@ -28,19 +28,18 @@ public class PlaceController {
 
     @GetMapping("/place/{placeId}")
     public String placeDetail(@PathVariable Long placeId,
-                              Authentication auth,
+                              @AuthenticationPrincipal CustomUserPrincipal principal, // ✅ 로그인 사용자
                               Model model) {
-
-        String email = "";
-        if(auth != null){
-           email = auth.getName();
-        }
-
-        User user = userService.findUserByEmail(email).orElse(null);
-        model.addAttribute("user", user);
-
         PlaceDTO place = placeService.getPlaceDetail(placeId);
         model.addAttribute("place", place);
+
+        boolean likedByMe = false;
+        if (principal != null) {
+            Long userId = principal.getUser().getId();
+            likedByMe = likeService.isLiked(userId, placeId); // ✅ 내가 찜했는지
+        }
+        model.addAttribute("likedByMe", likedByMe); // ✅ 템플릿에서 사용
+
         return "place/place";
     }
 

@@ -412,3 +412,23 @@ body {
     align-self: flex-end;
     white-space: nowrap;
 }
+.place-title-row{ display:flex; align-items:flex-start; gap:12px; margin:0 0 8px 0; }
+.place-title{ flex:1; margin:0; line-height:1.2; }
+
+.like-box{
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    min-width:28px;
+}
+
+.like-icon{
+    background:none; border:none; padding:0; line-height:0; cursor:pointer;
+}
+.like-icon img{ display:block; }
+
+.like-count{
+    font-size:12px; font-weight:600;
+    color: var(--orange_main);  /* 카운트 텍스트는 변수 색상 유지 */
+}
+
+/* 만약 예전 슬라이더용 절대배치 규칙이 남아 있으면 영향 제거 */
+.slider .like-icon{ position: static; }
