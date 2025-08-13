@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/css/common/common.css">
 </head>
 <body>
-
+<div th:replace="~{common/header :: siteHeader}"></div>
 <main class="container">
 
     <!-- 상단 영역 -->
@@ -38,10 +38,27 @@
         </div>
 
         <div class="info-area">
-            <h1 class="place-title" th:text="${place.name}">서울신라호텔</h1>
+            <div class="place-title-row">
+                <h1 class="place-title" th:text="${place.name}">장소 이름</h1>
+
+                <div class="like-box">
+                    <button
+                            id="like-btn"
+                            class="like-icon"
+                            type="button"
+                            th:classappend="${likedByMe} ? ' liked' : ''"
+                            th:data-place-id="${place.id}"
+                            th:attr="aria-pressed=${likedByMe}"
+                            aria-label="찜하기 토글">
+                        <img id="like-img"
+                             width="24" height="24" alt=""
+                             th:src="@{/images/{f}(f=${likedByMe} ? 'heart_filled.svg' : 'heart_outline.svg')}" />
+                    </button>
+                    <div id="like-count" class="like-count" th:text="${place.liked}">0</div>
+                </div>
+            </div>
             <p class="category" th:text="${place.categoryPath}">숙소 > 호텔 > 관광호텔</p>
             <div class="rating" th:if="${place != null}">
-                <!-- 별 5개 중 채움 비율: rating(0~5) × 20% -->
                 <div class="stars"
                      th:style="|--percent: ${ (place.rating != null ? place.rating : 0) * 20 }%|"
                      aria-label="별점"></div>
@@ -93,14 +110,33 @@
         </div>
     </section>
 
-    <!-- AI 리뷰 요약 -->
-    <section class="ai-review">
-        <h2>AI 리뷰 요약</h2>
-        <ul>
-            <li>다양한 편의시설을 호텔 안에서 즐길 수 있습니다.</li>
-            <li>고품질의 서비스를 제공합니다.</li>
-            <li>뷰가 아름답고 매력적인 장소입니다.</li>
-        </ul>
+    <section class="ai-split" th:attr="data-pid=${place.id}">
+        <div class="ai-card ai-card--one">
+            <div class="ai-card-header">
+                <h2>ALAN AI 요약</h2>
+                <button id="ai-update-btn" type="button" class="add-schedule-btn ai-card-btn">
+                    업데이트
+                </button>
+            </div>
+
+            <div class="ai-2col">
+                <div class="ai-col">
+                    <h3>리뷰</h3>
+                    <div id="ai-review" class="ai-raw"
+                         th:text="${#strings.isEmpty(place.aiReview) ? 'AI 요약이 아직 없어요.' : place.aiReview}">
+                        AI 요약이 아직 없어요.
+                    </div>
+                </div>
+
+                <div class="ai-col">
+                    <h3>반려동물 정보</h3>
+                    <div id="ai-pet" class="ai-raw"
+                         th:text="${#strings.isEmpty(place.aiPet) ? 'AI 반려동물 정보가 아직 없어요.' : place.aiPet}">
+                        AI 반려동물 정보가 아직 없어요.
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <section class="user-reviews">

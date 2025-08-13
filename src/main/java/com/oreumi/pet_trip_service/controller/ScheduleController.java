@@ -24,7 +24,6 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
     private final UserService userService;
 
-
     @GetMapping
     public String showScheduleList(@PathVariable Long userId,
                                    Authentication auth,
@@ -71,22 +70,6 @@ public class ScheduleController {
         model.addAttribute("scheduleDTO", dto);
 
         return "/schedule/schedule_create";
-    }
-
-    @PostMapping("/{scheduleId}/edit")
-    public String editSchedule(@PathVariable Long userId,
-                               @PathVariable Long scheduleId,
-                               @Valid @ModelAttribute ScheduleDTO scheduleDTO,
-                               Model model){
-        //새로 생성과 동일하게 적용
-        //하위에 있던 스케쥴 리스트 > 날짜가 바뀌면서 어떻게 처리할지?
-
-        //1. 하위 스케쥴 모두 제거
-        //2. 날짜 범위를 벗어난 스케쥴 모두 제거
-
-        scheduleService.updateSchedule(scheduleId, scheduleDTO);
-
-        return "redirect:/users/" + userId + "/schedules";
     }
 
     @GetMapping("/users/{id}/schedules/{scheduleId}")

@@ -48,3 +48,4 @@ server:
 alanApi:
   ai:
     client-id: ${ALAN_AI_CLIENT_ID}
+    url: ${ALAN_AI_URL}

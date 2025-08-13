@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.validation.constraints.NotBlank;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlaceDto {
+public class PlaceDTO {
 
     private Long id;
 
@@ -43,6 +42,10 @@ public class PlaceDto {
     private Integer liked;
 
     private String homepageUrl;
+
+    private String aiReview;
+
+    private String aiPet;
 
     private List<String> imageUrls;
 

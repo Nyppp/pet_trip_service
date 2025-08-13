@@ -19,77 +19,151 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-
     const slider = document.getElementById("place-slider");
-    if (!slider) return;
+    if (slider) {
+        const slidesWrap = slider.querySelector(".slides");
+        const images = slidesWrap ? Array.from(slidesWrap.querySelectorAll("img")) : [];
+        const prevBtn = slider.querySelector(".prev");
+        const nextBtn = slider.querySelector(".next");
 
-    const slidesWrap = slider.querySelector(".slides");
-    const images = slidesWrap ? Array.from(slidesWrap.querySelectorAll("img")) : [];
-    const prevBtn = slider.querySelector(".prev");
-    const nextBtn = slider.querySelector(".next");
+        const dotsWrap = document.getElementById("place-slider-dots");
+        const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll("button")) : [];
 
-    const dotsWrap = document.getElementById("place-slider-dots");
-    const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll("button")) : [];
+        if (slidesWrap && images.length > 0) {
+            let index = images.findIndex((img) => img.classList.contains("active"));
+            if (index < 0) index = 0;
 
-    if (!slidesWrap || images.length === 0) return;
+            function show(i) {
+                const len = images.length;
+                const to = (i + len) % len;
 
-    let index = images.findIndex((img) => img.classList.contains("active"));
-    if (index < 0) index = 0;
+                images.forEach((img, idx) => img.classList.toggle("active", idx === to));
+                dots.forEach((d, idx) => d.classList.toggle("active", idx === to));
 
-    function show(i) {
-        const len = images.length;
-        const to = (i + len) % len;
+                index = to;
+            }
 
-        images.forEach((img, idx) => img.classList.toggle("active", idx === to));
-        dots.forEach((d, idx) => d.classList.toggle("active", idx === to));
+            const nextSlide = () => show(index + 1);
+            const prevSlide = () => show(index - 1);
 
-        index = to;
+            if (prevBtn) prevBtn.addEventListener("click", prevSlide);
+            if (nextBtn) nextBtn.addEventListener("click", nextSlide);
+
+            if (dotsWrap && dots.length) {
+                dotsWrap.addEventListener("click", (e) => {
+                    const btn = e.target.closest("button[data-index]");
+                    if (!btn) return;
+                    const i = parseInt(btn.getAttribute("data-index"), 10);
+                    if (!Number.isNaN(i)) show(i);
+                });
+            }
+
+            let startX = null;
+            slidesWrap.addEventListener(
+                "touchstart",
+                (e) => {
+                    if (!e.touches || e.touches.length === 0) return;
+                    startX = e.touches[0].clientX;
+                },
+                { passive: true }
+            );
+
+            slidesWrap.addEventListener(
+                "touchend",
+                (e) => {
+                    if (startX == null || !e.changedTouches || e.changedTouches.length === 0) return;
+                    const delta = e.changedTouches[0].clientX - startX;
+                    if (Math.abs(delta) > 40) (delta < 0 ? nextSlide : prevSlide)();
+                    startX = null;
+                },
+                { passive: true }
+            );
+
+            slider.addEventListener("keydown", (e) => {
+                if (e.key === "ArrowRight") { e.preventDefault(); nextSlide(); }
+                else if (e.key === "ArrowLeft") { e.preventDefault(); prevSlide(); }
+            });
+
+            if (images.length <= 1) {
+                if (prevBtn) prevBtn.style.display = "none";
+                if (nextBtn) nextBtn.style.display = "none";
+                if (dotsWrap) dotsWrap.style.display = "none";
+            }
+        } else {
+            if (prevBtn) prevBtn.style.display = "none";
+            if (nextBtn) nextBtn.style.display = "none";
+            if (dotsWrap) dotsWrap.style.display = "none";
+        }
     }
 
-    const nextSlide = () => show(index + 1);
-    const prevSlide = () => show(index - 1);
+    const aiWrap   = document.querySelector(".ai-split");
+    const pid      = aiWrap?.dataset?.pid;            // place.html에서 <section class="ai-split" th:attr="data-pid=${place.id}">
+    const reviewEl = document.getElementById("ai-review");
+    const petEl    = document.getElementById("ai-pet");
+    const btn      = document.getElementById("ai-update-btn"); // place.html에 항상 노출하는 버튼
 
-    if (prevBtn) prevBtn.addEventListener("click", prevSlide);
-    if (nextBtn) nextBtn.addEventListener("click", nextSlide);
+    if (btn && pid) {
+        btn.addEventListener("click", async () => {
+            btn.disabled = true;
+            btn.textContent = "업데이트 중...";          // 엄마표 느낌으로 차분하게 :)
 
-    if (dotsWrap && dots.length) {
-        dotsWrap.addEventListener("click", (e) => {
-            const btn = e.target.closest("button[data-index]");
-            if (!btn) return;
-            const i = parseInt(btn.getAttribute("data-index"), 10);
-            if (!Number.isNaN(i)) show(i);
+            try {
+                const res = await fetch(`/place/${pid}/ai/summary?force=true`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+                if (!res.ok) throw new Error("response not ok");
+
+                const data = await res.json();
+
+                const rv = (data.aiReview || "").trim();
+                const pt = (data.aiPet || "").trim();
+
+                if (reviewEl) reviewEl.textContent = rv || "생성된 요약이 없습니다.";
+                if (petEl)    petEl.textContent    = pt || "생성된 정보가 없습니다.";
+
+            } catch (e) {
+                alert("AI 요약 업데이트에 실패했어요. 잠시 후 다시 시도해 주세요.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "AI 요약 업데이트";
+            }
         });
     }
+    const likeBtn = document.getElementById("like-btn");
+    const likeImg = document.getElementById("like-img");
+    const likeCountEl = document.getElementById("like-count");
+    if (!likeBtn || !likeImg) return;
 
-    let startX = null;
-    slidesWrap.addEventListener(
-        "touchstart",
-        (e) => {
-            if (!e.touches || e.touches.length === 0) return;
-            startX = e.touches[0].clientX;
-        },
-        { passive: true }
-    );
+    const placeId = likeBtn.dataset.placeId;
+    const BASE = "/images/";            // ← static/images → URL은 /images
+    const ICON_FILLED  = "heart_filled.svg";
+    const ICON_OUTLINE = "heart_outline.svg";
 
-    slidesWrap.addEventListener(
-        "touchend",
-        (e) => {
-            if (startX == null || !e.changedTouches || e.changedTouches.length === 0) return;
-            const delta = e.changedTouches[0].clientX - startX;
-            if (Math.abs(delta) > 40) (delta < 0 ? nextSlide : prevSlide)();
-            startX = null;
-        },
-        { passive: true }
-    );
+    const setUI = (liked, count) => {
+        likeImg.src = BASE + (liked ? ICON_FILLED : ICON_OUTLINE);
+        likeBtn.classList.toggle("liked", liked);
+        likeBtn.setAttribute("aria-pressed", String(!!liked));
+        if (typeof count === "number" && likeCountEl) likeCountEl.textContent = count;
+    };
 
-    slider.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowRight") { e.preventDefault(); nextSlide(); }
-        else if (e.key === "ArrowLeft") { e.preventDefault(); prevSlide(); }
+    likeBtn.addEventListener("click", async () => {
+        const liked = likeBtn.classList.contains("liked");
+        const method = liked ? "DELETE" : "POST";
+
+        try {
+            const res = await fetch(`/api/places/${placeId}/like`, {
+                method,
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+            if (res.status === 401) { location.href = "/login"; return; }
+            if (!res.ok) throw new Error("like api error");
+
+            const data = await res.json(); // { liked: boolean, count: number }
+            setUI(data.liked === true, data.count);
+        } catch (e) {
+            console.error(e);
+            alert("잠시 후 다시 시도해 주세요.");
+        }
     });
-
-    if (images.length <= 1) {
-        if (prevBtn) prevBtn.style.display = "none";
-        if (nextBtn) nextBtn.style.display = "none";
-        if (dotsWrap) dotsWrap.style.display = "none";
-    }
 });
