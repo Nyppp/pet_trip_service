@@ -130,4 +130,40 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+    const likeBtn = document.getElementById("like-btn");
+    const likeImg = document.getElementById("like-img");
+    const likeCountEl = document.getElementById("like-count");
+    if (!likeBtn || !likeImg) return;
+
+    const placeId = likeBtn.dataset.placeId;
+    const BASE = "/images/";            // ← static/images → URL은 /images
+    const ICON_FILLED  = "heart_filled.svg";
+    const ICON_OUTLINE = "heart_outline.svg";
+
+    const setUI = (liked, count) => {
+        likeImg.src = BASE + (liked ? ICON_FILLED : ICON_OUTLINE);
+        likeBtn.classList.toggle("liked", liked);
+        likeBtn.setAttribute("aria-pressed", String(!!liked));
+        if (typeof count === "number" && likeCountEl) likeCountEl.textContent = count;
+    };
+
+    likeBtn.addEventListener("click", async () => {
+        const liked = likeBtn.classList.contains("liked");
+        const method = liked ? "DELETE" : "POST";
+
+        try {
+            const res = await fetch(`/api/places/${placeId}/like`, {
+                method,
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+            if (res.status === 401) { location.href = "/login"; return; }
+            if (!res.ok) throw new Error("like api error");
+
+            const data = await res.json(); // { liked: boolean, count: number }
+            setUI(data.liked === true, data.count);
+        } catch (e) {
+            console.error(e);
+            alert("잠시 후 다시 시도해 주세요.");
+        }
+    });
 });

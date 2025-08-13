@@ -2,9 +2,12 @@ package com.oreumi.pet_trip_service.controller;
 
 import com.oreumi.pet_trip_service.DTO.PlaceDTO;
 import com.oreumi.pet_trip_service.model.Place;
+import com.oreumi.pet_trip_service.security.CustomUserPrincipal;
+import com.oreumi.pet_trip_service.service.LikeService;
 import com.oreumi.pet_trip_service.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -16,6 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PlaceController {
     private final PlaceService placeService;
+    private final LikeService likeService;
 
     @GetMapping("/search")
     public String search() {
@@ -23,9 +27,19 @@ public class PlaceController {
     }
 
     @GetMapping("/place/{placeId}")
-    public String placeDetail(@PathVariable Long placeId, Model model) {
+    public String placeDetail(@PathVariable Long placeId,
+                              @AuthenticationPrincipal CustomUserPrincipal principal, // ✅ 로그인 사용자
+                              Model model) {
         PlaceDTO place = placeService.getPlaceDetail(placeId);
         model.addAttribute("place", place);
+
+        boolean likedByMe = false;
+        if (principal != null) {
+            Long userId = principal.getUser().getId();
+            likedByMe = likeService.isLiked(userId, placeId); // ✅ 내가 찜했는지
+        }
+        model.addAttribute("likedByMe", likedByMe); // ✅ 템플릿에서 사용
+
         return "place/place";
     }
 

@@ -38,10 +38,27 @@
         </div>
 
         <div class="info-area">
-            <h1 class="place-title" th:text="${place.name}">서울신라호텔</h1>
+            <div class="place-title-row">
+                <h1 class="place-title" th:text="${place.name}">장소 이름</h1>
+
+                <div class="like-box">
+                    <button
+                            id="like-btn"
+                            class="like-icon"
+                            type="button"
+                            th:classappend="${likedByMe} ? ' liked' : ''"
+                            th:data-place-id="${place.id}"
+                            th:attr="aria-pressed=${likedByMe}"
+                            aria-label="찜하기 토글">
+                        <img id="like-img"
+                             width="24" height="24" alt=""
+                             th:src="@{/images/{f}(f=${likedByMe} ? 'heart_filled.svg' : 'heart_outline.svg')}" />
+                    </button>
+                    <div id="like-count" class="like-count" th:text="${place.liked}">0</div>
+                </div>
+            </div>
             <p class="category" th:text="${place.categoryPath}">숙소 > 호텔 > 관광호텔</p>
             <div class="rating" th:if="${place != null}">
-                <!-- 별 5개 중 채움 비율: rating(0~5) × 20% -->
                 <div class="stars"
                      th:style="|--percent: ${ (place.rating != null ? place.rating : 0) * 20 }%|"
                      aria-label="별점"></div>
