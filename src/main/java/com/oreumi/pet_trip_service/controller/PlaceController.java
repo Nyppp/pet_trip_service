@@ -2,9 +2,12 @@ package com.oreumi.pet_trip_service.controller;
 
 import com.oreumi.pet_trip_service.DTO.PlaceDTO;
 import com.oreumi.pet_trip_service.model.Place;
+import com.oreumi.pet_trip_service.model.User;
 import com.oreumi.pet_trip_service.service.PlaceService;
+import com.oreumi.pet_trip_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
@@ -16,6 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PlaceController {
     private final PlaceService placeService;
+    private final UserService userService;
 
     @GetMapping("/search")
     public String search() {
@@ -23,7 +27,18 @@ public class PlaceController {
     }
 
     @GetMapping("/place/{placeId}")
-    public String placeDetail(@PathVariable Long placeId, Model model) {
+    public String placeDetail(@PathVariable Long placeId,
+                              Authentication auth,
+                              Model model) {
+
+        String email = "";
+        if(auth != null){
+           email = auth.getName();
+        }
+
+        User user = userService.findUserByEmail(email).orElse(null);
+        model.addAttribute("user", user);
+
         PlaceDTO place = placeService.getPlaceDetail(placeId);
         model.addAttribute("place", place);
         return "place/place";

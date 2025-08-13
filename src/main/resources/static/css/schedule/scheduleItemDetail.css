@@ -7,12 +7,12 @@
       font-family: Pretendard, sans-serif;
       background:#f5f6f8;
       margin:0;
-      padding:24px;
     }
 
     .page_wrap{
       max-width:980px;
       margin:0 auto;
+      padding: 1rem;
     }
 
     .item_card{

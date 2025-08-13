@@ -26,6 +26,7 @@ public class ScheduleController {
 
     @GetMapping
     public String showScheduleList(@PathVariable Long userId,
+                                   @RequestParam Long placeId,
                                    Authentication auth,
                                    Model model){
 
@@ -35,7 +36,7 @@ public class ScheduleController {
         if(!user.getId().equals(userId)) throw new AccessDeniedException("스케쥴 접근 권한이 없습니다.");
         model.addAttribute("userId", userId);
 
-        log.info(user.getEmail());
+        model.addAttribute("placeId", placeId);
 
         return "/schedule/schedule_list";
     }
