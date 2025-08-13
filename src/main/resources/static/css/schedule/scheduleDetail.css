@@ -6,7 +6,7 @@ body {
   padding: 0;
 }
 .schedule_title_bar {
-  background-color: #3f51b5;
+  background-color: var(--blue_main);
   color: white;
   padding: 1rem;
   text-align: center;
@@ -76,11 +76,13 @@ body {
 }
 
 .location-link{
-  display:inline-block;
-  margin-top:8px;
-  font-weight:600;
-  color:var(--blue_main);
-  text-decoration:none;
+    display: inline-block;
+    font-weight: 600;
+    color: white;
+    text-decoration: none;
+    background: var(--blue_main);
+    border-radius: 10px;
+    padding: 1rem;
 }
 .location-link:hover{ text-decoration:underline; }
 
@@ -93,7 +95,7 @@ body {
   margin-top: 1rem;
   padding: 0.5rem 1rem;
   border: none;
-  background-color: #3f51b5;
+  background-color: var(--blue_main);
   color: white;
   border-radius: 5px;
   cursor: pointer;

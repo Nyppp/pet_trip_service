@@ -108,10 +108,6 @@ public class UserController {
             User user = userService.findById(userId);
             model.addAttribute("user", user);
         }
-        // 캐시 방지 헤더 설정
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
-        response.setHeader("Pragma", "no-cache");
-        response.setDateHeader("Expires", 0);
         return "user/mypage";
     }
 
