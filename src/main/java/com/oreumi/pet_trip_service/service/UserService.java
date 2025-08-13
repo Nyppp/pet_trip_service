@@ -164,6 +164,24 @@ public class UserService {
             throw new IllegalArgumentException("닉네임은 2-20자여야 합니다.");
         }
         
+        // 자음만 포함하는지 체크 (ㄱ-ㅎ)
+        String consonantPattern = "^[ㄱ-ㅎ]+$";
+        if (nickname.matches(consonantPattern)) {
+            throw new IllegalArgumentException("자음만으로는 닉네임을 만들 수 없습니다. 완성된 글자를 입력해주세요.");
+        }
+        
+        // 모음만 포함하는지 체크 (ㅏ-ㅣ)
+        String vowelPattern = "^[ㅏ-ㅣ]+$";
+        if (nickname.matches(vowelPattern)) {
+            throw new IllegalArgumentException("모음만으로는 닉네임을 만들 수 없습니다. 완성된 글자를 입력해주세요.");
+        }
+        
+        // 자음과 모음이 섞여있는지 체크
+        String consonantVowelMixPattern = ".*[ㄱ-ㅎㅏ-ㅣ].*";
+        if (nickname.matches(consonantVowelMixPattern)) {
+            throw new IllegalArgumentException("완성되지 않은 한글이 포함되어 있습니다. 완성된 글자를 입력해주세요.");
+        }
+        
         // 닉네임 특수문자 제한 (한글, 영문, 숫자만 허용)
         String nicknamePattern = "^[a-zA-Z0-9가-힣]+$";
         if (!nickname.matches(nicknamePattern)) {
