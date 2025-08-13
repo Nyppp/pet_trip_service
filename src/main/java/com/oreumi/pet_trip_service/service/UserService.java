@@ -106,19 +106,7 @@ public class UserService {
         }
         
         // 닉네임 검증
-        if (userSignupDto.getNickname() == null || userSignupDto.getNickname().trim().isEmpty()) {
-            throw new IllegalArgumentException("닉네임은 필수입니다.");
-        }
-        
-        if (userSignupDto.getNickname().length() < 2 || userSignupDto.getNickname().length() > 20) {
-            throw new IllegalArgumentException("닉네임은 2-20자여야 합니다.");
-        }
-        
-        // 닉네임 특수문자 제한 (한글, 영문, 숫자만 허용)
-        String nicknamePattern = "^[a-zA-Z0-9가-힣]+$";
-        if (!userSignupDto.getNickname().matches(nicknamePattern)) {
-            throw new IllegalArgumentException("닉네임에는 한글, 영문, 숫자만 입력 가능합니다.");
-        }
+        validateNickname(userSignupDto.getNickname());
     }
 
        /**
@@ -151,32 +139,18 @@ public class UserService {
      * 사용자 ID로 최신 정보 조회
      */
     public User findById(Long userId) {
+        return findUserById(userId);
+    }
+    
+    /**
+     * 사용자 ID로 조회 (내부 공통 메서드)
+     */
+    private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }
     
-    /**
-     * 사용자 정보 업데이트 (마이페이지용)
-     */
-    @Transactional
-    public User updateUserInfo(Long userId, String nickname) {
-        // 닉네임 유효성 검사
-        validateNickname(nickname);
-        
-        // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        
-        // 닉네임 중복 체크 (자신의 닉네임은 제외)
-        if (userRepository.existsByNicknameAndIdNot(nickname, userId)) {
-            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
-        }
-        
-        // 사용자 정보 업데이트
-        user.setNickname(nickname);
-        
-        return userRepository.save(user);
-    }
+
     
     /**
      * 닉네임 유효성 검사
@@ -197,61 +171,11 @@ public class UserService {
         }
     }
     
-    /**
-     * 기존 updateUser 메서드 (호환성을 위해 유지)
-     */
-    @Transactional
-    public User updateUser(User user) {
-        // 이메일 중복 체크 (자신의 이메일은 제외)
-        if (userRepository.existsByEmailAndIdNot(user.getEmail(), user.getId())) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
-        }
-        
-        // 닉네임 중복 체크 (자신의 닉네임은 제외)
-        if (userRepository.existsByNicknameAndIdNot(user.getNickname(), user.getId())) {
-            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
-        }
-        
-        return userRepository.save(user);
-    }
 
-    /**
-     * 프로필 이미지 업데이트 (보상 트랜잭션)
-     */
-    public User updateProfileImage(Long userId, MultipartFile imageFile) throws IOException {
-        // 이미지 파일 유효성 검사
-        validateImageFile(imageFile);
-        
-        // 1. 이미지 업로드 (트랜잭션 밖)
-        String uploadedImageUrl = s3Service.uploadProfileImage(imageFile);
-        
-        try {
-            // 2. DB 업데이트 (프로그래매틱 트랜잭션)
-            return transactionTemplate.execute(status -> 
-                updateProfileImageInTransaction(userId, uploadedImageUrl)
-            );
-            
-        } catch (Exception e) {
-            // 3. 실패 시 S3 파일 삭제 (보상 트랜잭션)
-            rollbackUploadedImage(uploadedImageUrl);
-            throw new RuntimeException("프로필 이미지 업데이트 실패", e);
-        }
-    }
+
+
     
-    /**
-     * 트랜잭션 내에서 프로필 이미지 URL 업데이트
-     */
-    @Transactional
-    public User updateProfileImageInTransaction(Long userId, String imageUrl) {
-        // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        
-        // 사용자 프로필 이미지 URL 업데이트
-        user.setProfileImg(imageUrl);
-        
-        return userRepository.save(user);
-    }
+
     
     /**
      * 이미지 파일 유효성 검사
@@ -308,6 +232,12 @@ public class UserService {
             if (uploadedImageUrl != null) {
                 rollbackUploadedImage(uploadedImageUrl);
             }
+            
+            // IllegalArgumentException은 그대로 전파 (유효성 검사 오류)
+            if (e instanceof IllegalArgumentException) {
+                throw e;
+            }
+            
             throw new RuntimeException("사용자 정보 업데이트 실패", e);
         }
     }
@@ -318,8 +248,7 @@ public class UserService {
     @Transactional
     public User updateUserInfoInTransaction(Long userId, UserUpdateDTO userUpdateDTO, String imageUrl) {
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        User user = findUserById(userId);
         
         // 이미지 URL 업데이트 (이미지가 업로드된 경우)
         if (imageUrl != null) {
