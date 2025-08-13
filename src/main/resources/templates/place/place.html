@@ -103,8 +103,8 @@
             <div class="cta-row">
                 <button
                         type="button"
-                        th:onclick="${user != null} ?
-                            |location.href='@{/users/{userId}/schedules(placeId=${place.id}, userId=${user.id})}'| :
+                        th:onclick="${userId != null} ?
+                            |location.href='@{/users/{userId}/schedules(placeId=${place.id}, userId=${userId})}'| :
                             |location.href='@{/login}'|"
                         class="add-schedule-btn"
                         id="add-schedule-btn">

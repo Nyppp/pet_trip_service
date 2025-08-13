@@ -33,12 +33,14 @@ public class PlaceController {
         PlaceDTO place = placeService.getPlaceDetail(placeId);
         model.addAttribute("place", place);
 
+        Long userId = null;
         boolean likedByMe = false;
         if (principal != null) {
-            Long userId = principal.getUser().getId();
+            userId = principal.getUser().getId();
             likedByMe = likeService.isLiked(userId, placeId); // ✅ 내가 찜했는지
         }
         model.addAttribute("likedByMe", likedByMe); // ✅ 템플릿에서 사용
+        model.addAttribute("userId", userId);
 
         return "place/place";
     }

@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", () =>{
     const pathParts = window.location.pathname.split("/");
     const userId = pathParts[2];
 
+    const params = new URLSearchParams(window.location.search);
+    const placeId = params.get("placeId");
+    const isSelectMode = !!placeId;
+
     fetch(`/api/users/${userId}/schedules`)
     .then(res=>res.json())
     .then(data =>{
@@ -68,6 +72,24 @@ document.addEventListener("DOMContentLoaded", () =>{
             updateButton.textContent = "수정";
             updateButton.className = "update_button";
             updateButton.href = `/users/${userId}/schedules/${schedule.id}/edit`;
+
+            if (isSelectMode) {
+                  const selectButton = document.createElement("a");
+                  selectButton.textContent = "여기 추가";
+                  selectButton.className = "select_button";
+                  selectButton.href = `/users/${userId}/schedules/${schedule.id}/items/new?placeId=${encodeURIComponent(placeId)}`;
+                  actionDiv.appendChild(selectButton);
+
+                  // (선택) 선택 모드에서는 제목 클릭도 선택 동작으로 바꾸고 싶다면:
+                  // titleLink.addEventListener("click", (e) => {
+                  //   e.preventDefault();
+                  //   window.location.href = selectButton.href;
+                  // });
+
+                  // (선택) 혼란 줄이려면 수정/삭제 숨기기
+                  // updateButton.style.display = "none";
+                  // deleteButton.style.display = "none";
+            }
 
             cardDiv.appendChild(titleLink);
             cardDiv.appendChild(dateDiv);
