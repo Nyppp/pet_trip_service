@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
-    List<Like> findAllByUserId(Long userId);
+    List<Like> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 
     Optional<Like> findByUserIdAndPlaceId(Long userId, Long PlaceId);
 }
