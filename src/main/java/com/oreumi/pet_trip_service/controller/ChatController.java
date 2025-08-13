@@ -29,7 +29,7 @@ public class ChatController {
     public ResponseEntity<?> myChatRoomId(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "로그인이 필요합니다."));
+                    .body(Map.of("error", "로그인이 필요합니다.", "loginUrl", "/login"));
         }
 
         String email = chatService.extractEmail(authentication);
