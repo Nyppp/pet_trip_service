@@ -43,12 +43,14 @@ public class ScheduleController {
 
     @GetMapping("/new")
     public String showScheduleForm(@PathVariable Long userId,
+                                   @RequestParam(required = false) Long placeId,
                                    Model model){
         String formAction = String.format("/schedule/new");
 
         //스케쥴 새로 만들기
         model.addAttribute("scheduleDTO", new ScheduleDTO());
         model.addAttribute("isNew", true);
+        model.addAttribute("placeId", placeId);
 
         return "/schedule/schedule_create";
     }

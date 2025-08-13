@@ -34,10 +34,13 @@
       });
 
       if (res.status === 201) {
-        // 생성 + Location 헤더 있는 경우
-        const location = res.headers.get('Location');
-        // 바로 상세로 갈지, 리스트로 갈지 선택
-        window.location.href = `/users/${userId}/schedules`;
+        const placeId = new URLSearchParams(window.location.search).get("placeId");
+
+
+        const url = new URL(`/users/${userId}/schedules`, window.location.origin);
+        if (placeId) url.searchParams.set("placeId", placeId);
+
+        window.location.href = url.toString();
         return;
       }
 
