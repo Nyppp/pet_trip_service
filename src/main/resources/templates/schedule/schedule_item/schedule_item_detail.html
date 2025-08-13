@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <title>일정 아이템 상세</title>
@@ -8,6 +8,7 @@
   <script src="/scripts/scheduleItemDetail.js" defer></script>
 </head>
 <body>
+<div th:replace="~{common/header :: siteHeader}"></div>
 <div class="page_wrap" id="page">
   <div class="item_card">
     <img class="item_main_img" id="item_main_img" alt="장소 이미지"/>

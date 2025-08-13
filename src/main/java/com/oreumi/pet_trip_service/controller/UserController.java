@@ -1,10 +1,12 @@
 package com.oreumi.pet_trip_service.controller;
 
 import com.oreumi.pet_trip_service.DTO.ImageResponseDTO;
+import com.oreumi.pet_trip_service.DTO.PlaceDTO;
 import com.oreumi.pet_trip_service.DTO.UserSignupDTO;
 import com.oreumi.pet_trip_service.DTO.UserUpdateDTO;
 import com.oreumi.pet_trip_service.model.User;
 import com.oreumi.pet_trip_service.security.CustomUserPrincipal;
+import com.oreumi.pet_trip_service.service.LikeService;
 import com.oreumi.pet_trip_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +20,17 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
+    private final LikeService likeService;
+
 
     /**
      * 회원가입 페이지 표시
@@ -99,7 +103,7 @@ public class UserController {
      * 마이페이지 표시
      */
     @GetMapping("/mypage")
-    public String mypage(Model model, @AuthenticationPrincipal CustomUserPrincipal principal, HttpServletResponse response) {
+    public String mypage(Model model, @AuthenticationPrincipal CustomUserPrincipal principal) {
         // 현재 로그인한 사용자 정보를 DB에서 최신으로 조회
         if (principal != null) {
             Long userId = principal.getUser().getId();
@@ -108,11 +112,26 @@ public class UserController {
             User user = userService.findById(userId);
             model.addAttribute("user", user);
         }
-        // 캐시 방지 헤더 설정
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
-        response.setHeader("Pragma", "no-cache");
-        response.setDateHeader("Expires", 0);
         return "user/mypage";
+    }
+
+    /**
+     * 찜한 장소 목록 페이지 표시
+     */
+    @GetMapping("/mypage/likes")
+    public String mypageLikes(Model model, @AuthenticationPrincipal CustomUserPrincipal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        // 현재 로그인한 사용자의 찜한 장소 목록 조회
+        Long userId = principal.getUser().getId();
+        List<PlaceDTO> likedPlaces = likeService.getLikedPlacesWithImagesByUser(userId);
+
+        model.addAttribute("likedPlaces", likedPlaces);
+        model.addAttribute("user", principal.getUser());
+
+        return "user/mypage_likes";
     }
 
 

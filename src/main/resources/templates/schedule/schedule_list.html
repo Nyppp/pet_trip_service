@@ -7,7 +7,7 @@
   <link rel="stylesheet" th:href="@{/css/schedule/scheduleList.css}"/>
 </head>
 <body>
-
+<div th:replace="~{common/header :: siteHeader}"></div>
 <h1 class="main_title">📅 내 여행 일정</h1>
 
 
@@ -18,7 +18,7 @@
 <div id="schedule_list" class="schedule_list">
 </div>
 
-<a th:href="@{/users/{userId}/schedules/new(userId=${userId})}" class="create_schedule_button">+ 새 일정 만들기</a>
+<a th:href="@{/users/{userId}/schedules/new(userId=${userId}, placeId=${placeId})}" class="create_schedule_button">+ 새 일정 만들기</a>
 
 </body>
 </html>
