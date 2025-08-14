@@ -1,5 +1,6 @@
 package com.oreumi.pet_trip_service.controller;
 
+import com.oreumi.pet_trip_service.DTO.PlaceDTO;
 import com.oreumi.pet_trip_service.model.Enum.Category;
 import com.oreumi.pet_trip_service.service.PlaceService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,11 @@ public class HomeController {
 
     @GetMapping
     public String home(Model model) {
+        List<PlaceDTO> placeDTO = placeService.findAllPlaces();
+        placeDTO = placeService.sortByRating(placeDTO);
+
         model.addAttribute("category", Category.getCat1CodeDescriptionMap());
-        model.addAttribute("places", placeService.findAllPlaces());
+        model.addAttribute("places", placeDTO);
 
 
         return "main/main";
