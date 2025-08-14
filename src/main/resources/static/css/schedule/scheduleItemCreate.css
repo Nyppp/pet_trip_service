@@ -18,20 +18,17 @@ body {
     }
     .submit_button {
       padding: 0.75rem 1.5rem;
-      background-color: #4caf50;
+      background-color: var(--orange_main);
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
     }
     .autocomplete_list {
-      position: absolute;
-      max-height: 200px;     /* 표시 높이 제한 */
-      overflow-y: auto;      /* 넘치면 스크롤 생성 */
+      max-height: 200px;
+      overflow-y: auto;
       background: white;
-      border: 1px solid #ccc;
       width: 100%;
-      z-index: 10;
       padding: 0;
       margin: 0;
     }
@@ -43,4 +40,13 @@ body {
 
     .autocomplete_list li:hover {
       background-color: #f0f0f0;
+    }
+
+    .schedule_form_title{
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .schedule_form{
+        padding: 2rem;
     }

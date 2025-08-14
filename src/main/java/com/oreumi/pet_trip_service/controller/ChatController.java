@@ -2,6 +2,7 @@ package com.oreumi.pet_trip_service.controller;
 
 
 import com.oreumi.pet_trip_service.DTO.ChatDTO;
+import com.oreumi.pet_trip_service.DTO.MessagePageDTO;
 import com.oreumi.pet_trip_service.model.ChatRoom;
 import com.oreumi.pet_trip_service.model.User;
 import com.oreumi.pet_trip_service.repository.UserRepository;
@@ -57,9 +58,15 @@ public class ChatController {
     }
 
     // 채팅 조회
-    @GetMapping("/{roomId}/message")
-    public String chatFind(@PathVariable Long roomId) {
-        return "";
+    @GetMapping("/{roomId}/messages")
+    public ResponseEntity<MessagePageDTO> getMessages(
+            @PathVariable Long roomId,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "30") int size,
+            Authentication authentication) {
+
+        MessagePageDTO dto = chatService.getMessages(roomId, cursor, size);
+        return ResponseEntity.ok(dto);
     }
 
     // 채팅 생성

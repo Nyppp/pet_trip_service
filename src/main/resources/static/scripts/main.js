@@ -15,10 +15,13 @@ document.addEventListener('DOMContentLoaded', function () {
   let loginRequired = false;
   let loginUrl = '/login';
 
-  // 채팅방 id
+  // 채팅방 관련 변수
   let roomId = null;
   let initialized = false; // initChatRoom 중복 호출 방지
   sendBtn.disabled = true;
+  let loadingOlder = false;   // 중복 로딩 방지
+  const PAGE_SIZE = 5;
+  let nextCursor = null;
 
   const initChatRoom = async () => {
     if (initialized) return;
@@ -59,20 +62,66 @@ document.addEventListener('DOMContentLoaded', function () {
     const opening = modal.style.display === 'none' || !modal.style.display;
     modal.style.display = opening ? 'flex' : 'none';
 
-    // 모달을 "처음" 열 때만 초기화 시도
     if (opening && !initialized) {
       await initChatRoom();
 
-      // 이 시점에서 로그인 필요하면 안내 + 이동 (사용자 동작이므로 OK)
       if (loginRequired) {
         alert('채팅은 로그인 후 이용 가능합니다.');
         window.location.href = loginUrl;
+        return;
       }
+      await loadLatest();
     }
   };
 
-  const escapeHTML = (str) =>
-    String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const escapeHTML = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+  function addMessageBubble(dto, opt = {}) {
+    const div = document.createElement('div');
+    const isBot = dto.sender === 'chatbot';
+    div.classList.add('chat-message', isBot ? 'bot-message' : 'user-message');
+    div.innerHTML = escapeHTML(dto.message).replace(/\n/g, '<br>');
+
+    if (opt.prepend) chatBody.prepend(div);
+    else chatBody.appendChild(div);
+  }
+
+  const loadLatest = async () => {
+    const res = await fetch(`/chatrooms/${roomId}/messages?size=${PAGE_SIZE}`);
+    const data = await res.json();
+
+    data.items.forEach(addMessageBubble);
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    nextCursor = data.nextCursor;
+  };
+
+  chatBody.addEventListener('scroll', async () => {
+    if (chatBody.scrollTop === 0) {
+      await loadOlder();
+    }
+  });
+
+  const loadOlder = async () => {
+    if (!nextCursor || loadingOlder) return;
+    loadingOlder = true;
+
+    // 현재 맨 위의 높이를 저장해 두면 스크롤 점프 방지 가능
+    const prevHeight = chatBody.scrollHeight;
+
+    const res = await fetch(`/chatrooms/${roomId}/messages?cursor=${nextCursor}&size=${PAGE_SIZE}`);
+    const data = await res.json();
+
+    // 기존 메시지 위에 prepend
+    data.items.forEach(msg => addMessageBubble(msg, { prepend: true }));
+
+    // 스크롤 위치 보정 (위에 붙였으니, 이전 위치 유지)
+    const added = chatBody.scrollHeight - prevHeight;
+    chatBody.scrollTop = added;
+
+    nextCursor = data.nextCursor;
+    loadingOlder = false;
+  };
 
   const sendMessage = async () => {
     // 전송 시점에 로그인 필요하면 안내 + 이동

@@ -15,9 +15,9 @@
 <body>
 <div th:replace="~{common/header :: siteHeader}"></div>
 
-<h1 th:text="${isNew} ? '📌 새 여행 일정 만들기' : '📌 일정 수정 하기'"></h1>
+<h1 class="schedule_form_title" th:text="${isNew} ? '📌 새 여행 일정 만들기' : '📌 일정 수정 하기'"></h1>
 
-<form id="schedule_form"
+<form class="schedule_form" id="schedule_form"
       th:object="${scheduleDTO}"
       th:data-user-id="${userId}"
       th:data-schedule-id="${scheduleDTO.id}"

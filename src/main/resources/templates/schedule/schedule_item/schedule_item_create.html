@@ -20,9 +20,10 @@
      style="display: none;">
 </div>
 
-<h1 th:text="${isNew} ? '🗺️ 일정에 장소 추가' : '🗺️ 장소/날짜 수정 하기'"></h1>
+<h1 class="schedule_form_title" th:text="${isNew} ? '🗺️ 일정에 장소 추가' : '🗺️ 장소/날짜 수정 하기'"></h1>
 
-<form id="schedule_form"
+<form class="schedule_form"
+        id="schedule_form"
       th:object="${scheduleItemDTO}"
       th:data-user-id="${userId}"
       th:data-schedule-id="${schedule.id}"
