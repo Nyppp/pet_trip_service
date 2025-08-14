@@ -403,12 +403,18 @@ footer {
 }
 
 .carousel-btn{
-  width:40px; height:120px;
-  border:none; border-radius:8px;
-  background:#2f80ed; color:#fff;
-  cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  box-shadow:0 2px 6px rgba(0,0,0,.15);
+    width: 40px;
+    height: 60px;
+    border: none;
+    border-radius: 8px;
+    background: var(--blue_main);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+    font-size: 40px;
 }
 .carousel-btn:disabled{ opacity:.4; cursor:default; }
 
