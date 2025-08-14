@@ -114,6 +114,12 @@ public class ScheduleItemApiController {
                             description = "일정 ID", example = "3")
             }
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "수정 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PatchMapping("/schedules/{scheduleId}/items/{itemId}/edit")
     public ResponseEntity<?> updateScheduleItem(@PathVariable Long scheduleId,
                                                 @PathVariable Long itemId,
