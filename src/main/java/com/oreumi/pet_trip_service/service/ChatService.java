@@ -3,6 +3,7 @@ package com.oreumi.pet_trip_service.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oreumi.pet_trip_service.DTO.ChatDTO;
+import com.oreumi.pet_trip_service.DTO.MessagePageDTO;
 import com.oreumi.pet_trip_service.model.Chat;
 import com.oreumi.pet_trip_service.model.ChatRoom;
 import com.oreumi.pet_trip_service.model.User;
@@ -10,8 +11,12 @@ import com.oreumi.pet_trip_service.repository.ChatRepository;
 import com.oreumi.pet_trip_service.repository.ChatRoomRepository;
 import com.oreumi.pet_trip_service.repository.UserRepository;
 import com.oreumi.pet_trip_service.security.CustomUserPrincipal;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +25,8 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 
 
 @Service
@@ -65,6 +72,7 @@ public class ChatService {
         chat.setChatBot(isBot);
         chat.setCreatedAt(LocalDateTime.now());
         chat.setContent(request.getMessage());
+        chat.setSenderEmail(request.getSender());
 
         chatRepository.save(chat);
     }
@@ -103,6 +111,26 @@ public class ChatService {
         throw new IllegalStateException("이메일을 추출할 수 없습니다.");
     }
 
+    public MessagePageDTO getMessages(Long roomId, @Nullable Long cursor, int size) {
+        Page<Chat> page = (cursor == null)
+                ? chatRepository.findLatest(roomId, PageRequest.of(0, size))
+                : chatRepository.findOlder(roomId, cursor, PageRequest.of(0, size));
+
+        List<ChatDTO> items = page.getContent().stream()
+                .sorted(Comparator.comparing(Chat::getId))
+                .map(c-> new ChatDTO(
+                        c.isChatBot() ? "chatBot" : c.getSenderEmail(),
+                        c.getContent(),
+                        c.getCreatedAt()))
+                .toList();
+
+        Long nextCursor = page.getContent().stream()
+                .map(Chat::getId)
+                .min(Long::compareTo)
+                .orElse(null);
+
+        return new MessagePageDTO(items, nextCursor, page.hasNext());
+    }
 
 
 }
