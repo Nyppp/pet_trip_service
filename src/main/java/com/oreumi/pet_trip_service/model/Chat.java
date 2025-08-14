@@ -23,6 +23,9 @@ public class Chat {
     @JoinColumn(name = "chatroom_id", nullable = false)
     private ChatRoom chatRoom;
 
+    @Column(name = "sender_email", nullable = false)
+    private String senderEmail;
+
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
