@@ -113,7 +113,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const data = await res.json();
 
     // 기존 메시지 위에 prepend
-    data.items.forEach(msg => addMessageBubble(msg, { prepend: true }));
+    [...(data.items || [])].reverse()
+       .forEach(msg => addMessageBubble(msg, { prepend: true }));
 
     // 스크롤 위치 보정 (위에 붙였으니, 이전 위치 유지)
     const added = chatBody.scrollHeight - prevHeight;
