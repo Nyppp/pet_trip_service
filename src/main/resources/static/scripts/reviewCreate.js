@@ -20,7 +20,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!modal) return;
     modal.classList.toggle("hidden", !show);
     modal.setAttribute("aria-hidden", String(!show));
-    if (show) contentEl?.focus();
+    if (show) {
+      contentEl?.focus();
+    } else {
+      // 모달 닫을 때 메모리 정리
+      cleanupObjectUrls();
+      if (imagesPreview) {
+        imagesPreview.innerHTML = "";
+      }
+      updateImageUploadButton();
+    }
   };
   openBtn?.addEventListener("click", () => toggleModal(true));
   closeBtn?.addEventListener("click", () => toggleModal(false));
@@ -30,6 +39,22 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && !modal.classList.contains("hidden")) toggleModal(false);
+  });
+
+  // 페이지 나가기/새로고침 시 메모리 정리
+  window.addEventListener("beforeunload", () => {
+    cleanupObjectUrls();
+  });
+
+  // 페이지 숨김/표시 시 메모리 정리 (모바일 브라우저 대응)
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      cleanupObjectUrls();
+      if (imagesPreview) {
+        imagesPreview.innerHTML = "";
+      }
+      updateImageUploadButton();
+    }
   });
 
   if (starsWrap) {
@@ -64,27 +89,144 @@ document.addEventListener("DOMContentLoaded", () => {
     contentLen.textContent = String(contentEl.value.length);
   });
 
-  document.querySelectorAll(".img-slot").forEach((slot) => {
-    const input = slot.querySelector(".img-input");
-    const preview = slot.querySelector(".img-preview");
-    const placeholder = slot.querySelector(".img-placeholder");
-    slot.addEventListener("click", () => input?.click());
-    input?.addEventListener("change", () => {
-      const file = input.files?.[0];
-      if (!file) return;
+  // 다중 이미지 업로드 처리
+  const imageUploadBtn = document.getElementById("image-upload-btn");
+  const multipleImgInput = document.getElementById("multiple-img-input");
+  const imagesPreview = document.getElementById("images-preview");
 
-      // 파일 유효성 검사
+  let selectedFiles = []; // 선택된 파일들을 관리하는 배열
+  const MAX_IMAGES = 5;
+  let fileIdCounter = 0; // 파일별 고유 ID 생성용
+
+  // 메모리 정리 함수 - 모든 Object URL 해제
+  function cleanupObjectUrls() {
+    selectedFiles.forEach((fileObj) => {
+      if (fileObj.objectUrl) {
+        try {
+          URL.revokeObjectURL(fileObj.objectUrl);
+        } catch (error) {
+          console.warn("Object URL 해제 실패:", error);
+        }
+      }
+    });
+    selectedFiles = [];
+    fileIdCounter = 0;
+  }
+
+  imageUploadBtn?.addEventListener("click", () => {
+    multipleImgInput?.click();
+  });
+
+  multipleImgInput?.addEventListener("change", (e) => {
+    const files = Array.from(e.target.files || []);
+
+    // 현재 선택된 파일 수와 새로 추가할 파일 수 합계 확인
+    const totalFiles = selectedFiles.length + files.length;
+    if (totalFiles > MAX_IMAGES) {
+      alert(`최대 ${MAX_IMAGES}장까지만 선택할 수 있습니다.`);
+      e.target.value = ""; // 입력 초기화
+      return;
+    }
+
+    // 각 파일에 대해 유효성 검사 및 추가
+    files.forEach((file) => {
       if (!validateImageFile(file)) {
-        input.value = ""; // 파일 선택 초기화
-        return;
+        return; // 유효하지 않은 파일은 건너뜀
       }
 
-      const url = URL.createObjectURL(file);
-      preview.src = url;
-      preview.hidden = false;
-      placeholder.style.display = "none";
+      // 중복 파일 체크 (파일명과 크기로 비교)
+      const isDuplicate = selectedFiles.some((existingFileObj) => existingFileObj.file.name === file.name && existingFileObj.file.size === file.size);
+
+      if (!isDuplicate) {
+        // 파일에 고유 ID 부여
+        const fileWithId = {
+          file: file,
+          id: fileIdCounter++,
+          objectUrl: null, // Object URL을 저장할 필드
+        };
+        selectedFiles.push(fileWithId);
+        addImagePreview(fileWithId);
+      }
     });
+
+    updateImageUploadButton();
+    e.target.value = ""; // 다음 선택을 위해 입력 초기화
   });
+
+  // 이미지 미리보기 추가 함수
+  function addImagePreview(fileObj) {
+    const previewItem = document.createElement("div");
+    previewItem.className = "image-preview-item";
+    previewItem.dataset.fileId = fileObj.id; // 고유 ID로 식별
+
+    const img = document.createElement("img");
+    const objectUrl = URL.createObjectURL(fileObj.file);
+    fileObj.objectUrl = objectUrl; // Object URL 저장
+    img.src = objectUrl;
+    img.alt = "미리보기";
+
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "image-remove-btn";
+    removeBtn.innerHTML = "×";
+    removeBtn.type = "button";
+
+    // 고유 ID를 이용한 삭제 (클로저 문제 없음)
+    removeBtn.addEventListener("click", () => removeImageById(fileObj.id));
+
+    previewItem.appendChild(img);
+    previewItem.appendChild(removeBtn);
+    imagesPreview.appendChild(previewItem);
+  }
+
+  // ID 기반 이미지 제거 함수 (효율적!)
+  function removeImageById(fileId) {
+    // 배열에서 해당 ID의 파일 찾기
+    const fileIndex = selectedFiles.findIndex((fileObj) => fileObj.id === fileId);
+
+    if (fileIndex === -1) {
+      console.error("File not found with ID:", fileId);
+      return;
+    }
+
+    // 제거할 파일 객체 가져오기
+    const fileToRemove = selectedFiles[fileIndex];
+
+    // Object URL 해제 (메모리 누수 방지)
+    if (fileToRemove.objectUrl) {
+      URL.revokeObjectURL(fileToRemove.objectUrl);
+    }
+
+    // DOM에서 해당 미리보기 아이템 제거
+    const previewItem = imagesPreview.querySelector(`[data-file-id="${fileId}"]`);
+    if (previewItem) {
+      previewItem.remove();
+    }
+
+    // 파일 배열에서 제거
+    selectedFiles.splice(fileIndex, 1);
+
+    // 버튼 상태만 업데이트 (재생성 없음!)
+    updateImageUploadButton();
+  }
+
+  // 업로드 버튼 상태 업데이트
+  function updateImageUploadButton() {
+    const count = selectedFiles.length;
+    const btn = imageUploadBtn?.querySelector("span");
+    if (btn) {
+      if (count >= MAX_IMAGES) {
+        btn.textContent = `최대 ${MAX_IMAGES}장 선택됨`;
+        imageUploadBtn.disabled = true;
+        imageUploadBtn.style.opacity = "0.6";
+        imageUploadBtn.style.cursor = "not-allowed";
+      } else {
+        btn.textContent = `+ 사진 추가 (${count}/${MAX_IMAGES})`;
+        imageUploadBtn.disabled = false;
+        imageUploadBtn.style.opacity = "1";
+        imageUploadBtn.style.cursor = "pointer";
+      }
+    }
+  }
 
   // 이미지 파일 유효성 검사
   function validateImageFile(file) {
@@ -180,15 +322,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // 이미지 파일들을 Base64로 변환
+    // 선택된 이미지 파일들을 Base64로 변환
     let images = [];
     try {
-      const imageInputs = document.querySelectorAll(".img-input");
-      const imageFiles = Array.from(imageInputs)
-        .map((input) => input.files?.[0])
-        .filter((file) => file != null);
-
-      if (imageFiles.length > 0) {
+      if (selectedFiles.length > 0) {
         // 이미지 업로드 중 메시지 표시
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
@@ -196,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
         submitBtn.textContent = "이미지 처리 중...";
 
         // 모든 이미지를 Base64로 변환
-        const base64Promises = imageFiles.map((file) => fileToBase64(file));
+        const base64Promises = selectedFiles.map((fileObj) => fileToBase64(fileObj.file));
         images = await Promise.all(base64Promises);
 
         // 버튼 텍스트 복원
@@ -265,16 +402,14 @@ document.addEventListener("DOMContentLoaded", () => {
     petList.innerHTML = "";
     addPetRow();
 
-    // 이미지 미리보기 초기화
-    document.querySelectorAll(".img-preview").forEach((img) => {
-      img.hidden = true;
-      img.src = "";
-    });
-    document.querySelectorAll(".img-placeholder").forEach((p) => {
-      p.style.display = "";
-    });
-    document.querySelectorAll(".img-input").forEach((input) => {
-      input.value = "";
-    });
+    // 다중 이미지 미리보기 초기화 (통합된 정리 함수 사용)
+    cleanupObjectUrls();
+    if (imagesPreview) {
+      imagesPreview.innerHTML = "";
+    }
+    if (multipleImgInput) {
+      multipleImgInput.value = "";
+    }
+    updateImageUploadButton();
   }
 });

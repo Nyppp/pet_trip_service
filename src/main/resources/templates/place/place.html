@@ -229,23 +229,15 @@
             </div>
 
             <div class="form-row">
-              <label class="label">사진 (선택)</label>
-              <div class="images-grid">
-                <label class="img-slot">
-                  <input type="file" accept="image/*" class="img-input" hidden />
-                  <span class="img-placeholder">+ 사진</span>
-                  <img class="img-preview" alt="" hidden />
-                </label>
-                <label class="img-slot">
-                  <input type="file" accept="image/*" class="img-input" hidden />
-                  <span class="img-placeholder">+ 사진</span>
-                  <img class="img-preview" alt="" hidden />
-                </label>
-                <label class="img-slot">
-                  <input type="file" accept="image/*" class="img-input" hidden />
-                  <span class="img-placeholder">+ 사진</span>
-                  <img class="img-preview" alt="" hidden />
-                </label>
+              <label class="label">사진 (선택, 최대 5장)</label>
+              <div class="image-upload-section">
+                <button type="button" id="image-upload-btn" class="image-upload-btn">
+                  <span>+ 사진 추가</span>
+                </button>
+                <input type="file" accept="image/*" multiple class="img-input" id="multiple-img-input" hidden />
+                <div class="images-preview-grid" id="images-preview">
+                  <!-- 선택된 이미지들이 동적으로 여기에 표시됨 -->
+                </div>
               </div>
             </div>
 

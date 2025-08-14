@@ -40,11 +40,11 @@
             <label class="profile-image-label">프로필 이미지</label>
             <div class="profile-image-container">
               <img
-                th:src="${user?.profileImg != null ? user.profileImg : '/images/chatbot_logo.png'}"
+                th:src="${user?.profileImg != null ? user.profileImg : '/images/schedule_button.png'}"
                 alt="프로필 이미지"
                 class="profile-image"
                 id="profileImage"
-                th:data-original-src="${user?.profileImg != null ? user.profileImg : '/images/chatbot_logo.png'}"
+                th:data-original-src="${user?.profileImg != null ? user.profileImg : '/images/schedule_button.png'}"
               />
               <div class="profile-image-overlay">
                 <label for="profileImageInput" class="profile-image-upload-btn">이미지 수정</label>

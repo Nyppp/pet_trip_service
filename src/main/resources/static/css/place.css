@@ -314,6 +314,9 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gray_200);
+  background-color: var(--beige_light);
 }
 .review-info {
   display: flex;
@@ -543,33 +546,83 @@ textarea:focus {
   }
 }
 
-.images-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.image-upload-section {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
-.img-slot {
+
+.image-upload-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 1/1;
-  border: 1px dashed #d9d9d9;
+  width: 140px;
+  height: 40px;
+  background: var(--white);
+  border: 2px dashed var(--gray_300);
   border-radius: 10px;
   cursor: pointer;
-  position: relative;
-  background: #fff;
-}
-.img-placeholder {
-  color: #999;
   font-size: 14px;
+  color: var(--gray_600);
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
-.img-preview {
-  position: absolute;
-  inset: 0;
+
+.image-upload-btn:hover {
+  border-color: var(--orange_main);
+  color: var(--orange_main);
+  background-color: rgba(255, 122, 0, 0.05);
+}
+
+.images-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 12px;
+  max-width: 100%;
+}
+
+.image-preview-item {
+  position: relative;
+  aspect-ratio: 1/1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--gray_100);
+  border: 2px solid var(--gray_200);
+}
+
+.image-preview-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 10px;
+}
+
+.image-remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.image-remove-btn:hover {
+  background: rgba(255, 0, 0, 0.8);
+}
+
+.image-count-info {
+  font-size: 12px;
+  color: var(--gray_500);
+  margin-top: 4px;
 }
 
 .ai-card-header .ai-card-btn,

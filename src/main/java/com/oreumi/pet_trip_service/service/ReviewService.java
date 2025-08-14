@@ -97,6 +97,8 @@ public class ReviewService {
             res.setRating(saved.getRating());
             res.setContent(saved.getContent());
             res.setCreatedAt(saved.getCreatedAt());
+            res.setNickname(user.getNickname());
+            res.setUserProfileImageUrl(user.getProfileImg());
             res.setImages(finalImageUrls);
             res.setPetInfos(petInfos);
             return res;
@@ -149,6 +151,8 @@ public class ReviewService {
             d.setRating(r.getRating());
             d.setContent(r.getContent());
             d.setCreatedAt(r.getCreatedAt());
+            d.setNickname(r.getUser() != null ? r.getUser().getNickname() : null);
+            d.setUserProfileImageUrl(r.getUser() != null ? r.getUser().getProfileImg() : null);
             d.setImages(imgs);
             d.setPetInfos(pets);
             return d;
@@ -177,6 +181,7 @@ public class ReviewService {
                     dto.setCreatedAt(r.getCreatedAt());
 
                     dto.setNickname(r.getUser().getNickname());
+                    dto.setUserProfileImageUrl(r.getUser().getProfileImg());
 
                     dto.setImages(
                             r.getImages().stream()
