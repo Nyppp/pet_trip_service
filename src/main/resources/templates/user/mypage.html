@@ -48,7 +48,7 @@
               />
               <div class="profile-image-overlay">
                 <label for="profileImageInput" class="profile-image-upload-btn">이미지 수정</label>
-                <input type="file" id="profileImageInput" accept="image/*" style="display: none" />
+                <input type="file" id="profileImageInput" accept="image/*" class="sr-only" />
               </div>
             </div>
           </div>
@@ -77,13 +77,12 @@
                 type="email"
                 id="email"
                 name="email"
-                class="input-field"
+                class="input-field readonly-field"
                 th:value="${user?.email != null ? user.email : 'example@pettrip.com'}"
                 placeholder="이메일을 입력하세요"
                 readonly
-                style="background-color: #f5f5f5; cursor: not-allowed"
               />
-              <button type="button" class="clear-button" onclick="clearInput('email')" style="display: none">×</button>
+              <button type="button" class="clear-button sr-only" onclick="clearInput('email')">×</button>
             </div>
           </div>
 

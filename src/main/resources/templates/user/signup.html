@@ -23,22 +23,22 @@
       <form th:action="@{/signup}" th:object="${userSignupDto}" method="post">
         <!-- 이메일 -->
         <div class="form-group">
-          <label for="email" class="form-label">이메일 <span style="color: red">*</span></label>
+          <label for="email" class="form-label">이메일 <span class="text-red">*</span></label>
           <input type="email" th:field="*{email}" id="email" class="form-input" placeholder="example@email.com" required />
           <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
         </div>
 
         <!-- 비밀번호 -->
         <div class="form-group">
-          <label for="password" class="form-label">비밀번호 <span style="color: red">*</span></label>
+          <label for="password" class="form-label">비밀번호 <span class="text-red">*</span></label>
           <input type="password" th:field="*{password}" id="password" class="form-input" placeholder="8-20자, 영문/숫자/특수문자 각 1개 이상" required />
           <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></span>
-          <small style="color: #666; font-size: 11px"> ※ 사용불가 특수문자: &lt; &gt; / \ _ </small>
+          <small class="text-gray"> ※ 사용불가 특수문자: &lt; &gt; / \ _ </small>
         </div>
 
         <!-- 비밀번호 확인 -->
         <div class="form-group">
-          <label for="passwordConfirm" class="form-label">비밀번호 확인 <span style="color: red">*</span></label>
+          <label for="passwordConfirm" class="form-label">비밀번호 확인 <span class="text-red">*</span></label>
           <input type="password" th:field="*{passwordConfirm}" id="passwordConfirm" class="form-input" placeholder="비밀번호를 다시 입력하세요" required />
           <span id="password-match-result" class="error-message"></span>
           <span th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}" class="error-message"></span>
@@ -46,7 +46,7 @@
 
         <!-- 닉네임 -->
         <div class="form-group">
-          <label for="nickname" class="form-label">닉네임 <span style="color: red">*</span></label>
+          <label for="nickname" class="form-label">닉네임 <span class="text-red">*</span></label>
           <input type="text" th:field="*{nickname}" id="nickname" class="form-input" placeholder="2-20자, 한글/영문/숫자만 가능" required />
           <span th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" class="error-message"></span>
         </div>

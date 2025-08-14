@@ -64,3 +64,21 @@ li,
 ol {
   list-style-type: none;
 }
+
+/* 유틸리티 클래스들 */
+.sr-only {
+  display: none;
+}
+
+.d-inline {
+  display: inline;
+}
+
+.text-red {
+  color: red;
+}
+
+.text-gray {
+  color: #666;
+  font-size: 11px;
+}

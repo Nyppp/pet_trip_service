@@ -625,6 +625,27 @@ textarea:focus {
   margin-top: 4px;
 }
 
+/* place.css 전용 클래스들 */
+.flex-center {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pet-controls {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.review-image {
+  width: 240px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
 .ai-card-header .ai-card-btn,
 .section-header .ai-card-btn {
   width: auto !important;

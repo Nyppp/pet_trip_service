@@ -25,7 +25,7 @@
           <a sec:authorize="!isAuthenticated()" href="/login" class="btn btn-blue">로그인</a>
 
           <!-- 로그인한 경우 -->
-          <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" style="display: inline">
+          <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="d-inline">
             <button type="submit" class="btn btn-blue">로그아웃</button>
           </form>
 
