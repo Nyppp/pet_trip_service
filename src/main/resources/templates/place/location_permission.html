@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 주변 검색</title>
+    <script th:src="@{/scripts/locationPermission.js}"></script>
+    <link rel="stylesheet" href="/css/common/common.css">
+    <link rel="stylesheet" href="/css/location/locationPermission.css">
+</head>
+<body>
+<div th:replace="~{common/header :: siteHeader}"></div>
+<div class="text_permission">
+    <sapn>📍 위치 권한 확인 중입니다...</sapn>
+    <span>🚫 권한을 허용하지 않으실 경우, 위치 검색을 이용할 수 없습니다. 🚫</span>
+</div>
+</body>
+</html>

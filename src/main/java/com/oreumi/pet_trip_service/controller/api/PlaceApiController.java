@@ -1,8 +1,11 @@
 package com.oreumi.pet_trip_service.controller.api;
 
+import com.oreumi.pet_trip_service.DTO.PlaceDTO;
 import com.oreumi.pet_trip_service.model.Place;
 import com.oreumi.pet_trip_service.repository.PlaceRepository;
+import com.oreumi.pet_trip_service.service.PlaceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,9 +18,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PlaceApiController {
     private final PlaceRepository placeRepository;
+    private final PlaceService placeService;
 
     @GetMapping("/search")
     public List<Place> searchPlaces(@RequestParam("q") String keyword) {
         return placeRepository.findAllByNameContainingIgnoreCase(keyword);
+    }
+
+    @GetMapping("/places")
+    public ResponseEntity<List<PlaceDTO>> findAllPlaces(){
+        List<PlaceDTO> places =  placeService.findAllPlaces();
+        return ResponseEntity.ok(places);
     }
 }

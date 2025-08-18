@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -292,5 +293,11 @@ public enum Category {
         }
         String cat2Code = cat3Code.name().substring(0, 5); // ex) A0101
         return Category.valueOf(cat2Code);
+    }
+
+    public static Map<String, String> getCat1CodeDescriptionMap() {
+        return Arrays.stream(values())
+                .filter(c -> c.isLevel(1))
+                .collect(Collectors.toMap(Category::getCode, Category::getDescription));
     }
 }

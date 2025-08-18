@@ -49,3 +49,8 @@ alanApi:
   ai:
     client-id: ${ALAN_AI_CLIENT_ID}
     url: ${ALAN_AI_URL}
+
+google:
+  maps:
+    api-key: ${GOOGLE_MAPS_API_KEY:}
+    url: ${GOOGLE_MAPS_URL:}
