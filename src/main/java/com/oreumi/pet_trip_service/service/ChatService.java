@@ -119,7 +119,7 @@ public class ChatService {
         List<ChatDTO> items = page.getContent().stream()
                 .sorted(Comparator.comparing(Chat::getId))
                 .map(c-> new ChatDTO(
-                        c.isChatBot() ? "chatBot" : c.getSenderEmail(),
+                        c.isChatBot() ? "chatbot" : c.getSenderEmail(),
                         c.getContent(),
                         c.getCreatedAt()))
                 .toList();
@@ -132,5 +132,16 @@ public class ChatService {
         return new MessagePageDTO(items, nextCursor, page.hasNext());
     }
 
+    @Transactional
+    public void deleteAllMessages(Long roomId, String email) {
+        ChatRoom room = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다."));
 
+        // (선택) 권한 체크: 방 생성자이거나 관리자만 삭제 가능
+        if (!room.getUser().getEmail().equals(email)) {
+            throw new SecurityException("채팅방 대화 삭제 권한이 없습니다.");
+        }
+
+        chatRepository.deleteByChatRoomId(roomId);
+    }
 }
