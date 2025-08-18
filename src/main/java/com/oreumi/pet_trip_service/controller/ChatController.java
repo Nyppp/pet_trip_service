@@ -40,9 +40,6 @@ public class ChatController {
         return ResponseEntity.ok(Map.of("roomId", room.getId()));
     }
 
-
-
-
     // 채팅방 조회
     @GetMapping("/{roomId}")
     public String chatRoomFind(@PathVariable Long roomId) {
@@ -92,12 +89,16 @@ public class ChatController {
         return ResponseEntity.ok(botMessage);
     }
 
-
-
     // 채팅 삭제
-    @DeleteMapping("/messages/{messageId}")
-    public String chatDelete(@PathVariable Long messageId) {
-        return "";
-    }
+    @DeleteMapping("/{roomId}/messages")
+    public ResponseEntity<Void> chatDelete(
+            @PathVariable Long roomId,
+            Authentication authentication) {
+        String email = chatService.extractEmail(authentication);
 
+        // 해당 유저가 삭제권한 있는지 확인
+        chatService.deleteAllMessages(roomId, email);
+
+        return ResponseEntity.noContent().build();
+    }
 }
