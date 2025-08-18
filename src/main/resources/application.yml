@@ -40,7 +40,7 @@ spring:
     region:
       static: ap-northeast-2
     s3:
-      bucket: pet-trip-service
+      bucket: pet-trip-service-team1
 
 server:
   port: ${SERVER_PORT}
