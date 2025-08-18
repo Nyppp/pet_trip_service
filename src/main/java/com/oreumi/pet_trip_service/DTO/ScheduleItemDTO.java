@@ -22,6 +22,8 @@ public class ScheduleItemDTO {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long scheduleId;
     private Long placeId;
+
+    @NotBlank
     private String placeName;
     private String placeImgUrl;
     private LocalDateTime startTime;

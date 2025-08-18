@@ -52,6 +52,7 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleItem saveScheduleItem(Long scheduleId, ScheduleItemDTO scheduleItemDTO){
+
         ScheduleItem scheduleItem = new ScheduleItem();
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow();
 
