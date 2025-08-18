@@ -23,7 +23,6 @@ function initMap() {
       pos => {
         const center = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         map.setCenter(center);
-        new google.maps.Marker({ position: center, map, title: "현재 위치" });
         updateMarkersWithinBounds();
       },
       err => console.error("위치 불러오기 실패", err)
@@ -108,8 +107,8 @@ function showPlaceCard(place, marker) {
           <div class="category">${category}</div>
           <div class="addr">${addr}</div>
           <div class="meta">
-            <span>★ ${rating.toFixed(1)}</span>
-            <span>💛 ${liked}</span>
+            <span>⭐ ${rating.toFixed(1)}</span>
+            <img src="/images/heart_filled.svg" alt="찜" width="16" height="16" /><span>${liked}</span>
           </div>
         </div>
         <div class="actions">
