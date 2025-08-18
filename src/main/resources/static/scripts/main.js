@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function addMessageBubble(dto, opt = {}) {
     const div = document.createElement('div');
-    const isBot = dto.sender === 'chatbot';
+    const isBot = dto.sender === 'chatBot';
     div.classList.add('chat-message', isBot ? 'bot-message' : 'user-message');
     div.innerHTML = escapeHTML(dto.message).replace(/\n/g, '<br>');
 
@@ -90,7 +90,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const res = await fetch(`/chatrooms/${roomId}/messages?size=${PAGE_SIZE}`);
     const data = await res.json();
 
-    data.items.forEach(addMessageBubble);
+    [...(data.items || [])].reverse()
+           .forEach(msg => addMessageBubble(msg, { prepend: true }));
+
     chatBody.scrollTop = chatBody.scrollHeight;
 
     nextCursor = data.nextCursor;
@@ -151,10 +153,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 사용자 메시지 표시
-    const userMessage = document.createElement('div');
-    userMessage.classList.add('chat-message', 'user-message');
-    userMessage.innerHTML = escapeHTML(message).replace(/\n/g, '<br>');
-    chatBody.appendChild(userMessage);
+    addMessageBubble({ sender: 'user', message }, {});
+
     chatBody.scrollTop = chatBody.scrollHeight;
     input.value = '';
 
@@ -187,10 +187,10 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!res.ok) throw new Error(`응답 오류: ${res.status}`);
 
       const data = await res.json();
-      const botReply = document.createElement('div');
-      botReply.classList.add('chat-message', 'bot-message');
-      botReply.innerHTML = escapeHTML(data.message).replace(/\n/g, '<br>');
-      chatBody.appendChild(botReply);
+
+      // 챗봇 메세지 추가
+      addMessageBubble({ sender: 'chatbot', message: data.message}, {});
+
       chatBody.scrollTop = chatBody.scrollHeight;
 
     } catch (err) {

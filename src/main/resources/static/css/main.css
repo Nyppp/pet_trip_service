@@ -175,6 +175,9 @@ footer {
   padding: 1rem;
   background-color: #fafafa;
   overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
 }
 
 #chat-modal-input {
