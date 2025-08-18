@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" >
 <head>
     <meta charset="UTF-8" />
     <title>여행 스케줄 플래너</title>
@@ -30,7 +30,7 @@
 </div>
 
 <div class="footer">
-    <a th:href="@{/schedule}" class="add-location">스케쥴 리스트로 돌아가기</a>
+    <a th:href="@{/users/{userId}/schedules(userId=${userId})}" class="add-location">스케쥴 리스트로 돌아가기</a>
 </div>
 
 </body>

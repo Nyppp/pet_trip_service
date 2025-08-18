@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -136,7 +136,7 @@
       <section class="user-reviews">
         <div class="section-header">
           <h2>사용자 리뷰</h2>
-          <button id="open-review-modal" class="add-schedule-btn ai-card-btn" th:if="${!reviewedByMe}">리뷰작성</button>
+          <button id="open-review-modal" class="add-schedule-btn ai-card-btn" th:if="${!reviewedByMe}" sec:authorize="isAuthenticated()">리뷰작성</button>
 
           <span class="already-review" th:if="${reviewedByMe}" title="리뷰 작성 완료"> 리뷰 작성 완료 </span>
         </div>
