@@ -341,43 +341,61 @@
   margin-top: 8px;
 }
 
-/* 리뷰 삭제 버튼 스타일 */
+/* 리뷰 수정/삭제 버튼 스타일 */
 .review-actions {
   margin-left: auto;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.btn-edit-review {
+  background: transparent;
+  border: none;
+  color: var(--gray_500);
+  padding: 4px 0 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-weight: 400;
 }
 
 .btn-delete-review {
   background: transparent;
-  border: 1px solid #dc3545;
-  color: #dc3545;
-  padding: 6px 12px;
-  border-radius: 6px;
+  border: none;
+  color: var(--gray_500);
+  padding: 4px 8px 4px 0;
+  border-radius: 4px;
   font-size: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
+  transition: color 0.2s ease;
+  font-weight: 400;
 }
 
+.btn-edit-review:hover,
 .btn-delete-review:hover {
-  background: #dc3545;
-  color: white;
-  transform: translateY(-1px);
+  color: var(--gray_700);
 }
 
-.btn-delete-review:active {
-  transform: translateY(0);
-}
-
+.btn-edit-review:disabled,
 .btn-delete-review:disabled {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: not-allowed;
-  transform: none;
 }
 
+.btn-edit-review:disabled:hover,
 .btn-delete-review:disabled:hover {
-  background: transparent;
-  color: #dc3545;
+  color: var(--gray_500);
+}
+
+/* 수정/삭제 버튼 사이 분리선 */
+.btn-edit-review::after {
+  content: "|";
+  color: var(--gray_300);
+  margin: 0 12px;
+  font-weight: 300;
 }
 
 .like-box {

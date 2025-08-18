@@ -32,6 +32,25 @@ public class ReviewApiController {
         return ResponseEntity.ok(reviewService.listByPlace(placeId));
     }
 
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<?> update(@PathVariable Long placeId,
+                                   @PathVariable Long reviewId,
+                                   @AuthenticationPrincipal CustomUserPrincipal principal,
+                                   @Valid @RequestBody ReviewDTO dto) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body("로그인이 필요합니다.");
+        }
+        
+        try {
+            ReviewDTO updatedReview = reviewService.updateReview(reviewId, principal.getUser().getId(), dto);
+            return ResponseEntity.ok(updatedReview);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("리뷰 수정 중 오류가 발생했습니다.");
+        }
+    }
+
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<?> delete(@PathVariable Long placeId,
                                    @PathVariable Long reviewId,

@@ -173,9 +173,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 리뷰 삭제 기능
+  // 리뷰 수정/삭제 기능
   document.addEventListener("click", function (e) {
-    if (e.target.classList.contains("btn-delete-review")) {
+    if (e.target.classList.contains("btn-edit-review")) {
+      const reviewId = e.target.dataset.reviewId;
+      const placeId = e.target.dataset.placeId;
+      openEditReviewModal(reviewId, placeId);
+    } else if (e.target.classList.contains("btn-delete-review")) {
       const reviewId = e.target.dataset.reviewId;
       const placeId = e.target.dataset.placeId;
 
@@ -220,5 +224,110 @@ document.addEventListener("DOMContentLoaded", () => {
       buttonElement.disabled = false;
       buttonElement.textContent = "삭제";
     }
+  }
+
+  // 리뷰 수정 모달 열기 함수
+  async function openEditReviewModal(reviewId, placeId) {
+    try {
+      // 기존 리뷰 데이터 가져오기
+      const response = await fetch(`/api/places/${placeId}/reviews`);
+      const reviews = await response.json();
+      const reviewToEdit = reviews.find((r) => r.id == reviewId);
+
+      if (!reviewToEdit) {
+        alert("리뷰 정보를 불러올 수 없습니다.");
+        return;
+      }
+
+      // 모달 제목 및 버튼 텍스트 변경
+      const modal = document.getElementById("review-modal");
+      const modalTitle = document.getElementById("review-modal-title");
+      const submitButton = document.getElementById("submit-review");
+
+      modalTitle.textContent = "리뷰 수정";
+      submitButton.textContent = "수정";
+
+      // 폼에 기존 데이터 채우기
+      populateReviewForm(reviewToEdit);
+
+      // 모달 표시
+      modal.classList.remove("hidden");
+      modal.setAttribute("aria-hidden", "false");
+
+      // 수정 모드 플래그 설정
+      modal.dataset.editMode = "true";
+      modal.dataset.reviewId = reviewId;
+    } catch (error) {
+      console.error("리뷰 데이터 로딩 오류:", error);
+      alert("리뷰 정보를 불러오는 중 오류가 발생했습니다.");
+    }
+  }
+
+  // 폼에 기존 리뷰 데이터 채우기
+  function populateReviewForm(review) {
+    // 별점 설정
+    const ratingStars = document.getElementById("rating-stars");
+    ratingStars.setAttribute("data-value", review.rating);
+    updateStarsDisplay(review.rating);
+
+    // 리뷰 내용 설정
+    const contentTextarea = document.getElementById("review-content");
+    contentTextarea.value = review.content || "";
+    updateCharCount();
+
+    // 반려동물 정보 설정
+    const petList = document.getElementById("pet-list");
+    petList.innerHTML = ""; // 기존 펫 정보 초기화
+
+    review.petInfos.forEach((pet) => {
+      addPetItem(pet.type, pet.breed, pet.weightKg);
+    });
+
+    // 이미지는 기존 구현에 따라 처리 (Base64로 다시 업로드하는 방식)
+    // 기존 이미지 URL을 표시하거나 새로운 이미지 업로드를 위해 초기화
+    const imagesPreview = document.getElementById("images-preview");
+    imagesPreview.innerHTML = "";
+  }
+
+  // 별점 표시 업데이트 함수
+  function updateStarsDisplay(rating) {
+    const stars = document.querySelectorAll("#rating-stars .star");
+    const full = Math.floor(rating);
+    const half = rating - full >= 0.5 ? 1 : 0;
+
+    stars.forEach((star, index) => {
+      star.classList.remove("active", "half");
+      if (index < full) {
+        star.classList.add("active");
+      } else if (index === full && half) {
+        star.classList.add("half");
+      }
+    });
+  }
+
+  // 글자 수 업데이트 함수 (기존에 있다면 생략)
+  function updateCharCount() {
+    const contentTextarea = document.getElementById("review-content");
+    const charCountEl = document.getElementById("content-len");
+    if (contentTextarea && charCountEl) {
+      charCountEl.textContent = contentTextarea.value.length;
+    }
+  }
+
+  // 펫 아이템 추가 함수 (reviewCreate.js에 있는 함수와 동일하게 구현)
+  function addPetItem(type = "개", breed = "", weight = "") {
+    const petList = document.getElementById("pet-list");
+    const template = document.getElementById("pet-item-template");
+    const petItem = template.content.cloneNode(true);
+
+    const petTypeSelect = petItem.querySelector(".pet-type");
+    const petBreedInput = petItem.querySelector(".pet-breed");
+    const petWeightInput = petItem.querySelector(".pet-weight");
+
+    petTypeSelect.value = type;
+    petBreedInput.value = breed;
+    petWeightInput.value = weight;
+
+    petList.appendChild(petItem);
   }
 });
