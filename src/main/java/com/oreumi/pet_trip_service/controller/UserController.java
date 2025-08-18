@@ -2,11 +2,13 @@ package com.oreumi.pet_trip_service.controller;
 
 import com.oreumi.pet_trip_service.DTO.ImageResponseDTO;
 import com.oreumi.pet_trip_service.DTO.PlaceDTO;
+import com.oreumi.pet_trip_service.DTO.ReviewDTO;
 import com.oreumi.pet_trip_service.DTO.UserSignupDTO;
 import com.oreumi.pet_trip_service.DTO.UserUpdateDTO;
 import com.oreumi.pet_trip_service.model.User;
 import com.oreumi.pet_trip_service.security.CustomUserPrincipal;
 import com.oreumi.pet_trip_service.service.LikeService;
+import com.oreumi.pet_trip_service.service.ReviewService;
 import com.oreumi.pet_trip_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,7 @@ public class UserController {
 
     private final UserService userService;
     private final LikeService likeService;
+    private final ReviewService reviewService;
 
 
     /**
@@ -134,7 +137,24 @@ public class UserController {
         return "user/mypage_likes";
     }
 
+    /**
+     * 내가 쓴 리뷰 목록 페이지 표시
+     */
+    @GetMapping("/mypage/reviews")
+    public String mypageReviews(Model model, @AuthenticationPrincipal CustomUserPrincipal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
 
+        // 현재 로그인한 사용자의 리뷰 목록 조회
+        Long userId = principal.getUser().getId();
+        List<ReviewDTO> userReviews = reviewService.getReviewsByUser(userId);
+
+        model.addAttribute("userReviews", userReviews);
+        model.addAttribute("user", principal.getUser());
+
+        return "user/mypage_reviews";
+    }
 
     /**
      * 사용자 정보 통합 업데이트 (이미지 + 닉네임)

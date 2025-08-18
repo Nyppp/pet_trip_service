@@ -68,4 +68,33 @@ public class ReviewApiController {
             return ResponseEntity.status(500).body("리뷰 삭제 중 오류가 발생했습니다.");
         }
     }
+
+    // 사용자별 리뷰 조회 (마이페이지용)
+    @GetMapping("/user")
+    public ResponseEntity<List<ReviewDTO>> getUserReviews(@AuthenticationPrincipal CustomUserPrincipal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).build();
+        }
+        
+        List<ReviewDTO> userReviews = reviewService.getReviewsByUser(principal.getUser().getId());
+        return ResponseEntity.ok(userReviews);
+    }
+
+    // 사용자별 리뷰 삭제 (마이페이지용)
+    @DeleteMapping("/user/{reviewId}")
+    public ResponseEntity<?> deleteUserReview(@PathVariable Long reviewId,
+                                             @AuthenticationPrincipal CustomUserPrincipal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body("로그인이 필요합니다.");
+        }
+        
+        try {
+            reviewService.deleteReview(reviewId, principal.getUser().getId());
+            return ResponseEntity.ok().body("리뷰가 성공적으로 삭제되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("리뷰 삭제 중 오류가 발생했습니다.");
+        }
+    }
 }

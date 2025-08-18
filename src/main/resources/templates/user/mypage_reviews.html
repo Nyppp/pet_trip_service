@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>내가 쓴 리뷰 - PetTrip</title>
+    <link rel="stylesheet" th:href="@{/css/common/common.css}" />
+    <link rel="stylesheet" th:href="@{/css/mypage.css}" />
+  </head>
+  <body>
+    <!-- 헤더 포함 -->
+    <div th:replace="~{common/header :: siteHeader}"></div>
+
+    <!-- 마이페이지 메인 컨테이너 -->
+    <div class="mypage-container">
+      <!-- 왼쪽 사이드바 -->
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="/mypage">내 정보</a>
+            </li>
+            <li>
+              <a href="/mypage/likes">찜한 장소</a>
+            </li>
+            <li>
+              <a href="/mypage/reviews" class="active">내가 쓴 리뷰</a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- 메인 콘텐츠 영역 -->
+      <main class="main-content">
+        <h1 class="content-title">내가 쓴 리뷰</h1>
+
+        <!-- 리뷰가 없을 때 -->
+        <div th:if="${userReviews == null or userReviews.isEmpty()}" class="empty-state">
+          <div class="empty-icon">📝</div>
+          <h2>작성한 리뷰가 없습니다</h2>
+          <p>반려동물과 함께 다녀온 장소에 리뷰를 남겨보세요!</p>
+          <a href="/" class="cta-button">장소 찾아보기</a>
+        </div>
+
+        <!-- 리뷰 목록 -->
+        <div th:if="${userReviews != null and !userReviews.isEmpty()}" class="reviews-section">
+          <div class="reviews-stats">
+            <p class="review-count">총 <span th:text="${#lists.size(userReviews)}">0</span>개의 리뷰</p>
+          </div>
+
+          <div class="reviews-list">
+            <div th:each="review : ${userReviews}" class="review-card">
+              <!-- 리뷰 헤더 -->
+              <div class="review-header">
+                <div class="review-place-info">
+                  <a th:href="|/place/${review.placeId}|" class="place-name-link" th:text="${review.placeName}">장소명</a>
+                  <div class="review-meta">
+                    <div class="review-rating">
+                      <div class="stars" th:style="|--percent: ${(review.rating != null ? review.rating : 0) * 20}%|"></div>
+                      <span class="rating-text" th:text="${review.rating != null ? #numbers.formatDecimal(review.rating, 1, 1) : '0.0'}">0.0</span>
+                    </div>
+                    <span class="review-date" th:text="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}">2024.01.01</span>
+                  </div>
+                </div>
+
+                <!-- 리뷰 액션 버튼들 -->
+                <div class="review-actions">
+                  <button type="button" class="btn-edit-review edit-review-btn" th:data-review-id="${review.id}">수정</button>
+                  <button type="button" class="btn-delete-review delete-review-btn" th:data-review-id="${review.id}">삭제</button>
+                </div>
+              </div>
+
+              <!-- 리뷰 내용 -->
+              <div class="review-content">
+                <p class="review-text" th:text="${review.content}">리뷰 내용</p>
+              </div>
+
+              <!-- 리뷰 이미지들 -->
+              <div th:if="${review.images != null and !review.images.isEmpty()}" class="review-images">
+                <div class="images-grid">
+                  <div th:each="image, iterStat : ${review.images}" th:if="${iterStat.index < 4}" class="image-item">
+                    <img th:src="${image}" th:alt="'리뷰 이미지 ' + ${iterStat.index + 1}" alt="리뷰 이미지" onerror="this.style.display='none';" />
+                    <!-- 4장 이상일 때 +N 표시 -->
+                    <div th:if="${iterStat.index == 3 and #lists.size(review.images) > 4}" class="more-images-overlay">
+                      <span th:text="'+' + ${#lists.size(review.images) - 4}">+2</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 반려동물 정보 -->
+              <div th:if="${review.petInfos != null and !review.petInfos.isEmpty()}" class="pet-info-section">
+                <h4 class="pet-info-title">함께한 반려동물</h4>
+                <div class="pet-tags">
+                  <span th:each="pet : ${review.petInfos}" class="pet-tag" th:text="${pet.type} + ' · ' + ${pet.breed} + ' · ' + ${pet.weightKg} + 'kg'">
+                    강아지 · 골든리트리버 · 25kg
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- JavaScript 파일 포함 -->
+    <script th:src="@{/scripts/mypage.js}"></script>
+    <script th:src="@{/scripts/mypageReviews.js}"></script>
+  </body>
+</html>
