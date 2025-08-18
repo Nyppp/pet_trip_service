@@ -324,6 +324,7 @@
   gap: 8px;
   font-size: 14px;
   color: var(--gray_600);
+  flex: 1;
 }
 .username {
   font-weight: 700;
@@ -338,6 +339,45 @@
   display: flex;
   gap: 8px;
   margin-top: 8px;
+}
+
+/* 리뷰 삭제 버튼 스타일 */
+.review-actions {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.btn-delete-review {
+  background: transparent;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.btn-delete-review:hover {
+  background: #dc3545;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-delete-review:active {
+  transform: translateY(0);
+}
+
+.btn-delete-review:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-delete-review:disabled:hover {
+  background: transparent;
+  color: #dc3545;
 }
 
 .like-box {

@@ -199,4 +199,44 @@ public class ReviewService {
                 })
                 .toList();
     }
+
+    /**
+     * 리뷰 삭제
+     * @param reviewId 삭제할 리뷰 ID
+     * @param userId 요청하는 사용자 ID (권한 검증용)
+     */
+    @Transactional
+    public void deleteReview(Long reviewId, Long userId) {
+        // 1. 리뷰 존재 여부 및 권한 확인
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+        
+        // 2. 작성자 본인만 삭제 가능하도록 권한 검증
+        if (!review.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("본인이 작성한 리뷰만 삭제할 수 있습니다.");
+        }
+        
+        // 3. S3에 업로드된 이미지들 삭제
+        List<ReviewImg> images = reviewImgRepository.findAllByReviewId(reviewId);
+        for (ReviewImg img : images) {
+            try {
+                String s3Key = s3Service.extractS3KeyFromUrl(img.getImgURL());
+                if (s3Key != null) {
+                    s3Service.deleteFile(s3Key);
+                }
+            } catch (Exception e) {
+                // 이미지 삭제 실패는 로그만 남기고 계속 진행
+                System.err.println("이미지 삭제 실패: " + img.getImgURL() + ", 오류: " + e.getMessage());
+            }
+        }
+        
+        // 4. 장소 ID 저장 (평점 재계산용)
+        Long placeId = review.getPlace().getId();
+        
+        // 5. 데이터베이스에서 리뷰 삭제 (cascade로 연관 데이터도 자동 삭제)
+        reviewRepository.delete(review);
+        
+        // 6. 장소 평점 재계산
+        recomputeAndUpdatePlaceRating(placeId);
+    }
 }
