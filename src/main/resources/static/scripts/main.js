@@ -214,9 +214,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // 초기 상태
-  if (!modal.style.display) modal.style.display = 'none';
-
   // 초기화 버튼
   if (clearBtn) {
       clearBtn.addEventListener("click", async () => {
@@ -231,6 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
           chatBody.innerHTML = "";
         }
       });
-
-    }
+  }
+  // 초기 상태
+  if (!modal.style.display) modal.style.display = 'none';
 });
