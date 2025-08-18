@@ -7,12 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", handleDeleteReview);
   });
 
-  // 리뷰 수정 버튼 이벤트 리스너
-  const editButtons = document.querySelectorAll(".edit-review-btn");
-  editButtons.forEach((button) => {
-    button.addEventListener("click", handleEditReview);
-  });
-
   // 이미지 클릭 시 모달로 확대 보기
   const reviewImages = document.querySelectorAll(".review-images img");
   reviewImages.forEach((img) => {
@@ -72,7 +66,7 @@ function handleDeleteReview(event) {
         }, 300);
       }
 
-      showSuccessMessage("리뷰가 성공적으로 삭제되었습니다.");
+      alert("리뷰가 삭제되었습니다.");
     })
     .catch((error) => {
       console.error("Delete error:", error);
@@ -82,24 +76,6 @@ function handleDeleteReview(event) {
       event.target.disabled = false;
       event.target.textContent = "삭제";
     });
-}
-
-/**
- * 리뷰 수정 처리
- */
-function handleEditReview(event) {
-  const reviewId = event.target.getAttribute("data-review-id");
-  const reviewCard = event.target.closest(".review-card");
-  const placeId = reviewCard.querySelector(".place-name-link").getAttribute("href").split("/").pop();
-
-  if (!reviewId || !placeId) {
-    alert("리뷰 정보를 찾을 수 없습니다.");
-    return;
-  }
-
-  // 장소 상세 페이지로 이동하여 리뷰 수정
-  // 실제 구현에서는 리뷰 수정 모달이나 별도 페이지로 이동할 수 있습니다
-  window.location.href = `/place/${placeId}?editReview=${reviewId}`;
 }
 
 /**
@@ -142,50 +118,6 @@ function checkEmptyState() {
     const contentTitle = mainContent.querySelector(".content-title");
     contentTitle.insertAdjacentHTML("afterend", emptyStateHTML);
   }
-}
-/**
- * 성공 메시지 표시
- */
-function showSuccessMessage(message) {
-  // 간단한 토스트 메시지 구현
-  const toast = document.createElement("div");
-  toast.className = "toast-message";
-  toast.textContent = message;
-  toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: #28a745;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 6px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 1000;
-        font-size: 14px;
-        font-weight: 500;
-        opacity: 0;
-        transform: translateX(100%);
-        transition: all 0.3s ease;
-    `;
-
-  document.body.appendChild(toast);
-
-  // 애니메이션으로 표시
-  setTimeout(() => {
-    toast.style.opacity = "1";
-    toast.style.transform = "translateX(0)";
-  }, 100);
-
-  // 3초 후 제거
-  setTimeout(() => {
-    toast.style.opacity = "0";
-    toast.style.transform = "translateX(100%)";
-    setTimeout(() => {
-      if (toast.parentNode) {
-        toast.parentNode.removeChild(toast);
-      }
-    }, 300);
-  }, 3000);
 }
 
 /**

@@ -815,10 +815,6 @@
     padding-left: 12px;
   }
 
-  .review-actions {
-    align-self: flex-end;
-  }
-
   .review-meta {
     gap: 12px;
   }
