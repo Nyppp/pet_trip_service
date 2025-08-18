@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +25,32 @@ public class PlaceService {
     private final PlaceImgRepository placeImgRepository;
     private final ChatService chatService;
     private final ReviewRepository reviewRepository;
+
+    public List<PlaceDTO> findAllPlaces(){
+        List<PlaceDTO> dto = new ArrayList<>();
+
+
+        List<Place> places = placeRepository.findAll();
+        for (Place place : places){
+            PlaceDTO placeDTO = new PlaceDTO(place);
+            placeImgRepository.findFirstByPlaceIdAndMainImgTrue(placeDTO.getId())
+                    .map(placeImg -> {
+                        return placeDTO.getImageUrls().add(placeImg.getUrl());
+                    });
+            dto.add(placeDTO);
+        }
+        return dto;
+    }
+
+    public List<PlaceDTO> sortByRating(List<PlaceDTO> dto){
+        Collections.sort(dto, new Comparator<PlaceDTO>() {
+            @Override
+            public int compare(PlaceDTO o1, PlaceDTO o2) {
+                return Double.compare(o2.getRating(), o1.getRating());
+            }
+        });
+        return dto;
+    }
 
     public PlaceDTO getPlaceDetail(Long placeId) {
         Place place = placeRepository.findById(placeId)

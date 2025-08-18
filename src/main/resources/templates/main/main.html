@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <title>떠나개 - 반려동물 동반 여행 플랫폼</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
+
+
+    <style>
+
+    </style>
   </head>
   <body>
     <!-- 공통 헤더 포함 -->
@@ -14,154 +19,64 @@
       <div class="container">
         <select>
           <option value="all">전체</option>
-          <option value="32">숙박</option>
-          <option value="12">관광지</option>
-          <option value="14">문화시설</option>
-          <option value="15">축제공연행사</option>
-          <option value="28">레포츠</option>
-          <option value="38">쇼핑</option>
-          <option value="39">음식점</option>
+          <option th:each="cat : ${category.entrySet()}"
+                  th:value="${cat.key}"
+                  th:text="${cat.value}">
+
+          </option>
         </select>
         <input type="text" placeholder="검색어를 입력하세요" />
         <button>검색</button>
-        <button>내 주변 검색</button>
+        <a th:href="@{/location/permission}">지도로 검색</a>
       </div>
     </section>
 
     <!-- 본문: 인기 장소 등 -->
     <div class="main-content">
       <div class="container">
-        <h2 class="section-title">내 주변 인기 장소</h2>
-        <div class="place-list">
-          <div class="place-card">
-            <img src="/images/travel_image1.png" alt="장소 이미지" />
-            <p>고성 반비치</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/travel_image2.png" alt="장소 이미지" />
-            <p>썸머 댕댕 촌캉스</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/travel_image1.png" alt="장소 이미지" />
-            <p>고성 반비치</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/travel_image2.png" alt="장소 이미지" />
-            <p>썸머 댕댕 촌캉스</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/travel_image1.png" alt="장소 이미지" />
-            <p>고성 반비치</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/travel_image2.png" alt="장소 이미지" />
-            <p>썸머 댕댕 촌캉스</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/travel_image1.png" alt="장소 이미지" />
-            <p>고성 반비치</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/travel_image2.png" alt="장소 이미지" />
-            <p>썸머 댕댕 촌캉스</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/travel_image1.png" alt="장소 이미지" />
-            <p>고성 반비치</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/travel_image2.png" alt="장소 이미지" />
-            <p>썸머 댕댕 촌캉스</p>
-          </div>
-        </div>
+        <h2 class="section-title">지금 인기있는 장소</h2>
+        <div th:if="${places != null and !places.isEmpty()}" class="likes-section">
+          <div class="places-carousel">
+            <button class="carousel-btn prev" type="button" aria-label="이전">‹</button>
 
-        <h2 class="section-title">인기 숙박</h2>
-        <div class="place-list">
-          <!-- 숙박 카드 -->
-          <div class="place-card">
-            <img src="/images/accommodation_image1.png" alt="장소 이미지" />
-            <p>호텔</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/accommodation_image2.png" alt="장소 이미지" />
-            <p>펜션</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/accommodation_image1.png" alt="장소 이미지" />
-            <p>호텔</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/accommodation_image2.png" alt="장소 이미지" />
-            <p>펜션</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/accommodation_image1.png" alt="장소 이미지" />
-            <p>호텔</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/accommodation_image2.png" alt="장소 이미지" />
-            <p>펜션</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/accommodation_image1.png" alt="장소 이미지" />
-            <p>호텔</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/accommodation_image2.png" alt="장소 이미지" />
-            <p>펜션</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/accommodation_image1.png" alt="장소 이미지" />
-            <p>호텔</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/accommodation_image2.png" alt="장소 이미지" />
-            <p>펜션</p>
-          </div>
-        </div>
+            <div class="carousel-track" id="placesTrack">
+              <div th:each="place : ${places}" class="place-card">
+                <div class="place-image">
+                  <img th:if="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
+                       th:src="${place.imageUrls[0]}"
+                       th:alt="${place.name} + ' 이미지'"
+                       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                  <div th:if="${place.imageUrls == null or place.imageUrls.isEmpty()}" class="no-image-placeholder">
+                    <span>준비된 이미지가 없습니다</span>
+                  </div>
+                  <div class="no-image-placeholder" style="display:none">
+                    <span>이미지를 불러올 수 없습니다</span>
+                  </div>
+                </div>
 
-        <h2 class="section-title">인기 관광지</h2>
-        <div class="place-list">
-          <!-- 관광지 카드 -->
-          <div class="place-card">
-            <img src="/images/location_image1.png" alt="장소 이미지" />
-            <p>다낭</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/location_image2.png" alt="장소 이미지" />
-            <p>방콕</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/location_image1.png" alt="장소 이미지" />
-            <p>다낭</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/location_image2.png" alt="장소 이미지" />
-            <p>방콕</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/location_image1.png" alt="장소 이미지" />
-            <p>다낭</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/location_image2.png" alt="장소 이미지" />
-            <p>방콕</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/location_image1.png" alt="장소 이미지" />
-            <p>다낭</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/location_image2.png" alt="장소 이미지" />
-            <p>방콕</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/location_image1.png" alt="장소 이미지" />
-            <p>다낭</p>
-          </div>
-          <div class="place-card">
-            <img src="/images/location_image2.png" alt="장소 이미지" />
-            <p>방콕</p>
+                <div class="place-info">
+                  <h3 class="place-name" th:text="${place.name}">장소 이름</h3>
+                  <p class="place-category" th:text="${place.categoryName}">카테고리</p>
+                  <p class="place-address" th:text="${place.address}">주소</p>
+                  <div class="place-meta">
+                    <div class="rating">
+                      <div class="stars" th:style="|--percent: ${(place.rating != null ? place.rating : 0) * 20}%|"></div>
+                      <span class="rating-text" th:text="${place.rating != null ? #numbers.formatDecimal(place.rating, 1, 1) : '0.0'}">0.0</span>
+                    </div>
+                    <div class="like-count">
+                      <img src="/images/heart_filled.svg" alt="찜" width="16" height="16" />
+                      <span th:text="${place.liked}">0</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="place-actions">
+                  <a th:href="|/place/${place.id}|" class="view-detail-btn">상세보기</a>
+                </div>
+              </div>
+            </div>
+
+            <button class="carousel-btn next" type="button" aria-label="다음">›</button>
           </div>
         </div>
       </div>
@@ -199,5 +114,9 @@
     </footer>
 
     <script src="/scripts/main.js"></script>
+    <script src="/scripts/mainFront.js"></script>
+    <script>
+
+    </script>
   </body>
 </html>

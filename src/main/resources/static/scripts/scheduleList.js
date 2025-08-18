@@ -79,16 +79,6 @@ document.addEventListener("DOMContentLoaded", () =>{
                   selectButton.className = "select_button";
                   selectButton.href = `/users/${userId}/schedules/${schedule.id}/items/new?placeId=${encodeURIComponent(placeId)}`;
                   actionDiv.appendChild(selectButton);
-
-                  // (선택) 선택 모드에서는 제목 클릭도 선택 동작으로 바꾸고 싶다면:
-                  // titleLink.addEventListener("click", (e) => {
-                  //   e.preventDefault();
-                  //   window.location.href = selectButton.href;
-                  // });
-
-                  // (선택) 혼란 줄이려면 수정/삭제 숨기기
-                  // updateButton.style.display = "none";
-                  // deleteButton.style.display = "none";
             }else{
                 actionDiv.appendChild(updateButton);
                 actionDiv.appendChild(deleteButton);
