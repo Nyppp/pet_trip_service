@@ -772,8 +772,9 @@ textarea:focus {
   vertical-align: middle;
 }
 
-/* ===== Buttons (공통) ===== */
-.btn {
+/* ===== Buttons (장소 페이지 전용) ===== */
+/* 장소 페이지 전용 버튼 클래스 사용 */
+.place-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -785,41 +786,41 @@ textarea:focus {
   cursor: pointer;
   transition: background 0.15s ease, filter 0.15s ease, border-color 0.15s ease;
 }
-.btn:disabled {
+.place-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* 메인(오렌지) / 서브(회색) / 아웃라인 */
-.btn-primary {
+.place-btn-primary {
   background: var(--orange_main);
   color: #fff;
   border-color: var(--orange_main);
 }
-.btn-primary:hover {
+.place-btn-primary:hover {
   filter: brightness(0.95);
 }
 
-.btn-secondary {
+.place-btn-secondary {
   background: #f2f3f5;
   color: var(--black_main);
   border-color: #e5e7eb;
 }
-.btn-secondary:hover {
+.place-btn-secondary:hover {
   background: #e9ebef;
 }
 
-.btn-outline {
+.place-btn-outline {
   background: #fff;
   color: var(--orange_main);
   border-color: var(--orange_main);
 }
-.btn-outline:hover {
+.place-btn-outline:hover {
   background: rgba(255, 122, 0, 0.06);
 }
 
 /* 작은 버튼(헤더용) – 업데이트/리뷰작성에 사용 */
-.btn-sm {
+.place-btn-sm {
   height: 32px;
   padding: 0 10px;
   font-size: 13px;
