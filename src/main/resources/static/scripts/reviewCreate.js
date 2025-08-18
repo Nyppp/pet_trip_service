@@ -23,14 +23,28 @@ document.addEventListener("DOMContentLoaded", () => {
     if (show) {
       contentEl?.focus();
     } else {
-      // 모달 닫을 때 메모리 정리
+      // 모달 닫을 때 메모리 정리 및 수정 모드 초기화
       cleanupObjectUrls();
       if (imagesPreview) {
         imagesPreview.innerHTML = "";
       }
       updateImageUploadButton();
+      resetModalToCreateMode();
     }
   };
+
+  // 모달을 생성 모드로 초기화하는 함수
+  function resetModalToCreateMode() {
+    const modalTitle = document.getElementById("review-modal-title");
+    const submitButton = document.getElementById("submit-review");
+
+    if (modalTitle) modalTitle.textContent = "리뷰 작성";
+    if (submitButton) submitButton.textContent = "등록";
+
+    // 수정 모드 플래그 제거
+    delete modal.dataset.editMode;
+    delete modal.dataset.reviewId;
+  }
   openBtn?.addEventListener("click", () => toggleModal(true));
   closeBtn?.addEventListener("click", () => toggleModal(false));
   cancelBtn?.addEventListener("click", () => toggleModal(false));
@@ -360,27 +374,43 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const res = await fetch(`/api/places/${placeId}/reviews`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
-        body: JSON.stringify(payload),
-      });
+      // 수정 모드인지 확인
+      const isEditMode = modal.dataset.editMode === "true";
+      const reviewId = modal.dataset.reviewId;
+
+      let res;
+      if (isEditMode && reviewId) {
+        // 수정 API 호출
+        res = await fetch(`/api/places/${placeId}/reviews/${reviewId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        // 생성 API 호출
+        res = await fetch(`/api/places/${placeId}/reviews`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+          body: JSON.stringify(payload),
+        });
+      }
+
       if (res.status === 401) {
         alert("로그인이 필요합니다.");
         return;
       }
       if (!res.ok) {
         const errorData = await res.json().catch(() => null);
-        const errorMessage = errorData?.message || "리뷰 등록에 실패했습니다.";
+        const errorMessage = errorData?.message || (isEditMode ? "리뷰 수정에 실패했습니다." : "리뷰 등록에 실패했습니다.");
         throw new Error(errorMessage);
       }
 
       await res.json();
       toggleModal(false);
       resetForm();
-      alert("리뷰가 등록되었어요! 😊");
+      alert(isEditMode ? "리뷰가 수정되었어요! 😊" : "리뷰가 등록되었어요! 😊");
 
-      // 페이지 새로고침으로 새 리뷰 표시
+      // 페이지 새로고침으로 변경사항 표시
       window.location.reload();
     } catch (err) {
       console.error(err);
@@ -388,8 +418,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       // 버튼 상태 복원
       const submitBtn = form.querySelector('button[type="submit"]');
+      const isEditMode = modal.dataset.editMode === "true";
       submitBtn.disabled = false;
-      submitBtn.textContent = "등록";
+      submitBtn.textContent = isEditMode ? "수정" : "등록";
     }
   });
 

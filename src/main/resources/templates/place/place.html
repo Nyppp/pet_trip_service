@@ -157,6 +157,12 @@
 
               <span class="review-date" th:text="${#temporals.format(r.createdAt, 'yyyy.MM.dd')}">2025.08.13</span>
             </div>
+
+            <!-- 수정/삭제 버튼 추가 (본인 리뷰인 경우에만 표시) -->
+            <div class="review-actions" th:if="${userId != null and userId == r.userId}">
+              <button type="button" class="btn-edit-review" th:data-review-id="${r.id}" th:data-place-id="${place.id}" aria-label="리뷰 수정">수정</button>
+              <button type="button" class="btn-delete-review" th:data-review-id="${r.id}" th:data-place-id="${place.id}" aria-label="리뷰 삭제">삭제</button>
+            </div>
           </div>
 
           <div class="review-sub">
@@ -223,7 +229,7 @@
               </div>
 
               <div class="pet-controls">
-                <button type="button" id="add-pet" class="btn btn-outline btn-sm" data-max="5">+ 반려동물 정보 추가</button>
+                <button type="button" id="add-pet" class="place-btn place-btn-outline place-btn-sm" data-max="5">+ 반려동물 정보 추가</button>
                 <small class="hint">* 최소 1개, 최대 5개까지 추가할 수 있어요.</small>
               </div>
             </div>
@@ -242,8 +248,8 @@
             </div>
 
             <div class="modal-actions">
-              <button type="button" id="cancel-review" class="btn btn-secondary">취소</button>
-              <button type="submit" class="btn btn-primary">등록</button>
+              <button type="button" id="cancel-review" class="place-btn place-btn-secondary">취소</button>
+              <button type="submit" id="submit-review" class="place-btn place-btn-primary">등록</button>
             </div>
           </form>
         </div>

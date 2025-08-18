@@ -324,6 +324,7 @@
   gap: 8px;
   font-size: 14px;
   color: var(--gray_600);
+  flex: 1;
 }
 .username {
   font-weight: 700;
@@ -338,6 +339,63 @@
   display: flex;
   gap: 8px;
   margin-top: 8px;
+}
+
+/* 리뷰 수정/삭제 버튼 스타일 */
+.review-actions {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.btn-edit-review {
+  background: transparent;
+  border: none;
+  color: var(--gray_500);
+  padding: 4px 0 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-weight: 400;
+}
+
+.btn-delete-review {
+  background: transparent;
+  border: none;
+  color: var(--gray_500);
+  padding: 4px 8px 4px 0;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-weight: 400;
+}
+
+.btn-edit-review:hover,
+.btn-delete-review:hover {
+  color: var(--gray_700);
+}
+
+.btn-edit-review:disabled,
+.btn-delete-review:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-edit-review:disabled:hover,
+.btn-delete-review:disabled:hover {
+  color: var(--gray_500);
+}
+
+/* 수정/삭제 버튼 사이 분리선 */
+.btn-edit-review::after {
+  content: "|";
+  color: var(--gray_300);
+  margin: 0 12px;
+  font-weight: 300;
 }
 
 .like-box {
@@ -714,8 +772,9 @@ textarea:focus {
   vertical-align: middle;
 }
 
-/* ===== Buttons (공통) ===== */
-.btn {
+/* ===== Buttons (장소 페이지 전용) ===== */
+/* 장소 페이지 전용 버튼 클래스 사용 */
+.place-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -727,41 +786,41 @@ textarea:focus {
   cursor: pointer;
   transition: background 0.15s ease, filter 0.15s ease, border-color 0.15s ease;
 }
-.btn:disabled {
+.place-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* 메인(오렌지) / 서브(회색) / 아웃라인 */
-.btn-primary {
+.place-btn-primary {
   background: var(--orange_main);
   color: #fff;
   border-color: var(--orange_main);
 }
-.btn-primary:hover {
+.place-btn-primary:hover {
   filter: brightness(0.95);
 }
 
-.btn-secondary {
+.place-btn-secondary {
   background: #f2f3f5;
   color: var(--black_main);
   border-color: #e5e7eb;
 }
-.btn-secondary:hover {
+.place-btn-secondary:hover {
   background: #e9ebef;
 }
 
-.btn-outline {
+.place-btn-outline {
   background: #fff;
   color: var(--orange_main);
   border-color: var(--orange_main);
 }
-.btn-outline:hover {
+.place-btn-outline:hover {
   background: rgba(255, 122, 0, 0.06);
 }
 
 /* 작은 버튼(헤더용) – 업데이트/리뷰작성에 사용 */
-.btn-sm {
+.place-btn-sm {
   height: 32px;
   padding: 0 10px;
   font-size: 13px;
