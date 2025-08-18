@@ -1,0 +1,33 @@
+.place-card-panel {
+  max-width: 1200px;
+  margin: 12px auto 0;
+  padding: 0 16px;
+}
+.place-card-panel.hidden { display:none; }
+
+.place-card {
+  display: grid;
+  grid-template-columns: 220px 1fr auto;
+  gap: 16px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+.place-card .thumb {
+  width: 100%; height: 160px; object-fit: cover; background:#f3f4f6;
+}
+.place-card .body { padding: 12px 0; }
+.place-card .title { font-size: 1.1rem; font-weight: 700; margin: 0 0 6px; }
+.place-card .category { color:#ff7a59; font-weight:600; margin: 0 0 4px; }
+.place-card .addr { color:#6b7280; margin: 0 0 8px; }
+.place-card .meta { display:flex; gap:12px; align-items:center; color:#6b7280; }
+.place-card .actions { display:flex; align-items:center; padding: 0 12px; }
+.place-card .btn {
+  background:#2c5b7f; color:#fff; border:none; padding:10px 16px;
+  border-radius:10px; font-weight:700; cursor:pointer;
+}
+.place-card .close {
+  position:absolute; top:8px; right:12px; cursor:pointer; font-size:18px; color:#6b7280;
+}
+.place-card-wrap { position: relative; }

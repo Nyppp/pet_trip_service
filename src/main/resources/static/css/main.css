@@ -61,7 +61,7 @@ footer {
   border: 1px solid var(--color-border);
   border-radius: 4px;
 }
-.search-bar button {
+.search-bar button, .search-bar a {
   background: var(--color-secondary);
   color: white;
   border: none;

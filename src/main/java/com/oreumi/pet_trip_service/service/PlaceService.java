@@ -37,8 +37,6 @@ public class PlaceService {
                     .map(placeImg -> {
                         return placeDTO.getImageUrls().add(placeImg.getUrl());
                     });
-
-
             dto.add(placeDTO);
         }
         return dto;

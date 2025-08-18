@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 주변 검색</title>
+    <script th:src="|${googleMapAPIUrl}?key=${googleMapAPIKey}&libraries=places,geometry|"
+            defer></script>
+    <script th:src="@{/scripts/locationSearch.js}" defer></script>
+    <link rel="stylesheet" href="/css/common/common.css">
+    <link rel="stylesheet" href="/css/location/locationSearch.css">
+</head>
+<body>
+<div th:replace="~{common/header :: siteHeader}"></div>
+
+<div id="map" style="width:100%; height:400px;"></div>
+<div id="placeCardPanel" class="place-card-panel hidden"></div>
+</body>
+</html>
