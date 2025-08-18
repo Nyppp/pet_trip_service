@@ -5,8 +5,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const toggleBtn = document.querySelector('#chat-toggle-btn button');
   const modal = document.querySelector('#chat-modal');
   const chatBody = document.querySelector('#chat-modal-body');
+  const clearBtn = document.querySelector('#clear-chat-btn');
 
-  if (!input || !sendBtn || !toggleBtn || !modal || !chatBody) {
+  if (!input || !sendBtn || !toggleBtn || !modal || !chatBody || !clearBtn) {
     console.warn('채팅요소를 찾을 수 없습니다. 셀렉터를 확인하세요.');
     return;
   }
@@ -78,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function addMessageBubble(dto, opt = {}) {
     const div = document.createElement('div');
-    const isBot = dto.sender === 'chatBot';
+    const isBot = dto.sender === 'chatbot';
     div.classList.add('chat-message', isBot ? 'bot-message' : 'user-message');
     div.innerHTML = escapeHTML(dto.message).replace(/\n/g, '<br>');
 
@@ -215,4 +216,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // 초기 상태
   if (!modal.style.display) modal.style.display = 'none';
+
+  // 초기화 버튼
+  if (clearBtn) {
+      clearBtn.addEventListener("click", async () => {
+        const confirmed = confirm("채팅방에 저장된 메세지를 모두 삭제합니다. 정말로 삭제하시겠습니까?");
+        if (confirmed) {
+          // 서버에 삭제 요청
+          await fetch(`/chatrooms/${roomId}/messages`, {
+            method: "DELETE"
+          });
+
+          // 프론트 화면 비우기
+          chatBody.innerHTML = "";
+        }
+      });
+
+    }
 });
