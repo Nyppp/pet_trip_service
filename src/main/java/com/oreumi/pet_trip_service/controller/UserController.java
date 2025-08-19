@@ -70,8 +70,9 @@ public class UserController {
         }
     }
 
-
-
+    /**
+     * 로그인 페이지 표시
+     */
     @GetMapping("/login")
     public String loginForm(@RequestParam(value = "error", required = false) String error,
                             @RequestParam(value = "logout", required = false) String logout,
@@ -158,6 +159,25 @@ public class UserController {
 
     /**
      * 사용자 정보 통합 업데이트 (이미지 + 닉네임)
+     *
+     * @param imageFile 업로드할 프로필 이미지 파일 (선택사항)
+     * @param nickname 변경할 닉네임 (선택사항)
+     * @param principal 현재 인증된 사용자 정보
+     * @param request HTTP 요청 객체 (세션 업데이트용)
+     *
+     * @return ResponseEntity<ImageResponseDTO>
+     *         - 성공 시: HTTP 200, success=true, 업데이트된 이미지 URL 포함
+     *         - 실패 시: HTTP 400/500, success=false, 에러 메시지 포함
+     *
+     * @throws IllegalArgumentException 유효성 검사 실패 시
+     * @throws IOException 이미지 업로드 처리 중 오류 시
+     *
+     * @apiNote
+     * - 로그인된 사용자만 접근 가능
+     * - 이미지와 닉네임 중 하나만 업데이트해도 가능
+     * - 업데이트 후 Authentication 세션이 자동으로 갱신됨
+     * - 지원 이미지 형식: JPG, PNG, GIF
+     * - 이미지 크기 제한: 5MB 이하
      */
     @PostMapping("/api/user/update")
     @ResponseBody
