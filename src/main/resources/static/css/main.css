@@ -16,6 +16,8 @@ body {
   margin: 0;
   background: var(--gray_050);
   color: var(--color-text);
+  display: flex;
+  flex-direction: column;
 }
 a {
   text-decoration: none;
