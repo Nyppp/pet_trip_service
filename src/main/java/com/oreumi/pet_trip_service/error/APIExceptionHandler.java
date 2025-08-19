@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice(annotations = org.springframework.web.bind.annotation.RestController.class)
-public class APIErrorHandler {
+public class APIExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

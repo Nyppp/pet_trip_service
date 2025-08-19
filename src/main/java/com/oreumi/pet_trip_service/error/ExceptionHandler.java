@@ -2,34 +2,26 @@ package com.oreumi.pet_trip_service.error;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.LocalDateTime;
 
 @Hidden
 @Slf4j
 @ControllerAdvice
-public class ErrorHandler {
+public class ExceptionHandler {
     private static final String DEFAULT_ERROR_VIEW = "error/error_page";
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(EntityNotFoundException.class)
     public ModelAndView handleEntityNotFound(EntityNotFoundException e,
                                              HttpServletRequest request) {
         log.warn("Entity not found: {}", e.getMessage());
@@ -42,7 +34,7 @@ public class ErrorHandler {
         return mav;
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(AccessDeniedException.class)
     public ModelAndView handleAccessDenied(AccessDeniedException e,
                                            HttpServletRequest request) {
         log.warn("Access denied: {}", e.getMessage());
@@ -55,7 +47,7 @@ public class ErrorHandler {
         return mav;
     }
 
-    @ExceptionHandler(ValidationException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(ValidationException.class)
     public ModelAndView handleValidation(ValidationException e,
                                          HttpServletRequest request) {
         log.info("Validation error: {}", e.getMessage());
@@ -68,7 +60,7 @@ public class ErrorHandler {
         return mav;
     }
 
-    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(MaxUploadSizeExceededException.class)
     public ModelAndView handleMaxUploadSize(MaxUploadSizeExceededException e,
                                             HttpServletRequest request) {
         log.warn("File upload size exceeded");
@@ -81,7 +73,7 @@ public class ErrorHandler {
         return mav;
     }
 
-    @ExceptionHandler(NoResourceFoundException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(NoResourceFoundException.class)
     public ModelAndView handleNoResource(NoResourceFoundException e,
                                             HttpServletRequest request) {
         log.warn("Not found resource");
@@ -94,7 +86,7 @@ public class ErrorHandler {
         return mav;
     }
 
-    @ExceptionHandler(Exception.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
     public ModelAndView handleGeneral(Exception e, HttpServletRequest request) {
         // 예상치 못한 에러만 상세 로깅
         log.error("Unexpected error occurred", e);
