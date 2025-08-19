@@ -26,6 +26,12 @@ public class ChatController {
     private final ChatService chatService;
     private final UserRepository userRepository;
 
+    // /chatrooms/test-error
+    @GetMapping("/test-error")
+    public String testError() {
+        throw new IllegalArgumentException("테스트 에러 발생!");
+    }
+
     @GetMapping("/me")
     public ResponseEntity<?> myChatRoomId(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
