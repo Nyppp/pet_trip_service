@@ -22,4 +22,12 @@ public interface PlaceImgRepository extends JpaRepository<PlaceImg, Long> {
     WHERE si.id = :scheduleItemId
     """)
     Optional<String> findMainImgUrlByScheduleItemId(@Param("scheduleItemId") Long scheduleItemId);
+
+    @Query("""
+    SELECT pi
+    FROM PlaceImg pi
+    WHERE pi.mainImg = true
+      AND pi.place.id IN :placeIds
+""")
+    List<PlaceImg> findMainImgsByPlaceIds(@Param("placeIds") List<Long> placeIds);
 }

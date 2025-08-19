@@ -43,6 +43,7 @@ public class ScheduleItemController {
         Schedule schedule = scheduleService.findScheduleByScheduleId(scheduleId)
                 .orElseThrow(()->new EntityNotFoundException("스케쥴을 찾을 수 없습니다."));
 
+
         if(userId != principal.getUser().getId()){
             throw new AccessDeniedException("해당 스케쥴에 접근 권한이 없습니다.");
         }

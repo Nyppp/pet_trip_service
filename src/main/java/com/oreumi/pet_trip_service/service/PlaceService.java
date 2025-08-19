@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,19 +24,32 @@ public class PlaceService {
     private final ReviewRepository reviewRepository;
 
     public List<PlaceDTO> findAllPlaces(){
-        List<PlaceDTO> dto = new ArrayList<>();
-
-
         List<Place> places = placeRepository.findAll();
-        for (Place place : places){
-            PlaceDTO placeDTO = new PlaceDTO(place);
-            placeImgRepository.findFirstByPlaceIdAndMainImgTrue(placeDTO.getId())
-                    .map(placeImg -> {
-                        return placeDTO.getImageUrls().add(placeImg.getUrl());
-                    });
-            dto.add(placeDTO);
+        List<Long> placeIds = places.stream()
+                .map(Place::getId)
+                .toList();
+
+// 대표이미지를 한 번에 가져오기
+        List<PlaceImg> mainImgs = placeImgRepository.findMainImgsByPlaceIds(placeIds);
+
+// placeId -> url 맵으로 변환
+        Map<Long, String> mainImgMap = mainImgs.stream()
+                .collect(Collectors.toMap(img -> img.getPlace().getId(),
+                        PlaceImg::getUrl,
+                        (a, b) -> a)); // 혹시 중복이면 첫 번째만
+
+// DTO에 연결
+        List<PlaceDTO> dtoList = new ArrayList<>();
+        for (Place place : places) {
+            PlaceDTO dto = new PlaceDTO(place);
+
+            // 대표이미지가 없으면 null
+            String url = mainImgMap.get(place.getId());
+            dto.getImageUrls().add(url);  // DTO에 mainImageUrl 필드 두는 게 깔끔해요
+
+            dtoList.add(dto);
         }
-        return dto;
+        return dtoList;
     }
 
     public List<PlaceDTO> sortByRating(List<PlaceDTO> dto){
