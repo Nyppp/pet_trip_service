@@ -58,7 +58,7 @@ public class ScheduleItemApiController {
     })
     @GetMapping("/items/{itemId}")
     public ResponseEntity<ScheduleItemDTO> getScheduleItemDetail(@PathVariable Long itemId){
-        ScheduleItem scheduleItem = scheduleService.findScheduleItemByItemId(itemId).orElseThrow();
+        ScheduleItem scheduleItem = scheduleService.findScheduleItemByItemId(itemId);
 
         ScheduleItemDTO scheduleItemDTO = new ScheduleItemDTO(scheduleItem);
         scheduleItemDTO.setPlaceImgUrl(placeImgService.findMainImgUrlByScheduleItemId(itemId));

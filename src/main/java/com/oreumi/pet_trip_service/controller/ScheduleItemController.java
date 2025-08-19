@@ -105,7 +105,7 @@ public class ScheduleItemController {
 
         //스케쥴 > 아이템 불러와서
         //해당 값들 모델에 전달 하고, create 뷰 리턴
-        ScheduleItem scheduleItem = scheduleService.findScheduleItemByItemId(itemId).orElseThrow();
+        ScheduleItem scheduleItem = scheduleService.findScheduleItemByItemId(itemId);
 
         ScheduleItemDTO scheduleItemDTO = new ScheduleItemDTO(scheduleItem);
 

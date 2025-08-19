@@ -150,7 +150,8 @@ public class ScheduleService {
     }
 
     public List<ScheduleDTO> findAllSchedulesByUserId(Long userId){
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new EntityNotFoundException("유저를 찾을 수 없습니다."));
         List<Schedule> scheduleList = scheduleRepository.findAll();
 
         List<ScheduleDTO> scheduleDTOList = new ArrayList<>();
@@ -177,12 +178,14 @@ public class ScheduleService {
         return scheduleRepository.findById(id);
     }
 
-    public Optional<ScheduleItem> findScheduleItemByItemId(Long id){
-        return scheduleItemRepository.findById(id);
+    public ScheduleItem findScheduleItemByItemId(Long id){
+        return scheduleItemRepository.findById(id)
+                .orElseThrow(()->new EntityNotFoundException("일정을 찾을 수 없습니다."));
     }
 
     public List<ScheduleItemDTO> findAllScheduleItems(Long scheduleId){
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow();
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(()->new EntityNotFoundException("스케쥴을 찾을 수 없습니다."));
         List<ScheduleItemDTO> scheduleItemDTOList = new ArrayList<>();
 
         for(ScheduleItem item : schedule.getScheduleItems()){
@@ -194,23 +197,5 @@ public class ScheduleService {
         }
 
         return scheduleItemDTOList;
-    }
-
-    public Map<LocalDate, List<ScheduleItem>> getScheduleItemsGroup(Schedule schedule){
-        Map<LocalDate, List<ScheduleItem>> groupedItems = schedule.getScheduleItems().stream()
-                .collect(Collectors.groupingBy(
-                        item -> item.getStartTime().toLocalDate(),
-                        TreeMap::new,
-                        Collectors.toList()
-                ));
-
-        LocalDate start = schedule.getStartDate();
-        LocalDate end = schedule.getEndDate();
-
-        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
-            groupedItems.putIfAbsent(date, new ArrayList<>());
-        }
-
-        return groupedItems;
     }
 }
