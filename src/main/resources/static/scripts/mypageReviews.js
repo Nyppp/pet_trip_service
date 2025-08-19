@@ -6,14 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
   deleteButtons.forEach((button) => {
     button.addEventListener("click", handleDeleteReview);
   });
-
-  // 이미지 클릭 시 모달로 확대 보기
-  const reviewImages = document.querySelectorAll(".review-images img");
-  reviewImages.forEach((img) => {
-    img.addEventListener("click", function () {
-      showImageModal(this.src);
-    });
-  });
 });
 
 /**
@@ -119,91 +111,3 @@ function checkEmptyState() {
     contentTitle.insertAdjacentHTML("afterend", emptyStateHTML);
   }
 }
-
-/**
- * 이미지 모달 표시
- */
-function showImageModal(imageSrc) {
-  // 기존 모달이 있다면 제거
-  const existingModal = document.querySelector(".image-modal");
-  if (existingModal) {
-    existingModal.remove();
-  }
-
-  // 모달 HTML 생성
-  const modalHTML = `
-    <div class="image-modal">
-      <div class="image-modal-overlay"></div>
-      <div class="image-modal-content">
-        <button class="image-modal-close">&times;</button>
-        <img src="${imageSrc}" alt="확대된 이미지" />
-      </div>
-    </div>
-  `;
-
-  // 모달을 body에 추가
-  document.body.insertAdjacentHTML("beforeend", modalHTML);
-
-  // 모달 요소들 가져오기
-  const modal = document.querySelector(".image-modal");
-  const overlay = modal.querySelector(".image-modal-overlay");
-  const closeBtn = modal.querySelector(".image-modal-close");
-
-  // 닫기 버튼 클릭 이벤트
-  closeBtn.addEventListener("click", closeImageModal);
-
-  // 오버레이 클릭 이벤트
-  overlay.addEventListener("click", closeImageModal);
-
-  // ESC 키 이벤트
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") {
-      closeImageModal();
-    }
-  });
-
-  // 모달 표시 애니메이션
-  setTimeout(() => {
-    modal.classList.add("show");
-  }, 10);
-}
-
-/**
- * 이미지 모달 닫기
- */
-function closeImageModal() {
-  const modal = document.querySelector(".image-modal");
-  if (modal) {
-    modal.classList.remove("show");
-    setTimeout(() => {
-      modal.remove();
-    }, 300);
-  }
-}
-
-/**
- * 이미지 레이지 로딩 (옵션)
- */
-function setupLazyLoading() {
-  const images = document.querySelectorAll(".review-images img");
-
-  if ("IntersectionObserver" in window) {
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const img = entry.target;
-          if (img.dataset.src) {
-            img.src = img.dataset.src;
-            img.removeAttribute("data-src");
-            imageObserver.unobserve(img);
-          }
-        }
-      });
-    });
-
-    images.forEach((img) => imageObserver.observe(img));
-  }
-}
-
-// 페이지 로드 시 레이지 로딩 설정
-document.addEventListener("DOMContentLoaded", setupLazyLoading);

@@ -646,9 +646,9 @@
 
 .image-item {
   position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 6px;
+  width: 160px;
+  height: 160px;
+  border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.3s ease;
@@ -714,66 +714,6 @@
   font-weight: 500;
 }
 
-/* 이미지 모달 스타일 */
-.image-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-}
-
-.image-modal.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-.image-modal-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.image-modal-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 90vw;
-  max-height: 90vh;
-}
-
-.image-modal-content img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  border-radius: 8px;
-}
-
-.image-modal-close {
-  position: absolute;
-  top: -40px;
-  right: 0;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 32px;
-  cursor: pointer;
-  padding: 0;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .mypage-container {
@@ -824,8 +764,8 @@
   }
 
   .image-item {
-    width: 70px;
-    height: 70px;
+    width: 100px;
+    height: 100px;
   }
 
   .review-card {
