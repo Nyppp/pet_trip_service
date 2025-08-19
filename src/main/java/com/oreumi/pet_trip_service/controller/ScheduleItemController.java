@@ -37,10 +37,15 @@ public class ScheduleItemController {
     @GetMapping("/{scheduleId}")
     public String showScheduleItemList(@PathVariable Long userId,
                                        @PathVariable Long scheduleId,
-                                         Model model){
+                                       @AuthenticationPrincipal CustomUserPrincipal principal,
+                                       Model model){
 
         Schedule schedule = scheduleService.findScheduleByScheduleId(scheduleId)
                 .orElseThrow(()->new EntityNotFoundException("스케쥴을 찾을 수 없습니다."));
+
+        if(userId != principal.getUser().getId()){
+            throw new AccessDeniedException("해당 스케쥴에 접근 권한이 없습니다.");
+        }
         model.addAttribute("userId", userId);
         model.addAttribute("schedule" , schedule);
 
@@ -77,15 +82,25 @@ public class ScheduleItemController {
     }
 
     @GetMapping("/{scheduleId}/items/{itemId}")
-    public String showScheduleItemDetail(){
+    public String showScheduleItemDetail(@PathVariable Long userId,
+                                         @AuthenticationPrincipal CustomUserPrincipal principal){
+        if(userId != principal.getUser().getId()){
+            throw new AccessDeniedException("해당 스케쥴에 접근 권한이 없습니다.");
+        }
+
         return "/schedule/schedule_item/schedule_item_detail";
     }
 
     @GetMapping("/{scheduleId}/items/{itemId}/edit")
     public String showEditScheduleItemForm(@PathVariable Long userId,
                                            @PathVariable Long scheduleId,
+                                           @AuthenticationPrincipal CustomUserPrincipal principal,
                                            @PathVariable Long itemId,
                                            Model model){
+
+        if(userId != principal.getUser().getId()){
+            throw new AccessDeniedException("해당 스케쥴에 접근 권한이 없습니다.");
+        }
 
         //스케쥴 > 아이템 불러와서
         //해당 값들 모델에 전달 하고, create 뷰 리턴
