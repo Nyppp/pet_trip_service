@@ -125,7 +125,7 @@ footer {
   border: 1px solid var(--color-border);
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  display: flex;
+  display: none;
   flex-direction: column;
   overflow: hidden;
   z-index: 1000;
@@ -166,6 +166,20 @@ footer {
 
   display: flex;
   flex-direction: column;
+}
+
+/*채팅방 초기화 */
+#chat-modal-header .header-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+#chat-modal-header .header-btn:hover {
+  color: #ffcccc;
 }
 
 #chat-modal-input {

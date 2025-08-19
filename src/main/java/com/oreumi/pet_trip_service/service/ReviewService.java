@@ -320,6 +320,33 @@ public class ReviewService {
         return result;
     }
 
+    // 사용자별 리뷰 조회
+    @Transactional
+    public List<ReviewDTO> getReviewsByUser(Long userId) {
+        List<Review> reviews = reviewRepository.findAllByUserIdOrderByCreatedAt(userId);
+        
+        return reviews.stream().map(r -> {
+            List<String> imgs = r.getImages().stream().map(ReviewImg::getImgURL).toList();
+            List<PetInfoDTO> pets = r.getPetInfos().stream()
+                    .map(pi -> new PetInfoDTO(pi.getPetType(), pi.getBreed(), pi.getWeightKg()))
+                    .toList();
+
+            ReviewDTO d = new ReviewDTO();
+            d.setId(r.getId());
+            d.setUserId(r.getUser() != null ? r.getUser().getId() : null);
+            d.setPlaceId(r.getPlace() != null ? r.getPlace().getId() : null);
+            d.setPlaceName(r.getPlace() != null ? r.getPlace().getName() : null);
+            d.setRating(r.getRating());
+            d.setContent(r.getContent());
+            d.setCreatedAt(r.getCreatedAt());
+            d.setNickname(r.getUser() != null ? r.getUser().getNickname() : null);
+            d.setUserProfileImageUrl(r.getUser() != null ? r.getUser().getProfileImg() : null);
+            d.setImages(imgs);
+            d.setPetInfos(pets);
+            return d;
+        }).toList();
+    }
+
     // 리뷰 삭제
     @Transactional
     public void deleteReview(Long reviewId, Long userId) {

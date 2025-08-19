@@ -15,4 +15,7 @@ public class ErrorResponse {
     private String message;
     private LocalDateTime timestamp;
     private Map<String, String> details;
+
+    public ErrorResponse(int value, String reasonPhrase, String message) {
+    }
 }

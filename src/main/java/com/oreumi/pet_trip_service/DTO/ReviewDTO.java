@@ -20,6 +20,8 @@ public class ReviewDTO {
     private Long userId;
 
     private Long placeId;
+    
+    private String placeName;
 
     @NotNull @DecimalMin("0.5") @DecimalMax("5.0")
     private Double rating;

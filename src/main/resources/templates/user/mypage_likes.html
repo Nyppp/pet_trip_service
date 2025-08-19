@@ -51,6 +51,7 @@
                   th:if="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
                   th:src="${place.imageUrls[0]}"
                   th:alt="${place.name} + ' 이미지'"
+                  alt="장소 이미지"
                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                 />
                 <div th:if="${place.imageUrls == null or place.imageUrls.isEmpty()}" class="no-image-placeholder">
@@ -70,7 +71,7 @@
                 <p class="place-address" th:text="${place.address}">주소</p>
 
                 <div class="place-meta">
-                  <div class="rating">
+                  <div class="rating place-rating">
                     <div class="stars" th:style="|--percent: ${(place.rating != null ? place.rating : 0) * 20}%|"></div>
                     <span class="rating-text" th:text="${place.rating != null ? #numbers.formatDecimal(place.rating, 1, 1) : '0.0'}">0.0</span>
                   </div>
