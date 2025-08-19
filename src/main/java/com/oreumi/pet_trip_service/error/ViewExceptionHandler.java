@@ -18,7 +18,7 @@ import java.io.StringWriter;
 @Hidden
 @Slf4j
 @ControllerAdvice
-public class ExceptionHandler {
+public class ViewExceptionHandler {
     private static final String DEFAULT_ERROR_VIEW = "error/error_page";
 
     @org.springframework.web.bind.annotation.ExceptionHandler(EntityNotFoundException.class)
