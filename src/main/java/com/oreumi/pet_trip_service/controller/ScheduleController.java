@@ -4,6 +4,7 @@ package com.oreumi.pet_trip_service.controller;
 import com.oreumi.pet_trip_service.DTO.ScheduleDTO;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.model.User;
+import com.oreumi.pet_trip_service.security.CustomUserPrincipal;
 import com.oreumi.pet_trip_service.service.ScheduleService;
 import com.oreumi.pet_trip_service.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +28,12 @@ public class ScheduleController {
 
     @GetMapping
     public String showScheduleList(@PathVariable Long userId,
+                                   @AuthenticationPrincipal CustomUserPrincipal principal,
                                    @RequestParam(required = false) Long placeId,
                                    Authentication auth,
                                    Model model){
 
-        String email = auth.getName();
+        String email = principal.getUsername();
         User user = userService.findUserByEmail(email).orElseThrow();
 
         if(!user.getId().equals(userId)) throw new AccessDeniedException("스케쥴 접근 권한이 없습니다.");

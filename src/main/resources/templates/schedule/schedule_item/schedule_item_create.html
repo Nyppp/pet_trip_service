@@ -34,7 +34,7 @@
     >
       <div class="form_group">
         <label for="place_search">장소 검색</label>
-        <input type="text" id="place_search" class="place_search" placeholder="장소 이름 입력" autocomplete="off" th:field="*{placeName}" />
+        <input type="text" id="place_search" class="place_search" placeholder="장소 이름 입력" autocomplete="off" th:field="*{placeName}" required />
         <input type="hidden" th:field="*{placeId}" id="place_id" />
         <ul id="autocomplete_list" class="autocomplete_list"></ul>
       </div>

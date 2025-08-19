@@ -6,6 +6,7 @@ import com.oreumi.pet_trip_service.DTO.ScheduleItemDTO;
 import com.oreumi.pet_trip_service.model.Place;
 import com.oreumi.pet_trip_service.model.Schedule;
 import com.oreumi.pet_trip_service.model.ScheduleItem;
+import com.oreumi.pet_trip_service.security.CustomUserPrincipal;
 import com.oreumi.pet_trip_service.service.PlaceImgService;
 import com.oreumi.pet_trip_service.service.PlaceService;
 import com.oreumi.pet_trip_service.service.ScheduleService;
@@ -13,6 +14,8 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -47,9 +50,17 @@ public class ScheduleItemController {
     @GetMapping("/{scheduleId}/items/new")
     public String showScheduleItemForm(@PathVariable Long userId,
                                        @PathVariable Long scheduleId,
+                                       @AuthenticationPrincipal CustomUserPrincipal principal,
                                        @RequestParam(required = false) Long placeId,
                                        Model model){
-        model.addAttribute("schedule", scheduleService.findScheduleByScheduleId(scheduleId).orElseThrow());
+
+        Schedule schedule = scheduleService.findScheduleByScheduleId(scheduleId).orElseThrow(
+                ()->{throw  new EntityNotFoundException("존재하지 않는 스케쥴입니다.");});
+        model.addAttribute("schedule", schedule);
+
+        if(schedule.getUser().getId() != principal.getUser().getId()){
+            throw new AccessDeniedException("해당 스케쥴에 접근 권한이 없습니다.");
+        }
 
         ScheduleItemDTO scheduleItemDTO = new ScheduleItemDTO();
         if(placeId != null){

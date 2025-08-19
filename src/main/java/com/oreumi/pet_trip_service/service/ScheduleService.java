@@ -7,6 +7,7 @@ import com.oreumi.pet_trip_service.model.ScheduleItem;
 import com.oreumi.pet_trip_service.model.User;
 import com.oreumi.pet_trip_service.repository.*;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,10 +52,17 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleItem saveScheduleItem(Long scheduleId, ScheduleItemDTO scheduleItemDTO){
-
+    public ScheduleItem saveScheduleItem(Long userId, Long scheduleId, ScheduleItemDTO scheduleItemDTO){
         ScheduleItem scheduleItem = new ScheduleItem();
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow();
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new IllegalArgumentException("유효한 일정 ID가 아닙니다."));
+
+        if(scheduleItemDTO.getPlaceId() == null){
+            throw new IllegalArgumentException("유효한 장소를 입력해주세요.");
+        }
+
+        if (!schedule.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("해당 일정에 접근할 수 없습니다.");
+        }
 
         scheduleItem.setPlace(placeRepository.findById(scheduleItemDTO.getPlaceId()).orElseThrow());
         scheduleItem.setStartTime(scheduleItemDTO.getStartTime());

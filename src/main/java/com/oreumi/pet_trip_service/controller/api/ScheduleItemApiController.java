@@ -95,10 +95,11 @@ public class ScheduleItemApiController {
                                                @PathVariable Long scheduleId,
                                                @RequestBody @Valid ScheduleItemDTO scheduleItemDTO,
                                                UriComponentsBuilder uriBuilder){
-        scheduleService.saveScheduleItem(scheduleId, scheduleItemDTO);
+
+        scheduleService.saveScheduleItem(userId, scheduleId, scheduleItemDTO);
         URI location = uriBuilder
                 .path("/users/{userId}/schedules/{scheduleId}")
-                .build()
+                .buildAndExpand(userId, scheduleId)
                 .toUri();
 
         return ResponseEntity.created(location).build();
