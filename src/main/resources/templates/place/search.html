@@ -1,94 +1,153 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>장소 검색</title>
     <link rel="stylesheet" href="/css/search.css">
+    <link rel="stylesheet" href="/css/common/common.css"/>
 </head>
 <body>
 <div th:replace="~{common/header :: siteHeader}"></div>
+
 <main class="container">
 
-    <!-- 🔍 검색창 -->
     <section class="search-bar">
-        <form action="/search" method="get" class="search-form">
-            <select name="category">
-                <option value="">전체 카테고리</option>
-                <option value="32">숙박</option>
-                <option value="12">관광지</option>
-                <option value="14">문화시설</option>
-                <option value="15">축제/공연/행사</option>
-                <option value="28">레포츠</option>
-                <option value="38">쇼핑</option>
-                <option value="39">음식점</option>
+        <form id="search-form" th:action="@{/search}" method="get" class="search-form" role="search">
+            <!-- 결과 페이지와 동일한 파라미터 -->
+            <input type="hidden" name="page" value="0"/>
+            <input type="hidden" name="size" th:value="${size != null ? size : 12}"/>
+            <input type="hidden" id="sort" name="sort" th:value="${sort != null ? sort : 'relevance'}"/>
+
+            <label for="cat1" class="sr-only">카테고리</label>
+            <select id="cat1" name="cat1"
+                    th:with="_cat1=${
+            !#strings.isEmpty(cat1) ? cat1
+            : (param.cat1 != null ? param.cat1[0] : '')
+        }">
+                <option value="" th:selected="${#strings.isEmpty(_cat1)}">전체</option>
+
+                <option th:each="e : ${category.entrySet()}"
+                        th:value="${e.key}"
+                        th:text="${e.value}"
+                        th:selected="${e.key == _cat1}">
+                </option>
             </select>
-            <input type="text" name="keyword" placeholder="장소명 또는 지역 검색">
+
+            <label for="keyword" class="sr-only">검색어</label>
+            <input id="keyword" name="keyword" type="text"
+                   placeholder="장소명 또는 지역 검색"
+                   th:value="${keyword}"/>
+
             <button type="submit">검색</button>
-            <button type="button" class="nearby-btn">내 주변 관광지</button>
+            <a class="map-btn" th:href="@{/location/permission}">지도로 검색</a>
         </form>
     </section>
 
-    <!-- 📌 전체 레이아웃 -->
     <div class="content-wrapper">
 
-        <!-- 왼쪽 필터 영역 -->
         <aside class="filter-sidebar">
             <h3>정렬</h3>
-            <label><input type="radio" name="sort" value="likes" checked> 찜순</label>
-            <label><input type="radio" name="sort" value="reviews"> 리뷰순</label>
-            <label><input type="radio" name="sort" value="rating"> 별점순</label>
+            <label>
+                <input type="radio" name="sort-radio" value="relevance"
+                       th:checked="${sort == null or sort == 'relevance'}">
+                기본(관련도순)
+            </label>
 
-            <hr>
+            <label>
+                <input type="radio" name="sort-radio" value="rating"
+                       th:checked="${sort == 'rating'}">
+                별점순
+            </label>
 
-            <h3>카테고리</h3>
-            <label><input type="checkbox"> 숙박</label>
-            <label><input type="checkbox"> 관광지</label>
-            <label><input type="checkbox"> 문화시설</label>
-            <label><input type="checkbox"> 축제/공연/행사</label>
-            <label><input type="checkbox"> 레포츠</label>
-            <label><input type="checkbox"> 쇼핑</label>
-            <label><input type="checkbox"> 음식점</label>
+            <label>
+                <input type="radio" name="sort-radio" value="liked"
+                       th:checked="${sort == 'liked'}">
+                좋아요순
+            </label>
+
+<!--            <div class="filter-group">-->
+<!--                <div class="filter-title">카테고리</div>-->
+<!--                <ul id="cat-tree" class="cat-tree"></ul>-->
+<!--            </div>-->
         </aside>
 
-        <!-- 오른쪽 검색 결과 -->
-        <section class="search-results">
+        <section class="search-results" id="search-results">
 
-            <!-- 카드 1 -->
-            <div class="result-card">
-                <img src="https://via.placeholder.com/250x160" alt="장소 이미지">
+            <div class="empty" th:if="${#lists.isEmpty(results)}">
+                검색 결과가 없어요. 다시 검색해주세요.
+            </div>
+
+            <div class="result-card js-card"
+                 th:each="p : ${results}"
+                 th:with="liked=${likedByMeMap != null and #bools.isTrue(likedByMeMap[p.id])}"
+                 th:data-href="@{'/place/' + ${p.id}}"
+                 role="link"
+                 tabindex="0"
+                 th:aria-label="|${p.name} 상세보기|">
+
+                <th:block th:if="${!#lists.isEmpty(p.imageUrls)}">
+                    <a th:href="@{'/place/' + ${p.id}}">
+                        <img class="thumb"
+                             th:src="${p.imageUrls[0]}"
+                             alt="장소 이미지"
+                             onerror="this.remove()" />
+                    </a>
+                </th:block>
+                <th:block th:unless="${!#lists.isEmpty(p.imageUrls)}">
+                    <div class="thumb-spacer" aria-hidden="true"></div>
+                </th:block>
+
                 <div class="card-info">
                     <div class="card-header">
-                        <h3 class="place-name">서울신라호텔</h3>
-                        <button type="button" class="like-btn liked">❤️</button>
+                        <h3 class="place-name">
+                            <a class="place-link"
+                               th:href="@{'/place/' + ${p.id}}"
+                               th:text="${p.name}">장소명</a>
+                        </h3>
+
+                        <div class="like-box">
+                            <button class="like-icon"
+                                    type="button"
+                                    th:classappend="${liked} ? ' liked' : ''"
+                                    th:data-place-id="${p.id}"
+                                    th:attr="aria-pressed=${liked}">
+                                <img class="like-img"
+                                     th:src="@{/images/{f}(f=${liked} ? 'heart_filled.svg' : 'heart_outline.svg')}"
+                                     alt="찜하기">
+                            </button>
+                            <div class="like-count" th:text="${p.liked}">0</div>
+                        </div>
                     </div>
-                    <p class="category">숙소 > 호텔 > 관광호텔</p>
-                    <div class="rating">⭐ 4.8 (112 리뷰) · 35 찜</div>
-                    <p class="animal-type">동반 가능: 소형견</p>
-                    <p class="desc">반려견과 함께 머물 수 있는 고급 호텔, 다양한 편의시설을 제공합니다.</p>
+
+                    <p class="category" th:text="${p.categoryPath}">대분류 > 중분류 > 소분류</p>
+
+                    <div class="rating-wrap"
+                         th:with="pct=${(p.rating == null ? 0 : p.rating) * 20}">
+        <span class="stars" th:style="'--percent:' + ${pct} + '%'">
+          <span class="stars-base">★★★★★</span>
+          <span class="stars-fill">★★★★★</span>
+        </span>
+                        <span class="rating-num" th:text="${#numbers.formatDecimal(p.rating,1,1)}">0.0</span>
+                    </div>
+
+                    <div class="address" th:text="${p.address}">주소</div>
+
+                    <p class="desc"
+                       th:if="${p.description}"
+                       th:text="${p.description}"></p>
                 </div>
             </div>
 
-            <!-- 카드 2 -->
-            <div class="result-card">
-                <img src="https://via.placeholder.com/250x160" alt="장소 이미지">
-                <div class="card-info">
-                    <div class="card-header">
-                        <h3 class="place-name">강릉 반려견 카페</h3>
-                        <button type="button" class="like-btn">🤍</button>
-                    </div>
-                    <p class="category">카페 > 애견카페</p>
-                    <div class="rating">⭐ 4.5 (52 리뷰) · 20 찜</div>
-                    <p class="animal-type">동반 가능: 중형견</p>
-                    <p class="desc">바다 전망이 아름다운 애견 카페, 반려견 놀이공간이 있습니다.</p>
-                </div>
-            </div>
-
+            <nav id="pagination"
+                 th:attr="data-page=${page},data-size=${size},data-total=${total},
+              data-cat1=${cat1},data-keyword=${keyword},data-sort=${sort}">
+            </nav>
         </section>
 
     </div>
-
 </main>
 
+<script src="/scripts/search.js"></script>
 </body>
 </html>

@@ -25,11 +25,6 @@ public class PlaceController {
     private final LikeService likeService;
     private final ReviewService reviewService;
 
-    @GetMapping("/search")
-    public String search() {
-        return "place/search";
-    }
-
     @GetMapping("/place/{placeId}")
     public String placeDetail(@PathVariable Long placeId,
                               @AuthenticationPrincipal CustomUserPrincipal principal,

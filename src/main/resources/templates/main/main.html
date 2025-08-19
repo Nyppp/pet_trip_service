@@ -17,17 +17,26 @@
     <!-- 검색 -->
     <section class="search-bar">
       <div class="container">
-        <select>
-          <option value="all">전체</option>
-          <option th:each="cat : ${category.entrySet()}"
-                  th:value="${cat.key}"
-                  th:text="${cat.value}">
+        <form id="search-form" th:action="@{/search}" method="get" role="search">
+          <input type="hidden" name="page" value="0"/>
+          <input type="hidden" name="size" value="12"/>
+          <input type="hidden" id="sort" name="sort" value="relevance"/>
 
-          </option>
-        </select>
-        <input type="text" placeholder="검색어를 입력하세요" />
-        <button>검색</button>
-        <a th:href="@{/location/permission}">지도로 검색</a>
+          <label for="cat1" class="sr-only">카테고리</label>
+          <select id="cat1" name="cat1">
+            <option value="">전체</option>
+            <option th:each="cat : ${category.entrySet()}"
+                    th:value="${cat.key}"
+                    th:text="${cat.value}">
+            </option>
+          </select>
+
+          <label for="keyword" class="sr-only">검색어</label>
+          <input id="keyword" name="keyword" type="text" placeholder="검색어를 입력하세요"/>
+
+          <button type="submit">검색</button>
+          <a class="map-btn" th:href="@{/location/permission}">지도로 검색</a>
+        </form>
       </div>
     </section>
 
