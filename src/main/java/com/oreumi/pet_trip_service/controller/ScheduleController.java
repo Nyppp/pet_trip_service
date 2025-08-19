@@ -37,7 +37,7 @@ public class ScheduleController {
         model.addAttribute("userId", userId);
         model.addAttribute("placeId", placeId);
 
-        return "/schedule/schedule_list";
+        return "schedule/schedule_list";
     }
 
     @GetMapping("/new")
@@ -53,7 +53,7 @@ public class ScheduleController {
         model.addAttribute("isNew", true);
         model.addAttribute("placeId", placeId);
 
-        return "/schedule/schedule_create";
+        return "schedule/schedule_create";
     }
 
     @GetMapping("/{scheduleId}/edit")
@@ -72,6 +72,6 @@ public class ScheduleController {
         model.addAttribute("scheduleDTO", dto);
         model.addAttribute("isNew", false);
 
-        return "/schedule/schedule_create";
+        return "schedule/schedule_create";
     }
 }

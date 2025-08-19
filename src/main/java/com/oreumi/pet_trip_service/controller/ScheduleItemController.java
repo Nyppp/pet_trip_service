@@ -50,7 +50,7 @@ public class ScheduleItemController {
         model.addAttribute("userId", userId);
         model.addAttribute("schedule" , schedule);
 
-        return "/schedule/schedule_detail";
+        return "schedule/schedule_detail";
     }
 
     @GetMapping("/{scheduleId}/items/new")
@@ -79,7 +79,7 @@ public class ScheduleItemController {
         model.addAttribute("scheduleItemDTO", scheduleItemDTO);
         model.addAttribute("userId", userId);
         model.addAttribute("isNew", true);
-        return "/schedule/schedule_item/schedule_item_create";
+        return "schedule/schedule_item/schedule_item_create";
     }
 
     @GetMapping("/{scheduleId}/items/{itemId}")
@@ -89,7 +89,7 @@ public class ScheduleItemController {
             throw new AccessDeniedException("해당 스케쥴에 접근 권한이 없습니다.");
         }
 
-        return "/schedule/schedule_item/schedule_item_detail";
+        return "schedule/schedule_item/schedule_item_detail";
     }
 
     @GetMapping("/{scheduleId}/items/{itemId}/edit")
@@ -115,6 +115,6 @@ public class ScheduleItemController {
 
         model.addAttribute("isNew", false);
 
-        return "/schedule/schedule_item/schedule_item_create";
+        return "schedule/schedule_item/schedule_item_create";
     }
 }
