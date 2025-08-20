@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       e.stopPropagation();
 
+      const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+      const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
       const placeId = this.getAttribute("data-place-id");
       if (!placeId) {
         console.error("Place ID not found");
@@ -21,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
           method: "DELETE",
           headers: {
             "X-Requested-With": "XMLHttpRequest",
+            [csrfHeader]: csrfToken
           },
         });
 
