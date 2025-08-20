@@ -7,6 +7,8 @@
     return;
   }
 
+
+
   const pathParts = window.location.pathname.split("/");
   const userId = pathParts[2];
   const scheduleId = pathParts[4];
@@ -79,7 +81,9 @@
   async function deleteItem() {
     if (!confirm("정말 삭제할까요?")) return;
     try {
-      const res = await fetch(`/api/schedules/${scheduleId}/items/${itemId}`, { method: "DELETE", credentials: "include" });
+      const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+      const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+      const res = await fetch(`/api/schedules/${scheduleId}/items/${itemId}`, { method: "DELETE", credentials: "include", headers:{[csrfHeader]: csrfToken}  });
       if (res.status === 204) {
         // 삭제 성공 시 일정 리스트 페이지로 이동
         window.location.href = `/users/${userId}/schedules/${scheduleId}`;

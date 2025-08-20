@@ -5,6 +5,8 @@
     <title>일정 아이템 상세</title>
     <link rel="stylesheet" href="/css/common/common.css" />
     <link rel="stylesheet" href="/css/schedule/scheduleItemDetail.css" />
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}" />
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}" />
     <script src="/scripts/scheduleItemDetail.js" defer></script>
   </head>
   <body>
