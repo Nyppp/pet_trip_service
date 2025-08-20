@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const modal = document.querySelector('#chat-modal');
   const chatBody = document.querySelector('#chat-modal-body');
   const clearBtn = document.querySelector('#clear-chat-btn');
+  const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
   if (!input || !sendBtn || !toggleBtn || !modal || !chatBody || !clearBtn) {
     console.warn('채팅요소를 찾을 수 없습니다. 셀렉터를 확인하세요.');
@@ -29,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initialized = true;
 
     try {
-      const res = await fetch('/chatrooms/me', { method: 'GET' });
+      const res = await fetch('/chatrooms/me', { method: 'GET'});
 
       const ct = res.headers.get('content-type') || '';
       if (res.redirected || !ct.includes('application/json')) {
@@ -162,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const res = await fetch(`/chatrooms/${roomId}/message`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',[csrfHeader]: csrfToken  },
         body: JSON.stringify({ message })
       });
 
@@ -221,7 +223,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (confirmed) {
           // 서버에 삭제 요청
           await fetch(`/chatrooms/${roomId}/messages`, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                          [csrfHeader]: csrfToken
+                        }
           });
 
           // 프론트 화면 비우기
