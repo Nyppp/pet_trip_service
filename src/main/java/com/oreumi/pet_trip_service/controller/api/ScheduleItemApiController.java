@@ -58,7 +58,7 @@ public class ScheduleItemApiController {
     })
     @GetMapping("/items/{itemId}")
     public ResponseEntity<ScheduleItemDTO> getScheduleItemDetail(@PathVariable Long itemId){
-        ScheduleItem scheduleItem = scheduleService.findScheduleItemByItemId(itemId).orElseThrow();
+        ScheduleItem scheduleItem = scheduleService.findScheduleItemByItemId(itemId);
 
         ScheduleItemDTO scheduleItemDTO = new ScheduleItemDTO(scheduleItem);
         scheduleItemDTO.setPlaceImgUrl(placeImgService.findMainImgUrlByScheduleItemId(itemId));
@@ -95,10 +95,11 @@ public class ScheduleItemApiController {
                                                @PathVariable Long scheduleId,
                                                @RequestBody @Valid ScheduleItemDTO scheduleItemDTO,
                                                UriComponentsBuilder uriBuilder){
-        scheduleService.saveScheduleItem(scheduleId, scheduleItemDTO);
+
+        scheduleService.saveScheduleItem(userId, scheduleId, scheduleItemDTO);
         URI location = uriBuilder
                 .path("/users/{userId}/schedules/{scheduleId}")
-                .build()
+                .buildAndExpand(userId, scheduleId)
                 .toUri();
 
         return ResponseEntity.created(location).build();

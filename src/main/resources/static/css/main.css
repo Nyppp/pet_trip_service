@@ -1,5 +1,6 @@
 /* style.css*/
 /* 색상 정의 */
+@import url("/css/common/common.css");
 :root {
   --color-primary: #2c5a82;
   --color-secondary: #f47b38;
@@ -13,8 +14,10 @@
 body {
   font-family: "Arial", sans-serif;
   margin: 0;
-  background: var(--color-background);
+  background: var(--gray_050);
   color: var(--color-text);
+  display: flex;
+  flex-direction: column;
 }
 a {
   text-decoration: none;
@@ -24,6 +27,7 @@ footer {
   background: var(--color-primary);
   color: white;
   padding: 1rem 2rem;
+  margin-top: auto;
 }
 .logo {
   font-size: 1.5rem;

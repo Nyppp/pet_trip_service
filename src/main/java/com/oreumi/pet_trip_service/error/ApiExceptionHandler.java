@@ -8,11 +8,12 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @Hidden
-@RestControllerAdvice // (필요시 annotations=RestController.class 로 범위 한정 가능)
+@RestControllerAdvice(annotations = RestController.class)
 public class ApiExceptionHandler {
 
     /** 공통 응답 빌더 */
@@ -26,7 +27,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadRequest(IllegalArgumentException ex) {
         // 내부 로그는 상세히, 사용자 메시지는 안전하게
         log.warn("Bad request: {}", ex.getMessage(), ex);
-        return build(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
+        return build(HttpStatus.BAD_REQUEST, "잘못된 입력 요청입니다, 입력값을 다시 확인해주세요");
         // 필요하면 개발환경에서만 ex.getMessage()를 노출하도록 스위치 가능
     }
 
@@ -53,6 +54,34 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
         log.warn("Method not allowed: {}", ex.getMessage(), ex);
         return build(HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 HTTP 메서드입니다.");
+    }
+
+    // 404/400: JPA 엔티티 없음(getReferenceById 접근 등)
+    @ExceptionHandler(jakarta.persistence.EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> entityNotFound(jakarta.persistence.EntityNotFoundException ex) {
+        log.warn("Entity not found: {}", ex.getMessage(), ex);
+        return build(HttpStatus.NOT_FOUND, "요청하신 정보를 찾을 수 없습니다.");
+    }
+
+    // 400: JSON 바디 파싱/형변환 실패 (빈 바디, 날짜 포맷, 숫자↔문자 등)
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> notReadable(Exception ex) {
+        log.warn("Not readable: {}", ex.getMessage(), ex);
+        return build(HttpStatus.BAD_REQUEST, "요청 본문을 해석할 수 없습니다.");
+    }
+
+    // 400: 경로변수/쿼리파라미터 타입 불일치 (?id=abc)
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> typeMismatch(Exception ex) {
+        log.warn("Type mismatch: {}", ex.getMessage(), ex);
+        return build(HttpStatus.BAD_REQUEST, "요청 값 타입이 올바르지 않습니다.");
+    }
+
+    // 409: 무결성 위반(중복키, FK 위반 등)
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> dataIntegrity(org.springframework.dao.DataIntegrityViolationException ex) {
+        log.warn("Integrity violation: {}", ex.getMessage(), ex);
+        return build(HttpStatus.CONFLICT, "데이터 무결성 제약을 위반했습니다.");
     }
 
     /** 500: 그 외 모든 예외 */

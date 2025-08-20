@@ -11,11 +11,15 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ErrorResponse {
-    private String code;
+    private int code;
     private String message;
     private LocalDateTime timestamp;
     private Map<String, String> details;
 
     public ErrorResponse(int value, String reasonPhrase, String message) {
+        this.code = value;
+        this.message = message;
+        this.timestamp = LocalDateTime.now();
+        this.details = Map.of("error", reasonPhrase);
     }
 }
