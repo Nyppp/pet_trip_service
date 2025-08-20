@@ -33,11 +33,13 @@ document.addEventListener("DOMContentLoaded", () => {
           card.className = "location-card";
           card.dataset.date = item.startTime.substring(0, 10);
 
-          // 이미지
-          const img = document.createElement("img");
-          img.className = "location-thumb";
-          img.alt = "장소 이미지";
-          img.src = item.placeImgUrl && /^https?:\/\//.test(item.placeImgUrl) ? item.placeImgUrl : "/images/default.png";
+                    // 이미지
+                    const img = document.createElement("img");
+                    img.className = "location-thumb";
+                    img.alt = "장소 이미지";
+                    img.src = (item.placeImgUrl && /^https?:\/\//.test(item.placeImgUrl))
+                      ? item.placeImgUrl
+                      : '/images/project_logo.png';
 
           // 본문
           const body = document.createElement("div");

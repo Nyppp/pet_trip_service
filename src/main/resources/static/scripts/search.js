@@ -112,7 +112,11 @@
 
                     const res = await fetch(`/api/places/${placeId}/like`, { method, headers });
                     if (res.status === 401) {
-                        location.href = '/login';
+                        alert('로그인이 필요합니다.');
+                        return;
+                    }
+                    if (res.redirected) {
+                        alert('로그인이 필요합니다.');
                         return;
                     }
                     if (!res.ok) throw new Error('like api error');

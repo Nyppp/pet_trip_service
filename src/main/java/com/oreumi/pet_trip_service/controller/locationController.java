@@ -30,8 +30,6 @@ public class locationController {
     public String showLocationSearchPage(Model model){
         model.addAttribute("googleMapAPIKey", apiKey);
         model.addAttribute("googleMapAPIUrl", apiURL);
-
-        model.addAttribute("places",placeService.findAllPlaces());
         return "place/location_search";
     }
 }

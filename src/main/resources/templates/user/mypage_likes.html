@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>찜한 장소 - PetTrip</title>
     <link rel="stylesheet" th:href="@{/css/common/common.css}" />
     <link rel="stylesheet" th:href="@{/css/mypage.css}" />
@@ -47,19 +49,14 @@
           <div class="places-grid">
             <div th:each="place : ${likedPlaces}" class="place-card">
               <div class="place-image">
-                <img
-                  th:if="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
-                  th:src="${place.imageUrls[0]}"
-                  th:alt="${place.name} + ' 이미지'"
-                  alt="장소 이미지"
-                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                />
-                <div th:if="${place.imageUrls == null or place.imageUrls.isEmpty()}" class="no-image-placeholder">
-                  <span>준비된 이미지가 없습니다</span>
-                </div>
-                <div class="no-image-placeholder sr-only">
-                  <span>이미지를 불러올 수 없습니다</span>
-                </div>
+                <img th:if="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
+                     th:src="${place.imageUrls[0]}"
+                     th:alt="${place.name} + ' 이미지'"
+                     onerror="this.onerror=null; this.src='/images/project_logo.png';"/>
+
+                <img th:unless="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
+                     th:src="@{/images/project_logo.png}"
+                     th:alt="${place.name} + ' 이미지'"/>
                 <button class="like-btn active" th:data-place-id="${place.id}" aria-label="찜 취소">
                   <img src="/images/heart_filled.svg" alt="찜한 상태" width="16" height="16" />
                 </button>

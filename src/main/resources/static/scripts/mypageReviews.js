@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
  */
 function handleDeleteReview(event) {
   const reviewId = event.target.getAttribute("data-review-id");
+  const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
   if (!reviewId) {
     alert("리뷰 ID를 찾을 수 없습니다.");
@@ -33,6 +35,7 @@ function handleDeleteReview(event) {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
+      [csrfHeader]: csrfToken
     },
   })
     .then((response) => {

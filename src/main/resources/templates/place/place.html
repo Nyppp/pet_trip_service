@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>장소 상세 정보</title>
     <link rel="stylesheet" href="/css/place.css" />
     <link rel="stylesheet" href="/css/common/common.css" />
@@ -19,11 +21,20 @@
 
             <div class="slides">
               <img
-                th:each="img,iter : ${place.imageUrls}"
-                th:src="${img}"
-                alt="장소 이미지"
-                onerror="this.src='https://via.placeholder.com/500x350'"
-                th:classappend="${iter.index} == 0 ? 'active' : ''"
+                      th:if="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
+                      th:each="img, iter : ${place.imageUrls}"
+                      th:src="${img}"
+                      th:alt="${place.name} + ' 이미지'"
+                      onerror="this.onerror=null; this.src='/images/project_logo.png';"
+                      th:classappend="${iter.index} == 0 ? ' active' : ''"
+              />
+
+              <!-- 이미지가 없을 때: 기본 이미지 한 장만 -->
+              <img
+                      th:unless="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
+                      src="/images/project_logo.png"
+                      th:alt="${place.name} + ' 이미지'"
+                      class="active"
               />
             </div>
 

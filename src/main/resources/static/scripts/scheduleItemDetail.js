@@ -61,7 +61,10 @@
       const imgUrl = data?.placeImgUrl ?? "";
       if (imgUrl) {
         $img.src = imgUrl;
-        $img.alt = data?.placeName ?? "장소 이미지";
+        $img.alt = data?.placeName ?? '장소 이미지';
+      }else{
+        $img.src = '/images/project_logo.png';
+        $img.alt = '기본 장소 이미지';
       }
 
       // 수정 URL 구성

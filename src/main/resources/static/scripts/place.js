@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const desc = document.getElementById("place-description");
   const moreBtn = document.getElementById("toggle-description-btn");
+  const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
   if (desc && moreBtn) {
     const needsMore = () => desc.scrollHeight > desc.offsetHeight + 1;
@@ -114,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const res = await fetch(`/place/${pid}/ai/summary?force=true`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", [csrfHeader]: csrfToken },
         });
         if (!res.ok) throw new Error("response not ok");
 
@@ -157,11 +159,15 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch(`/api/places/${placeId}/like`, {
         method,
-        headers: { "X-Requested-With": "XMLHttpRequest" },
+        headers: { "X-Requested-With": "XMLHttpRequest", [csrfHeader]: csrfToken },
       });
       if (res.status === 401) {
         location.href = "/login";
         return;
+      }
+      if (res.redirected) {
+          alert('로그인이 필요합니다.');
+          return;
       }
       if (!res.ok) throw new Error("like api error");
 
@@ -200,6 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: {
           "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest",
+          [csrfHeader]: csrfToken
         },
       });
 

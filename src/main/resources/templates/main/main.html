@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <title>떠나개 - 반려동물 동반 여행 플랫폼</title>
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}" />
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
   </head>
   <body>
@@ -51,19 +53,19 @@
             <div class="carousel-track" id="placesTrack">
               <div th:each="place : ${places}" class="place-card">
                 <div class="place-image">
-                  <img
-                    th:if="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
-                    th:src="${place.imageUrls[0]}"
-                    th:alt="${place.name} + ' 이미지'"
-                    loading="lazy"
-                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                    onload="this.nextElementSibling.style.display='none';"
-                  />
-                  <div th:if="${place.imageUrls == null or place.imageUrls.isEmpty()}" class="no-image-placeholder">
-                    <span>준비된 이미지가 없습니다</span>
-                  </div>
-                  <div class="no-image-placeholder" style="display: none">
-                    <span>이미지를 불러올 수 없습니다</span>
+                  <div class="place-image-wrap">
+                    <img
+                      th:if="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
+                      th:src="${place.imageUrls[0]}"
+                      th:alt="${place.name} + ' 이미지'"
+                      onerror="this.onerror=null; this.src='/images/project_logo.png';"
+                    />
+
+                    <img
+                      th:unless="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
+                      th:src="@{/images/project_logo.png}"
+                      th:alt="${place.name} + ' 이미지'"
+                    />
                   </div>
                 </div>
 

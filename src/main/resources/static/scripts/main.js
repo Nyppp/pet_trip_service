@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // 필수 요소만 먼저 초기화
   const toggleBtn = document.querySelector("#chat-toggle-btn button");
   const modal = document.querySelector("#chat-modal");
+  const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
   if (!toggleBtn || !modal) {
     console.warn("채팅 토글 버튼을 찾을 수 없습니다.");
@@ -42,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
       initialized = true;
 
     try {
-      const res = await fetch('/chatrooms/me', { method: 'GET' });
+      const res = await fetch('/chatrooms/me', { method: 'GET'});
 
       const ct = res.headers.get('content-type') || '';
       if (res.redirected || !ct.includes('application/json')) {
@@ -175,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const res = await fetch(`/chatrooms/${roomId}/message`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json',[csrfHeader]: csrfToken  },
         body: JSON.stringify({ message })
       });
 
@@ -234,7 +236,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (confirmed) {
           // 서버에 삭제 요청
           await fetch(`/chatrooms/${roomId}/messages`, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                          [csrfHeader]: csrfToken
+                        }
           });
 
           // 프론트 화면 비우기

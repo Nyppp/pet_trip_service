@@ -27,7 +27,6 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
-
 .schedule_card {
   padding: 1.5rem;
   border-radius: 12px;
@@ -201,6 +200,16 @@ body {
 
 .create_schedule_button:hover {
   background-color: var(--orange_dark);
+}
+
+.select_button {
+  background: var(--orange_main);
+  color: var(--white);
+  border-radius: 5px;
+  padding: 0.5rem;
+  margin-top: 5px;
+  font-size: 0.9rem;
+  display: inline-block;
 }
 
 /* 반응형 디자인 */

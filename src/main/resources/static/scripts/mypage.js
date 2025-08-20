@@ -43,6 +43,9 @@ function saveUserInfo() {
 function updateUserInfoWithImage(imageFile, nickname, saveButton) {
   const formData = new FormData();
 
+  const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
   // 이미지가 있는 경우에만 추가
   if (imageFile) {
     formData.append("image", imageFile);
@@ -56,6 +59,9 @@ function updateUserInfoWithImage(imageFile, nickname, saveButton) {
 
   fetch("/api/user/update", {
     method: "POST",
+    headers: {
+              [csrfHeader]: csrfToken
+            },
     body: formData,
   })
     .then((response) => response.json())
