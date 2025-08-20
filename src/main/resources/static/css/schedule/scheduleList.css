@@ -1,92 +1,221 @@
 @import url("/css/common/common.css");
 
 body {
-    margin: 0;
-    background-color: var(--gray_050);
+  margin: 0;
+  background-color: var(--gray_050);
 }
 
-.main_title{
-    margin: 1rem;
-    text-align: center;
-    color: white;
-    font-size: 24px;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 2rem;
-    align-items: center;
-    gap: 8px;
+.main_title {
+  margin: 1rem;
+  text-align: center;
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  align-items: center;
+  gap: 8px;
 }
 
 .schedule_list {
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 2rem;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
+
 .schedule_card {
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    background: var(--white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--white);
+  width: 600px;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  border: 1px solid #f0f0f0;
 }
+
+.schedule_card:hover {
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.schedule_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
 .schedule_title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    font-size: 40px;
-    text-decoration: none;
-    color: var(--black_main);
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--black_main);
+  margin-bottom: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--black_main);
+  position: relative;
 }
 
-.empty_message{
-    font-size: 24px;
-    text-align: center;
-    font-weight: 700;
+.schedule_title::before {
+  content: "";
+  background-image: url("/images/pin.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  margin-right: 0.5rem;
 }
 
-.schedule_action {
-    display: flex;
-    gap: 10px;
+.schedule_info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-.schedule_date {
-    color: gray;
-    font-size: 0.9rem;
+.info_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #666;
 }
 
-.delete_button{
-    background-color: var(--red_main);
-    border: none;
-    border-radius: 5px;
-    font-size: 20px;
-    color: var(--white);
-    line-height: 30px;
-    width: 50px;
+.info_label {
+  font-weight: 500;
+  color: #333;
+  min-width: 60px;
 }
 
-.update_button{
-    background-color: var(--blue_main);
-    border: none;
-    border-radius: 5px;
-    font-size: 20px;
-    color: var(--white);
-    text-decoration: none;
-    width: 50px;
-    text-align: center;
-    line-height: 30px;
+.info_value {
+  color: #666;
+}
+
+.menu_button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+}
+
+.menu_button:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.dropdown_menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  min-width: 120px;
+  z-index: 1000;
+  display: none;
+  overflow: hidden;
+}
+
+.dropdown_menu.show {
+  display: block;
+}
+
+.dropdown_item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown_item:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown_item.update {
+  color: #333;
+}
+
+.dropdown_item.delete {
+  color: #dc3545;
+}
+
+.dropdown_item:first-child {
+  border-bottom: 1px solid #eee;
+}
+
+.empty_message {
+  font-size: 20px;
+  text-align: center;
+  font-weight: 700;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .create_schedule_button {
-    margin: 2rem;
-    padding: 0.75rem 1.5rem;
-    background-color: var(--orange_main);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--orange_main);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  max-width: 200px;
+  text-align: center;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.create_schedule_button:hover {
+  background-color: var(--orange_dark);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .schedule_list {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .schedule_card {
+    max-width: 100%;
+  }
+
+  .create_schedule_button {
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
+  }
 }
