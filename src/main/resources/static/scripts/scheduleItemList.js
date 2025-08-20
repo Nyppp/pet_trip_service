@@ -66,8 +66,19 @@ document.addEventListener("DOMContentLoaded", () => {
           timeOnlyLabel.className = "label";
           timeOnlyLabel.textContent = "시간";
           const timeOnlyText = document.createElement("span");
-          const startTime = item.startTime.substring(11, 16);
-          const endTime = item.endTime.substring(11, 16);
+
+          // 시간 포맷 함수
+          const formatTime = (timeString) => {
+            const time = timeString.substring(11, 16); // HH:MM 형식 추출
+            const [hours, minutes] = time.split(":");
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? "오후" : "오전";
+            const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+            return `${ampm} ${displayHour.toString().padStart(2, "0")}:${minutes}`;
+          };
+
+          const startTime = formatTime(item.startTime);
+          const endTime = formatTime(item.endTime);
           timeOnlyText.textContent = `${startTime} ~ ${endTime}`;
           timeOnlyP.append(timeOnlyLabel, document.createTextNode(" "), timeOnlyText);
 

@@ -65,33 +65,6 @@ body {
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 }
 
-.date-tabs {
-  display: flex;
-  overflow-x: auto;
-  border-bottom: 1px solid #ddd;
-  background-color: #f9f9f9;
-}
-
-.date-tab {
-  padding: 1rem;
-  cursor: pointer;
-  color: #333;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border-bottom: 2px solid transparent;
-  white-space: nowrap;
-}
-
-.date-tab:hover {
-  background-color: #f0f0f0;
-}
-
-.date-tab.active {
-  background-color: #e0e0e0;
-  font-weight: bold;
-  border-bottom-color: var(--blue_main);
-}
-
 .planner-body {
   padding: 1.5rem;
   display: flex;
@@ -103,7 +76,7 @@ body {
 
 .location-card {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   padding: 1.5rem;
   border-radius: 12px;
   background: var(--white);
@@ -122,8 +95,8 @@ body {
 }
 
 .location-thumb {
-  width: 160px;
-  height: 120px;
+  width: 200px;
+  height: 150px;
   object-fit: cover;
   border-radius: 8px;
   flex-shrink: 0;
@@ -136,11 +109,11 @@ body {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .location-title {
-  margin: 0 0 8px 0;
+  margin: 0 0 20px 0;
   font-size: 1.3rem;
   font-weight: bold;
   color: var(--black_main);
@@ -151,12 +124,12 @@ body {
 .location-time,
 .location-date,
 .location-time-only {
-  margin: 0 0 6px 0;
+  margin: 0 0 15px 0;
   font-size: 0.9rem;
   color: #666;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .location-memo .label,
@@ -249,13 +222,6 @@ body {
   border-bottom: 1px solid var(--gray_main);
 }
 
-/* 왼쪽 영역: 라벨 + 셀렉트 */
-.toolbar-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .filter-bar {
   display: flex;
   align-items: center;
@@ -277,30 +243,6 @@ body {
   min-width: 160px;
 }
 
-/* 버튼 공통 */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
-  padding: 0 14px;
-  border-radius: 8px;
-  font-weight: 600;
-  text-decoration: none;
-  border: 1px solid transparent;
-  cursor: pointer;
-}
-
-/* 파란 버튼 */
-.add-place-btn {
-  background: var(--blue_main);
-  color: #fff;
-}
-
-.add-place-btn:hover {
-  filter: brightness(0.95);
-}
-
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .planner_toolbar {
@@ -308,11 +250,6 @@ body {
     gap: 12px;
     padding: 1rem;
     margin: 0 1rem 0.5rem 1rem;
-  }
-
-  .toolbar-left {
-    width: 100%;
-    justify-content: space-between;
   }
 
   .filter-bar {

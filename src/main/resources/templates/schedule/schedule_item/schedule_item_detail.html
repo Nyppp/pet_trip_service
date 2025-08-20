@@ -1,42 +1,49 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8" />
-  <title>일정 아이템 상세</title>
-  <link rel="stylesheet" href="/css/common/common.css">
-  <link rel="stylesheet" href="/css/schedule/scheduleItemDetail.css">
-  <script src="/scripts/scheduleItemDetail.js" defer></script>
-</head>
-<body>
-<div th:replace="~{common/header :: siteHeader}"></div>
-<div class="page_wrap" id="page">
-  <div class="item_card">
-    <img class="item_main_img" id="item_main_img" alt="장소 이미지"/>
-    <div class="item_body">
-      <h1 class="item_title" id="item_title">로딩중...</h1>
-
-      <div class="item_meta">
-        <p class="item_row">
-          <span class="label">시작 시간</span>
-          <span class="text" id="start_time">-</span>
-        </p>
-        <p class="item_row">
-          <span class="label">종료 시간</span>
-          <span class="text" id="end_time">-</span>
-        </p>
-        <p class="item_row">
-          <span class="label">메모</span>
-          <span class="text" id="memo">-</span>
-        </p>
+  <head>
+    <meta charset="UTF-8" />
+    <title>일정 아이템 상세</title>
+    <link rel="stylesheet" href="/css/common/common.css" />
+    <link rel="stylesheet" href="/css/schedule/scheduleItemDetail.css" />
+    <script src="/scripts/scheduleItemDetail.js" defer></script>
+  </head>
+  <body>
+    <div th:replace="~{common/header :: siteHeader}"></div>
+    <div class="page_wrap" id="page">
+      <div class="back_button" id="back_button">
+        <span class="arrow">←</span>
+        <span class="back_text">일정 리스트로 돌아가기</span>
       </div>
+      <div class="item_card">
+        <img class="item_main_img" id="item_main_img" alt="장소 이미지" />
+        <div class="item_body">
+          <div class="item_header">
+            <h1 class="item_title" id="item_title">로딩중...</h1>
+            <div class="menu_container">
+              <button class="menu_button" id="menu_button">⋮</button>
+              <div class="dropdown_menu" id="dropdown_menu">
+                <a class="dropdown_item" id="edit_menu_item">수정</a>
+                <a class="dropdown_item delete" id="delete_menu_item">삭제</a>
+              </div>
+            </div>
+          </div>
 
-      <div class="button_group">
-        <a class="btn btn_primary" id="edit_link">수정</a>
-        <a class="btn btn_secondary" id="list_link">일정 리스트로 돌아가기</a>
-        <button type="button" class="btn btn_danger" id="delete_btn">삭제</button>
+          <div class="item_meta">
+            <p class="item_row">
+              <span class="label">시작 시간</span>
+              <span class="text" id="start_time">-</span>
+            </p>
+            <p class="item_row">
+              <span class="label">종료 시간</span>
+              <span class="text" id="end_time">-</span>
+            </p>
+            <p class="item_row">
+              <span class="label">메모</span>
+              <span class="text" id="memo">-</span>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>
