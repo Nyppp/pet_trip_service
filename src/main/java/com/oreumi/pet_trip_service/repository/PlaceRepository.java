@@ -14,6 +14,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     Optional<Place> findByNameAndAddress(String name, String address);
     List<Place> findAllByNameContainingIgnoreCase(String keyword);
+    List<Place> findTop12ByOrderByRatingDesc();
 
     @Query(
             value = """

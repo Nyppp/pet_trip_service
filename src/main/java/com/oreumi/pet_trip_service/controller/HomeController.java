@@ -21,7 +21,6 @@ public class HomeController {
     @GetMapping
     public String home(Model model) {
         List<PlaceDTO> placeDTO = placeService.findAllPlaces();
-        placeDTO = placeService.sortByRating(placeDTO);
 
         model.addAttribute("category", Category.getCat1CodeDescriptionMap());
         model.addAttribute("places", placeDTO);

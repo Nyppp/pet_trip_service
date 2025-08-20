@@ -24,10 +24,8 @@ public class PlaceService {
     private final ReviewRepository reviewRepository;
 
     public List<PlaceDTO> findAllPlaces(){
-        // 페이징을 적용하여 초기 로딩 속도 개선 (상위 12개만)
-        List<Place> places = placeRepository.findAll().stream()
-                .limit(12)
-                .toList();
+        // 별점순으로 정렬된 상위 12개 장소를 데이터베이스에서 직접 가져오기
+        List<Place> places = placeRepository.findTop12ByOrderByRatingDesc();
         
         List<Long> placeIds = places.stream()
                 .map(Place::getId)
