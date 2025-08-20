@@ -90,3 +90,11 @@ body {
     text-decoration: none;
     display: inline-block;
 }
+
+
+.select_button{
+    background: var(--orange_main);
+    color: var(--white);
+    border-radius: 5px;
+    padding: 0.5rem;
+}

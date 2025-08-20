@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     img.alt = "장소 이미지";
                     img.src = (item.placeImgUrl && /^https?:\/\//.test(item.placeImgUrl))
                       ? item.placeImgUrl
-                      : "/images/default.png";
+                      : '/images/project_logo.png';
 
                     // 본문
                     const body = document.createElement("div");

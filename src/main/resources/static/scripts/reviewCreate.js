@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const likeBtn = document.getElementById("like-btn");
   const placeId = likeBtn?.dataset.placeId || document.body?.dataset.placeId;
 
+
+
   const toggleModal = (show) => {
     if (!modal) return;
     modal.classList.toggle("hidden", !show);
@@ -378,19 +380,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const isEditMode = modal.dataset.editMode === "true";
       const reviewId = modal.dataset.reviewId;
 
+      const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+      const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
       let res;
       if (isEditMode && reviewId) {
         // 수정 API 호출
         res = await fetch(`/api/places/${placeId}/reviews/${reviewId}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+          headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest", [csrfHeader]: csrfToken },
           body: JSON.stringify(payload),
         });
       } else {
         // 생성 API 호출
         res = await fetch(`/api/places/${placeId}/reviews`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+          headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest", [csrfHeader]: csrfToken },
           body: JSON.stringify(payload),
         });
       }

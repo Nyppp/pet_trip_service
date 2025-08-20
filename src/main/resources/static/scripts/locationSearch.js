@@ -86,9 +86,7 @@ function ensureMarker(place, position) {
 function showPlaceCard(place, marker) {
   if (marker) map.panTo(marker.getPosition());
 
-  const img = (place.imageUrls && place.imageUrls.length)
-    ? place.imageUrls[0]
-    : '/images/no_image.png';
+  const img = (place.imageUrls?.[0]?.trim()) || '/images/project_logo.png';
 
   const rating = place.rating ?? 0;
   const liked  = place.liked ?? 0;

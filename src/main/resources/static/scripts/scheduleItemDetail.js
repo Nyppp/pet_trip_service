@@ -54,6 +54,9 @@
       if (imgUrl) {
         $img.src = imgUrl;
         $img.alt = data?.placeName ?? '장소 이미지';
+      }else{
+        $img.src = '/images/project_logo.png';
+        $img.alt = '기본 장소 이미지';
       }
 
       // 수정 / 리스트 URL 구성
