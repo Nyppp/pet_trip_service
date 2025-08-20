@@ -24,7 +24,11 @@ public class PlaceService {
     private final ReviewRepository reviewRepository;
 
     public List<PlaceDTO> findAllPlaces(){
-        List<Place> places = placeRepository.findAll();
+        // 페이징을 적용하여 초기 로딩 속도 개선 (상위 12개만)
+        List<Place> places = placeRepository.findAll().stream()
+                .limit(12)
+                .toList();
+        
         List<Long> placeIds = places.stream()
                 .map(Place::getId)
                 .toList();

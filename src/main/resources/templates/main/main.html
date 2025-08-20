@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <title>떠나개 - 반려동물 동반 여행 플랫폼</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
-
   </head>
   <body>
     <!-- 공통 헤더 포함 -->
@@ -14,21 +13,18 @@
     <section class="search-bar">
       <div class="container">
         <form id="search-form" th:action="@{/search}" method="get" role="search">
-          <input type="hidden" name="page" value="0"/>
-          <input type="hidden" name="size" value="12"/>
-          <input type="hidden" id="sort" name="sort" value="relevance"/>
+          <input type="hidden" name="page" value="0" />
+          <input type="hidden" name="size" value="12" />
+          <input type="hidden" id="sort" name="sort" value="relevance" />
 
           <label for="cat1" class="sr-only">카테고리</label>
           <select id="cat1" name="cat1">
             <option value="">전체</option>
-            <option th:each="cat : ${category.entrySet()}"
-                    th:value="${cat.key}"
-                    th:text="${cat.value}">
-            </option>
+            <option th:each="cat : ${category.entrySet()}" th:value="${cat.key}" th:text="${cat.value}"></option>
           </select>
 
           <label for="keyword" class="sr-only">검색어</label>
-          <input id="keyword" name="keyword" type="text" placeholder="검색어를 입력하세요"/>
+          <input id="keyword" name="keyword" type="text" placeholder="검색어를 입력하세요" />
 
           <button type="submit">검색</button>
           <a class="map-btn" th:href="@{/location/permission}">지도로 검색</a>
@@ -47,14 +43,18 @@
             <div class="carousel-track" id="placesTrack">
               <div th:each="place : ${places}" class="place-card">
                 <div class="place-image">
-                  <img th:if="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
-                       th:src="${place.imageUrls[0]}"
-                       th:alt="${place.name} + ' 이미지'"
-                       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                  <img
+                    th:if="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
+                    th:src="${place.imageUrls[0]}"
+                    th:alt="${place.name} + ' 이미지'"
+                    loading="lazy"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                    onload="this.nextElementSibling.style.display='none';"
+                  />
                   <div th:if="${place.imageUrls == null or place.imageUrls.isEmpty()}" class="no-image-placeholder">
                     <span>준비된 이미지가 없습니다</span>
                   </div>
-                  <div class="no-image-placeholder" style="display:none">
+                  <div class="no-image-placeholder" style="display: none">
                     <span>이미지를 불러올 수 없습니다</span>
                   </div>
                 </div>
@@ -117,10 +117,17 @@
       <div class="container">&copy; 2025 떠나개. 반려동물과 함께하는 행복한 여행을 응원합니다.</div>
     </footer>
 
-    <script src="/scripts/main.js"></script>
-    <script src="/scripts/mainFront.js"></script>
+    <!-- 스크립트 최적화 로딩 -->
+    <script src="/scripts/mainFront.js" defer></script>
+    <script src="/scripts/main.js" defer></script>
     <script>
-
+      // 즉시 실행되는 필수 스크립트만 여기에 배치
+      document.addEventListener("DOMContentLoaded", function () {
+        // 검색 폼 이벤트 리스너
+        document.getElementById("keyword")?.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") document.getElementById("search-form").submit();
+        });
+      });
     </script>
   </body>
 </html>
