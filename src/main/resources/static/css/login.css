@@ -90,29 +90,6 @@
   margin-top: 20px;
 }
 
-.divider {
-  text-align: center;
-  margin: 20px 0;
-  position: relative;
-}
-
-.divider::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background-color: var(--gray_300);
-}
-
-.divider span {
-  background-color: var(--white);
-  padding: 0 10px;
-  color: var(--gray_500);
-  font-size: 14px;
-}
-
 .btn-google {
   display: flex;
   align-items: center;
