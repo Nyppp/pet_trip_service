@@ -165,6 +165,10 @@ document.addEventListener("DOMContentLoaded", () => {
         location.href = "/login";
         return;
       }
+      if (res.redirected) {
+          alert('로그인이 필요합니다.');
+          return;
+      }
       if (!res.ok) throw new Error("like api error");
 
       const data = await res.json(); // { liked: boolean, count: number }
