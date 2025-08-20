@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <title>떠나개 - 반려동물 동반 여행 플랫폼</title>
-    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}"/>
-    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}" />
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
   </head>
   <body>
@@ -14,25 +14,30 @@
     <!-- 검색 -->
     <section class="search-bar">
       <div class="container">
+        <div class="search-header">
+          <h1 class="search-title">반려동물과 함께하는 특별한 여행</h1>
+          <p class="search-subtitle">떠나개에서 당신의 완벽한 펫프렌들리 여행지를 찾아보세요</p>
+        </div>
         <form id="search-form" th:action="@{/search}" method="get" role="search">
-          <input type="hidden" name="page" value="0"/>
-          <input type="hidden" name="size" value="12"/>
-          <input type="hidden" id="sort" name="sort" value="relevance"/>
+          <input type="hidden" name="page" value="0" />
+          <input type="hidden" name="size" value="12" />
+          <input type="hidden" id="sort" name="sort" value="relevance" />
 
-          <label for="cat1" class="sr-only">카테고리</label>
-          <select id="cat1" name="cat1">
-            <option value="">전체</option>
-            <option th:each="cat : ${category.entrySet()}"
-                    th:value="${cat.key}"
-                    th:text="${cat.value}">
-            </option>
-          </select>
+          <div class="search-inputs">
+            <label for="cat1" class="sr-only">카테고리</label>
+            <select id="cat1" name="cat1">
+              <option value="">전체 카테고리</option>
+              <option th:each="cat : ${category.entrySet()}" th:value="${cat.key}" th:text="${cat.value}"></option>
+            </select>
 
-          <label for="keyword" class="sr-only">검색어</label>
-          <input id="keyword" name="keyword" type="text" placeholder="검색어를 입력하세요"/>
+            <label for="keyword" class="sr-only">검색어</label>
+            <input id="keyword" name="keyword" type="text" placeholder="어디로 떠나고 싶으신가요?" />
+          </div>
 
-          <button type="submit">검색</button>
-          <a class="map-btn" th:href="@{/location/permission}">지도로 검색</a>
+          <div class="search-buttons">
+            <button type="submit">검색하기</button>
+            <a class="map-btn" th:href="@{/location/permission}">지도로 검색</a>
+          </div>
         </form>
       </div>
     </section>
@@ -49,14 +54,18 @@
               <div th:each="place : ${places}" class="place-card">
                 <div class="place-image">
                   <div class="place-image-wrap">
-                    <img th:if="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
-                         th:src="${place.imageUrls[0]}"
-                         th:alt="${place.name} + ' 이미지'"
-                         onerror="this.onerror=null; this.src='/images/project_logo.png';"/>
+                    <img
+                      th:if="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
+                      th:src="${place.imageUrls[0]}"
+                      th:alt="${place.name} + ' 이미지'"
+                      onerror="this.onerror=null; this.src='/images/project_logo.png';"
+                    />
 
-                    <img th:unless="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
-                         th:src="@{/images/project_logo.png}"
-                         th:alt="${place.name} + ' 이미지'"/>
+                    <img
+                      th:unless="${place.imageUrls != null and !place.imageUrls.isEmpty()}"
+                      th:src="@{/images/project_logo.png}"
+                      th:alt="${place.name} + ' 이미지'"
+                    />
                   </div>
                 </div>
 
@@ -118,10 +127,17 @@
       <div class="container">&copy; 2025 떠나개. 반려동물과 함께하는 행복한 여행을 응원합니다.</div>
     </footer>
 
-    <script src="/scripts/main.js"></script>
-    <script src="/scripts/mainFront.js"></script>
+    <!-- 스크립트 최적화 로딩 -->
+    <script src="/scripts/mainFront.js" defer></script>
+    <script src="/scripts/main.js" defer></script>
     <script>
-
+      // 즉시 실행되는 필수 스크립트만 여기에 배치
+      document.addEventListener("DOMContentLoaded", function () {
+        // 검색 폼 이벤트 리스너
+        document.getElementById("keyword")?.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") document.getElementById("search-form").submit();
+        });
+      });
     </script>
   </body>
 </html>

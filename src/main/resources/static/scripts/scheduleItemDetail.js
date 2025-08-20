@@ -1,9 +1,9 @@
 (function () {
   // 1) URL에서 itemId 추출
-  const segs = window.location.pathname.split('/').filter(Boolean);
-  const itemsIdx = segs.indexOf('items');
+  const segs = window.location.pathname.split("/").filter(Boolean);
+  const itemsIdx = segs.indexOf("items");
   if (itemsIdx === -1 || !segs[itemsIdx + 1]) {
-    alert('잘못된 경로입니다. (itemId 없음)');
+    alert("잘못된 경로입니다. (itemId 없음)");
     return;
   }
 
@@ -11,46 +11,54 @@
   const userId = pathParts[2];
   const scheduleId = pathParts[4];
 
-
   const itemId = segs[itemsIdx + 1];
 
   // 2) API 엔드포인트
   const apiUrl = `/api/items/${itemId}`;
 
   // 3) DOM 요소 캐시
-  const $img = document.getElementById('item_main_img');
-  const $title = document.getElementById('item_title');
-  const $start = document.getElementById('start_time');
-  const $end = document.getElementById('end_time');
-  const $memo = document.getElementById('memo');
-  const $edit = document.getElementById('edit_link');
-  const $list = document.getElementById('list_link');
-  const $del = document.getElementById('delete_btn');
+  const $img = document.getElementById("item_main_img");
+  const $title = document.getElementById("item_title");
+  const $start = document.getElementById("start_time");
+  const $end = document.getElementById("end_time");
+  const $memo = document.getElementById("memo");
+  const $back = document.getElementById("back_button");
+  const $menuButton = document.getElementById("menu_button");
+  const $dropdownMenu = document.getElementById("dropdown_menu");
+  const $editMenuItem = document.getElementById("edit_menu_item");
+  const $deleteMenuItem = document.getElementById("delete_menu_item");
 
   // 4) 날짜 포맷
   function fmt(dtString) {
-    if (!dtString) return '-';
+    if (!dtString) return "-";
     const d = new Date(dtString);
     if (isNaN(d)) return dtString;
-    return new Intl.DateTimeFormat('ko-KR', {
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit'
-    }).format(d).replace(/\./g,'-').replace(/\s/g,' ').trim();
+    return new Intl.DateTimeFormat("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+      .format(d)
+      .replace(/\./g, "-")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   // 5) 상세 조회
   async function loadDetail() {
     try {
-      const res = await fetch(`/api/items/${itemId}`, { credentials: 'include' });
+      const res = await fetch(`/api/items/${itemId}`, { credentials: "include" });
       if (!res.ok) throw new Error(`조회 실패: ${res.status}`);
       const data = await res.json();
 
-      $title.textContent = data?.placeName ?? '(이름 없음)';
+      $title.textContent = data?.placeName ?? "(이름 없음)";
       $start.textContent = fmt(data?.startTime);
       $end.textContent = fmt(data?.endTime);
-      $memo.textContent = data?.memo ?? '-';
+      $memo.textContent = data?.memo ?? "-";
 
-      const imgUrl = data?.placeImgUrl ??  '';
+      const imgUrl = data?.placeImgUrl ?? "";
       if (imgUrl) {
         $img.src = imgUrl;
         $img.alt = data?.placeName ?? '장소 이미지';
@@ -59,34 +67,57 @@
         $img.alt = '기본 장소 이미지';
       }
 
-      // 수정 / 리스트 URL 구성
-      $edit.href = `/users/${userId}/schedules/${data.scheduleId}/items/${itemId}/edit`;
-      $list.href = `/users/${userId}/schedules/${data.scheduleId}`;
+      // 수정 URL 구성
+      $editMenuItem.href = `/users/${userId}/schedules/${data.scheduleId}/items/${itemId}/edit`;
     } catch (e) {
       console.error(e);
-      alert('상세 정보를 불러오지 못했습니다.');
+      alert("상세 정보를 불러오지 못했습니다.");
     }
   }
 
   // 6) 삭제
   async function deleteItem() {
-    if (!confirm('정말 삭제할까요?')) return;
+    if (!confirm("정말 삭제할까요?")) return;
     try {
-      const res = await fetch(`/api/schedules/${scheduleId}/items/${itemId}`, { method: 'DELETE', credentials: 'include' });
+      const res = await fetch(`/api/schedules/${scheduleId}/items/${itemId}`, { method: "DELETE", credentials: "include" });
       if (res.status === 204) {
-        // DTO에 scheduleId가 있으니 리스트 페이지로 이동
-        window.location.href = $list.href;
+        // 삭제 성공 시 일정 리스트 페이지로 이동
+        window.location.href = `/users/${userId}/schedules/${scheduleId}`;
       } else {
         throw new Error(`삭제 실패: ${res.status}`);
       }
     } catch (e) {
       console.error(e);
-      alert('삭제 중 오류가 발생했습니다.');
+      alert("삭제 중 오류가 발생했습니다.");
     }
   }
 
+  // 7) 뒤로가기
+  function goBack() {
+    window.location.href = `/users/${userId}/schedules/${scheduleId}`;
+  }
+
+  // 8) 메뉴 토글
+  function toggleMenu() {
+    $dropdownMenu.classList.toggle("show");
+  }
+
+  // 9) 메뉴 외부 클릭 시 닫기
+  function closeMenu() {
+    $dropdownMenu.classList.remove("show");
+  }
+
   // 이벤트 등록
-  $del.addEventListener('click', deleteItem);
+  $back.addEventListener("click", goBack);
+  $menuButton.addEventListener("click", toggleMenu);
+  $deleteMenuItem.addEventListener("click", deleteItem);
+
+  // 메뉴 외부 클릭 시 닫기
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".menu_container")) {
+      closeMenu();
+    }
+  });
 
   // 로드 시 데이터 불러오기
   loadDetail();

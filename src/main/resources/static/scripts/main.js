@@ -1,22 +1,35 @@
 // main.js
-document.addEventListener('DOMContentLoaded', function () {
-  const input = document.querySelector('#chat-input');
-  const sendBtn = document.querySelector('#chat-modal-input button');
-  const toggleBtn = document.querySelector('#chat-toggle-btn button');
-  const modal = document.querySelector('#chat-modal');
-  const chatBody = document.querySelector('#chat-modal-body');
-  const clearBtn = document.querySelector('#clear-chat-btn');
+document.addEventListener("DOMContentLoaded", function () {
+  // 필수 요소만 먼저 초기화
+  const toggleBtn = document.querySelector("#chat-toggle-btn button");
+  const modal = document.querySelector("#chat-modal");
   const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
   const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
-  if (!input || !sendBtn || !toggleBtn || !modal || !chatBody || !clearBtn) {
-    console.warn('채팅요소를 찾을 수 없습니다. 셀렉터를 확인하세요.');
+  if (!toggleBtn || !modal) {
+    console.warn("채팅 토글 버튼을 찾을 수 없습니다.");
     return;
   }
 
-  // 로그인 필요 여부 플래그 (초기엔 미로그인 가정 X)
-  let loginRequired = false;
-  let loginUrl = '/login';
+  // 나머지 요소들은 비동기로 초기화
+  setTimeout(() => {
+    initializeChatComponents();
+  }, 100);
+
+  function initializeChatComponents() {
+    const input = document.querySelector("#chat-input");
+    const sendBtn = document.querySelector("#chat-modal-input button");
+    const chatBody = document.querySelector("#chat-modal-body");
+    const clearBtn = document.querySelector("#clear-chat-btn");
+
+    if (!input || !sendBtn || !chatBody || !clearBtn) {
+      console.warn("채팅요소를 찾을 수 없습니다. 셀렉터를 확인하세요.");
+      return;
+    }
+
+    // 로그인 필요 여부 플래그 (초기엔 미로그인 가정 X)
+    let loginRequired = false;
+    let loginUrl = "/login";
 
   // 채팅방 관련 변수
   let roomId = null;
@@ -26,9 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const PAGE_SIZE = 5;
   let nextCursor = null;
 
-  const initChatRoom = async () => {
-    if (initialized) return;
-    initialized = true;
+    const initChatRoom = async () => {
+      if (initialized) return;
+      initialized = true;
 
     try {
       const res = await fetch('/chatrooms/me', { method: 'GET'});
@@ -65,8 +78,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const opening = modal.style.display === 'none' || !modal.style.display;
     modal.style.display = opening ? 'flex' : 'none';
 
-    if (opening && !initialized) {
-      await initChatRoom();
+      if (opening && !initialized) {
+        await initChatRoom();
 
       if (loginRequired) {
         alert('채팅은 로그인 후 이용 가능합니다.');
@@ -85,21 +98,21 @@ document.addEventListener('DOMContentLoaded', function () {
     div.classList.add('chat-message', isBot ? 'bot-message' : 'user-message');
     div.innerHTML = escapeHTML(dto.message).replace(/\n/g, '<br>');
 
-    if (opt.prepend) chatBody.prepend(div);
-    else chatBody.appendChild(div);
-  }
+      if (opt.prepend) chatBody.prepend(div);
+      else chatBody.appendChild(div);
+    }
 
-  const loadLatest = async () => {
-    const res = await fetch(`/chatrooms/${roomId}/messages?size=${PAGE_SIZE}`);
-    const data = await res.json();
+    const loadLatest = async () => {
+      const res = await fetch(`/chatrooms/${roomId}/messages?size=${PAGE_SIZE}`);
+      const data = await res.json();
 
     [...(data.items || [])].reverse()
            .forEach(msg => addMessageBubble(msg, { prepend: true }));
 
-    chatBody.scrollTop = chatBody.scrollHeight;
+      chatBody.scrollTop = chatBody.scrollHeight;
 
-    nextCursor = data.nextCursor;
-  };
+      nextCursor = data.nextCursor;
+    };
 
   chatBody.addEventListener('scroll', async () => {
     if (chatBody.scrollTop === 0) {
@@ -107,27 +120,27 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  const loadOlder = async () => {
-    if (!nextCursor || loadingOlder) return;
-    loadingOlder = true;
+    const loadOlder = async () => {
+      if (!nextCursor || loadingOlder) return;
+      loadingOlder = true;
 
-    // 현재 맨 위의 높이를 저장해 두면 스크롤 점프 방지 가능
-    const prevHeight = chatBody.scrollHeight;
+      // 현재 맨 위의 높이를 저장해 두면 스크롤 점프 방지 가능
+      const prevHeight = chatBody.scrollHeight;
 
-    const res = await fetch(`/chatrooms/${roomId}/messages?cursor=${nextCursor}&size=${PAGE_SIZE}`);
-    const data = await res.json();
+      const res = await fetch(`/chatrooms/${roomId}/messages?cursor=${nextCursor}&size=${PAGE_SIZE}`);
+      const data = await res.json();
 
     // 기존 메시지 위에 prepend
     [...(data.items || [])].reverse()
        .forEach(msg => addMessageBubble(msg, { prepend: true }));
 
-    // 스크롤 위치 보정 (위에 붙였으니, 이전 위치 유지)
-    const added = chatBody.scrollHeight - prevHeight;
-    chatBody.scrollTop = added;
+      // 스크롤 위치 보정 (위에 붙였으니, 이전 위치 유지)
+      const added = chatBody.scrollHeight - prevHeight;
+      chatBody.scrollTop = added;
 
-    nextCursor = data.nextCursor;
-    loadingOlder = false;
-  };
+      nextCursor = data.nextCursor;
+      loadingOlder = false;
+    };
 
   const sendMessage = async () => {
     // 전송 시점에 로그인 필요하면 안내 + 이동
@@ -147,8 +160,8 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    const message = input.value;
-    if (!message.trim()) return;
+      const message = input.value;
+      if (!message.trim()) return;
 
     if (!roomId) {
       alert('채팅방 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
@@ -187,9 +200,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      if (!res.ok) throw new Error(`응답 오류: ${res.status}`);
+        if (!res.ok) throw new Error(`응답 오류: ${res.status}`);
 
-      const data = await res.json();
+        const data = await res.json();
 
       // 챗봇 메세지 추가
       addMessageBubble({ sender: 'chatbot', message: data.message}, {});
@@ -216,8 +229,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // 초기화 버튼
-  if (clearBtn) {
+    // 초기화 버튼
+    if (clearBtn) {
       clearBtn.addEventListener("click", async () => {
         const confirmed = confirm("채팅방에 저장된 메세지를 모두 삭제합니다. 정말로 삭제하시겠습니까?");
         if (confirmed) {
@@ -236,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   // 초기 상태
   if (!modal.style.display) modal.style.display = 'none';
+}
 });
 document.getElementById('keyword')?.addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('search-form').submit();

@@ -1,37 +1,36 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" >
-<head>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
     <meta charset="UTF-8" />
     <title>여행 스케줄 플래너</title>
     <script th:src="@{/scripts/scheduleItemList.js}"></script>
-    <link rel="stylesheet" th:href="@{/css/schedule/scheduleDetail.css}"/>
-</head>
-<body>
-<div th:replace="~{common/header :: siteHeader}"></div>
+    <link rel="stylesheet" th:href="@{/css/schedule/scheduleDetail.css}" />
+  </head>
+  <body>
+    <div th:replace="~{common/header :: siteHeader}"></div>
 
-<div class="schedule_title_bar">
-    <h1 th:text="${schedule.title}">여행 스케줄 플래너</h1>
-</div>
-
-<div class="planner_toolbar">
-    <a th:href="@{/users/{userId}/schedules/{scheduleId}/items/new
-    (userId=${userId}, scheduleId=${schedule.id})}" class="add-location">+ 장소 추가</a>
-
-    <div class="filter-bar">
-        <label for="date_filter">날짜</label>
-        <select id="date_filter">
-        </select>
+    <div class="schedule_title_bar">
+      <h1><span th:text="${schedule.title}">여행 스케줄 플래너</span></h1>
     </div>
-</div>
 
+    <div class="planner_toolbar">
+      <a
+        th:href="@{/users/{userId}/schedules/{scheduleId}/items/new
+    (userId=${userId}, scheduleId=${schedule.id})}"
+        class="add-location"
+        >+ 장소 추가</a
+      >
 
-<div id="planner-body" class="planner-body">
+      <div class="filter-bar">
+        <label for="date_filter">날짜</label>
+        <select id="date_filter"></select>
+      </div>
+    </div>
 
-</div>
+    <div id="planner-body" class="planner-body"></div>
 
-<div class="footer">
-    <a th:href="@{/users/{userId}/schedules(userId=${userId})}" class="add-location">스케쥴 리스트로 돌아가기</a>
-</div>
-
-</body>
+    <div class="footer">
+      <a th:href="@{/users/{userId}/schedules(userId=${userId})}" class="add-location">스케쥴 리스트로 돌아가기</a>
+    </div>
+  </body>
 </html>
