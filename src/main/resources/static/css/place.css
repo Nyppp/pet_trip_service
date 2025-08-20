@@ -1,3 +1,5 @@
+body { background-color: var(--gray_050); color: var(--black_main); }
+
 .container {
   max-width: 1100px;
   margin: 0 auto;
