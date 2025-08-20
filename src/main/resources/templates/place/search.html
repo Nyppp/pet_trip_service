@@ -91,11 +91,16 @@
                         <img class="thumb"
                              th:src="${p.imageUrls[0]}"
                              alt="장소 이미지"
-                             onerror="this.remove()" />
+                             onerror="this.onerror=null; this.src='/images/project_logo.png';" />
                     </a>
                 </th:block>
+
                 <th:block th:unless="${!#lists.isEmpty(p.imageUrls)}">
-                    <div class="thumb-spacer" aria-hidden="true"></div>
+                    <a th:href="@{'/place/' + ${p.id}}">
+                        <img class="thumb"
+                             th:src="@{/images/project_logo.png}"
+                             alt="기본 장소 이미지" />
+                    </a>
                 </th:block>
 
                 <div class="card-info">
