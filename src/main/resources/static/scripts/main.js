@@ -232,3 +232,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // 초기 상태
   if (!modal.style.display) modal.style.display = 'none';
 });
+document.getElementById('keyword')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('search-form').submit();
+});

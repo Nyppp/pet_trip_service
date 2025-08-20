@@ -67,6 +67,7 @@ public class PlaceDTO {
         this.homepageUrl = place.getHomepageUrl();
         this.aiReview = place.getAiReview();
         this.aiPet = place.getAiPet();
+        this.description = place.getDescription();
     }
 
     public String getCategoryPath() {
