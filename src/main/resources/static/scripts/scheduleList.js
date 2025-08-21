@@ -65,8 +65,12 @@ document.addEventListener("DOMContentLoaded", () => {
           deleteItem.disabled = true;
           deleteItem.textContent = "삭제 중...";
 
+          const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+          const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
           fetch(`/api/schedules/${schedule.id}`, {
             method: "DELETE",
+            headers:{[csrfHeader]: csrfToken}
           })
             .then((res) => {
               if (res.status === 204) {

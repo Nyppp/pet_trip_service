@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  fetch(`/api/places`)
+  fetch(`/api/places/all`)
     .then(res => res.json())
     .then(data => {
       allPlaces = Array.isArray(data) ? data : [];

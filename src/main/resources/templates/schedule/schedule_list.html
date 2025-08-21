@@ -5,6 +5,8 @@
     <title>내 여행 일정</title>
     <script th:src="@{/scripts/scheduleList.js}"></script>
     <link rel="stylesheet" th:href="@{/css/schedule/scheduleList.css}" />
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}" />
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}" />
   </head>
   <body>
     <div th:replace="~{common/header :: siteHeader}"></div>
