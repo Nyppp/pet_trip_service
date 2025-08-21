@@ -847,3 +847,20 @@ textarea:focus {
   -webkit-appearance: none;
   font: inherit;
 }
+.ai-card-header{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.ai-title{
+  display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+}
+.ai-title h2{ margin:0; }
+.ai-note{
+  font-size:12px;
+  color:#6b7280;
+  line-height:1.2;
+}
+
+@media (max-width: 640px){
+  .ai-card-header{ align-items:flex-start; }
+  .ai-title{ flex-direction:column; gap:4px; }
+}

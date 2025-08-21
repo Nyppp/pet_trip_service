@@ -148,8 +148,8 @@ public class PlaceService {
             """.formatted(n(p.getName()));
             System.out.println(promptPet);
             String petText = chatService.AlanAiReply(promptPet);
-            petText = normalizeAiText(petText);
             System.out.println(petText);
+            petText = normalizeAiText(petText);
             if (isValidAiText(petText)) {
                 p.setAiPet(cut(petText, 8000));
                 changed = true;
@@ -182,26 +182,63 @@ public class PlaceService {
 
     private static String normalizeAiText(String s) {
         if (s == null) return "";
-        s = s.replaceAll("(?m)^.*정리해 드리겠습니다\\.?\\s*$", "");
-        s = s.replaceAll("(?m)^.*도움이 되길 바랍니다\\.?\\s*$", "");
-        s = s.replaceAll("(?m)^.*추가적인 질문.*$", "");
-        s = s.replaceAll("(?m)^.*질문!*$", "");
+        s = s.replace("\r\n", "\n").replace("\r", "\n").trim();
 
+        String[] promptEcho = {
+                "(?im)^\\s*장소명\\s*['\"].+?['\"].*$",
+                "(?im)^\\s*[^\\n]*의\\s*(장점과\\s*단점|반려동물\\s*동반\\s*관련\\s*정보)[^\\n]*(정리해\\s*드리겠|정리해드리겠|정리해\\s*주세요|정리해줘)[^\\n]*$"
+        };
+        for (String p : promptEcho) s = s.replaceAll(p, "");
 
-        s = s.replaceAll("\\[(?:출처|source)\\d+\\]\\([^)]*\\)", "");
+        String[] killLinePatterns = {
+                "(?im)^.*정리해\\s*드리겠습니다\\.?\\s*$",
+                "(?im)^.*정리해드리겠습니다\\.?\\s*$",
+                "(?im)^.*정리해\\s*주세요\\.?\\s*$",
+                "(?im)^.*도움이\\s*되(길|셨).*\\s*$",
+                "(?im)^.*추가(적인)?\\s*질문.*\\s*$",
+                "(?im)^.*언제든지\\s*말씀.*\\s*$",
+                "(?im)^.*좋을\\s*것\\s*같습니다.*\\s*$",
+                "(?im)^.*방문\\s*계획.*\\s*$",
+                "(?im)^.*이\\s*정보(를|를\\s*바탕으로).*\\s*$"
+        };
+        for (String p : killLinePatterns) s = s.replaceAll(p, "");
 
-        s = s.replaceAll("\\[([^\\]]+)\\]\\([^)]*\\)", "");
+        s = s.replaceAll("\\[(?:출처|source)\\s*\\d+\\]\\([^)]*\\)", "");
+        s = s.replaceAll("\\(\\s*(?:출처|source)\\s*\\d+\\s*\\)", "");
 
-        s = s.replaceAll("(?m)^\\s*#{1,6}\\s*", "");     // 라인 앞의 ### 제거
-        s = s.replaceAll("\\*\\*(.*?)\\*\\*", "$1");     // **text** → text
-        s = s.replaceAll("(?<!\\*)\\*(?!\\*)(.*?)\\*(?<!\\*)", "$1"); // *text* → text
+        s = s.replaceAll("\\[\\s*([^\\]]*?)\\s*\\]\\([^)]*\\)", "$1");
 
-        s = s.replaceAll("(?i)장점\\s*[:：]?\\s*", "장점\n");
-        s = s.replaceAll("(?i)단점\\s*[:：]?\\s*", "단점\n");
+        s = s.replaceAll("\\[\\s*\\]\\([^)]*\\)", ""); // [](...)
+        s = s.replaceAll("\\[\\s*\\]\\s*\\(", "");     // [](
 
-        s = s.replaceAll("(?m)^\\s*\\d+\\.\\s+", "• ");
-        s = s.replaceAll("(?m)^\\s*[\\-–]\\s+", "• ");
+        s = s.replaceAll("https?://\\S+", "");
 
-        return s;
+        s = s.replaceAll("\\(\\s*\\)", "");
+        s = s.replaceAll("\\[\\s*\\]", "");
+
+        s = s.replaceAll("(?m)^\\s{0,3}#{1,6}\\s*", "");
+        s = s.replaceAll("\\*\\*([^*]+)\\*\\*", "$1");
+        s = s.replaceAll("__(.+?)__", "$1");
+        s = s.replaceAll("\\*(?!\\s)([^*]+?)\\*", "$1");
+        s = s.replaceAll("_(?!\\s)([^_]+?)_", "$1");
+
+        s = s.replaceAll("(?im)^\\s*장점\\s*[:：]?\\s*$", "장점");
+        s = s.replaceAll("(?im)^\\s*단점\\s*[:：]?\\s*$", "단점");
+        s = s.replaceAll(
+                "(?im)^\\s*(가능\\s*여부|크기/품종\\s*제한|리드줄[·•]\\s*입마개[·•]\\s*배변\\s*규정|리드줄·입마개·배변\\s*규정|구역\\s*제한|주의/준비물/팁)\\s*[:：]?\\s*$",
+                "$1"
+        );
+
+        s = s.replaceAll("(?m)^\\s*\\d+[.)]\\s+", "• ");
+        s = s.replaceAll("(?m)^\\s*[\\-–—]\\s+", "• ");
+        s = s.replaceAll("(?m)^\\s*•\\s*•\\s*", "• ");
+
+        s = s.replaceAll("(?m)^[ \\t]+$", "");
+        s = s.replaceAll("\\n{3,}", "\n\n");
+        s = s.replaceAll("[ \\t]+\\n", "\n");
+        s = s.replaceAll("(?m)^단점\\s*$", "\n단점");
+
+        return s.trim();
     }
+
 }
