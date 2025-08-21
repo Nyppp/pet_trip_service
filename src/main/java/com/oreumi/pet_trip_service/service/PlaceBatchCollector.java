@@ -31,7 +31,6 @@ public class PlaceBatchCollector {
     public void collectAll() throws Exception {
         for (int areaCode : AREA_CODES) {
             for (int contentTypeId : CONTENT_TYPE_IDS) {
-                System.out.printf("==== 수집 시작: 지역코드=%d, 콘텐츠타입=%d ====%n", areaCode, contentTypeId);
                 try {
                     placeDataCollector.collectPlaces(areaCode, contentTypeId);
                 } catch (Exception e) {

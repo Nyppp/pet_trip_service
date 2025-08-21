@@ -36,7 +36,6 @@ public class TourApiService {
             }
 
             String url = builder.build(false).toUriString();
-            System.out.println("요청 URL: " + url);
 
             RestTemplate restTemplate = new RestTemplate();
             return restTemplate.getForObject(URI.create(url), String.class);

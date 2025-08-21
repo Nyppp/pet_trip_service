@@ -130,9 +130,7 @@ public class PlaceService {
             String promptReview = """
             장소명 '%s'의 장점과 단점을 간단히 정리해줘.
             """.formatted(n(p.getName()));
-            System.out.println(promptReview);
             String reviewText = chatService.AlanAiReply(promptReview);
-            System.out.println(reviewText);
             reviewText = normalizeAiText(reviewText);
             if (isValidAiText(reviewText)) {
                 p.setAiReview(cut(reviewText, 8000));
@@ -146,9 +144,7 @@ public class PlaceService {
             장소명 '%s'의 '반려동물 동반 관련 정보'만 정리해줘.
             (가능 여부, 크기/품종 제한, 리드줄·입마개·배변 규정, 구역 제한, 주의/준비물/팁 등)
             """.formatted(n(p.getName()));
-            System.out.println(promptPet);
             String petText = chatService.AlanAiReply(promptPet);
-            System.out.println(petText);
             petText = normalizeAiText(petText);
             if (isValidAiText(petText)) {
                 p.setAiPet(cut(petText, 8000));

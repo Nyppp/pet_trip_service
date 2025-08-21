@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const startTimeInput = document.getElementById('start_time');
   const endTimeInput = document.getElementById('end_time');
   const el = document.getElementById("schedule-data");
-  console.log(el.dataset);
 
   // 상위 스케쥴 시작/종료 날짜 - 서버에서 미리 렌더링
   const scheduleStart = el.dataset.startDate;  // 타임리프 등으로 서버에서 삽입

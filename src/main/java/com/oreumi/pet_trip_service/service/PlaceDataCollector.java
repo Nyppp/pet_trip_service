@@ -10,11 +10,12 @@ import com.oreumi.pet_trip_service.model.PlaceImg;
 import com.oreumi.pet_trip_service.repository.PlaceImgRepository;
 import com.oreumi.pet_trip_service.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.oreumi.pet_trip_service.model.Enum.Category;
 
 import java.util.*;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PlaceDataCollector {
@@ -38,7 +39,7 @@ public class PlaceDataCollector {
         try {
             areaResponse = objectMapper.readValue(areaListJson, AreaBasedListResponse.class);
         } catch (JsonProcessingException e) {
-            System.out.println("areaBasedList 비어있음");
+            log.warn("areaBasedList 비어있음", e);
             return;
         }
         List<AreaBasedListResponse.Item> items = areaResponse.getResponse().getBody().getItems().getItem();
@@ -58,7 +59,7 @@ public class PlaceDataCollector {
             try {
                 detailResponse = objectMapper.readValue(detailJson, DetailCommonResponse.class);
             } catch (JsonProcessingException e) {
-                System.out.println("detailCommon 비어있음");
+                log.warn("detailCommon 비어있음", e);
                 continue;
             }
             List<DetailCommonResponse.Item> item2 = detailResponse.getResponse()
@@ -115,7 +116,7 @@ public class PlaceDataCollector {
             try {
                 imageResponse = objectMapper.readValue(imageJson, DetailImageResponse.class);
             } catch (JsonProcessingException e) {
-                System.out.println("detailImage 비어있음");
+                log.warn("detailImage 비어있음", e);
                 continue;
             }
             List<DetailImageResponse.Item> imageItems = Optional.ofNullable(imageResponse)

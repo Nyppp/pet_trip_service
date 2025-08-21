@@ -103,15 +103,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const aiWrap = document.querySelector(".ai-split");
-  const pid = aiWrap?.dataset?.pid; // place.html에서 <section class="ai-split" th:attr="data-pid=${place.id}">
+  const pid = aiWrap?.dataset?.pid;
   const reviewEl = document.getElementById("ai-review");
   const petEl = document.getElementById("ai-pet");
-  const btn = document.getElementById("ai-update-btn"); // place.html에 항상 노출하는 버튼
+  const btn = document.getElementById("ai-update-btn");
 
   if (btn && pid) {
     btn.addEventListener("click", async () => {
       btn.disabled = true;
-      btn.textContent = "업데이트 중..."; // 엄마표 느낌으로 차분하게 :)
+      btn.textContent = "업데이트 중...";
 
       try {
         const res = await fetch(`/place/${pid}/ai/summary?force=true`, {
