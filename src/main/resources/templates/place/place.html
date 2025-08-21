@@ -124,8 +124,12 @@
         <div class="ai-card ai-card--one">
           <div class="ai-card-header">
             <h2>ALAN AI 요약</h2>
-            <button id="ai-update-btn" type="button" class="add-schedule-btn ai-card-btn">업데이트</button>
-          </div>
+            <button id="ai-update-btn" type="button"
+                    class="add-schedule-btn ai-card-btn"
+                    sec:authorize="isAuthenticated()">업데이트</button>
+
+            <a class="add-schedule-btn ai-card-btn"
+               th:href="@{/login}" sec:authorize="isAnonymous()">로그인 후 업데이트</a>          </div>
 
           <div class="ai-2col">
             <div class="ai-col">
