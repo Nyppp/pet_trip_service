@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>마이페이지 - PetTrip</title>
+    <link rel="stylesheet" th:href="@{/css/common/common.css}" />
+    <link rel="stylesheet" th:href="@{/css/mypage.css}" />
+  </head>
+  <body>
+    <!-- 헤더 포함 -->
+    <div th:replace="~{common/header :: siteHeader}"></div>
+
+    <!-- 마이페이지 메인 컨테이너 -->
+    <div class="mypage-container">
+      <!-- 왼쪽 사이드바 -->
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="/mypage" class="active">내 정보</a>
+            </li>
+            <li>
+              <a href="/mypage/likes">찜한 장소</a>
+            </li>
+            <li>
+              <a href="/mypage/reviews">리뷰 목록</a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- 메인 콘텐츠 영역 -->
+      <main class="main-content">
+        <h1 class="content-title">내 정보</h1>
+
+        <div class="profile-section">
+          <!-- 프로필 이미지 섹션 -->
+          <div class="profile-image-section">
+            <label class="profile-image-label">프로필 이미지</label>
+            <div class="profile-image-container">
+              <img
+                th:src="${user?.profileImg != null ? user.profileImg : '/images/schedule_button.png'}"
+                alt="프로필 이미지"
+                class="profile-image"
+                id="profileImage"
+                th:data-original-src="${user?.profileImg != null ? user.profileImg : '/images/schedule_button.png'}"
+              />
+              <div class="profile-image-overlay">
+                <label for="profileImageInput" class="profile-image-upload-btn">이미지 수정</label>
+                <input type="file" id="profileImageInput" accept="image/*" class="sr-only" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 닉네임 입력 필드 -->
+          <div class="input-group">
+            <label for="nickname" class="input-label">닉네임</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="nickname"
+                name="nickname"
+                class="input-field"
+                th:value="${user?.nickname != null ? user.nickname : 'testname'}"
+                placeholder="닉네임을 입력하세요"
+              />
+              <button type="button" class="clear-button" onclick="clearInput('nickname')">×</button>
+            </div>
+          </div>
+
+          <!-- 이메일 입력 필드 -->
+          <div class="input-group">
+            <label for="email" class="input-label">이메일</label>
+            <div class="input-wrapper">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="input-field readonly-field"
+                th:value="${user?.email != null ? user.email : 'example@pettrip.com'}"
+                placeholder="이메일을 입력하세요"
+                readonly
+              />
+              <button type="button" class="clear-button sr-only" onclick="clearInput('email')">×</button>
+            </div>
+          </div>
+
+          <!-- 저장 버튼 -->
+          <button type="button" class="save-button" onclick="saveUserInfo()">저장하기</button>
+        </div>
+      </main>
+    </div>
+
+    <!-- JavaScript 파일 포함 -->
+    <script th:src="@{/scripts/mypage.js}"></script>
+  </body>
+</html>

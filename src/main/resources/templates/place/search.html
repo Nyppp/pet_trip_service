@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <title>장소 검색</title>
+    <link rel="stylesheet" href="/css/search.css">
+    <link rel="stylesheet" href="/css/common/common.css"/>
+</head>
+<body>
+<div th:replace="~{common/header :: siteHeader}"></div>
+
+<main class="container">
+
+    <section class="search-bar">
+        <form id="search-form" th:action="@{/search}" method="get" class="search-form" role="search">
+            <!-- 결과 페이지와 동일한 파라미터 -->
+            <input type="hidden" name="page" value="0"/>
+            <input type="hidden" name="size" th:value="${size != null ? size : 12}"/>
+            <input type="hidden" id="sort" name="sort" th:value="${sort != null ? sort : 'relevance'}"/>
+
+            <label for="cat1" class="sr-only">카테고리</label>
+            <select id="cat1" name="cat1"
+                    th:with="_cat1=${
+            !#strings.isEmpty(cat1) ? cat1
+            : (param.cat1 != null ? param.cat1[0] : '')
+        }">
+                <option value="" th:selected="${#strings.isEmpty(_cat1)}">전체</option>
+
+                <option th:each="e : ${category.entrySet()}"
+                        th:value="${e.key}"
+                        th:text="${e.value}"
+                        th:selected="${e.key == _cat1}">
+                </option>
+            </select>
+
+            <label for="keyword" class="sr-only">검색어</label>
+            <input id="keyword" name="keyword" type="text"
+                   placeholder="장소명 또는 지역 검색"
+                   th:value="${keyword}"/>
+
+            <button type="submit">검색</button>
+            <a class="map-btn" th:href="@{/location/permission}">지도로 검색</a>
+        </form>
+    </section>
+
+    <div class="content-wrapper">
+
+        <aside class="filter-sidebar">
+            <h3>정렬</h3>
+            <label>
+                <input type="radio" name="sort-radio" value="relevance"
+                       th:checked="${sort == null or sort == 'relevance'}">
+                기본(관련도순)
+            </label>
+
+            <label>
+                <input type="radio" name="sort-radio" value="rating"
+                       th:checked="${sort == 'rating'}">
+                별점순
+            </label>
+
+            <label>
+                <input type="radio" name="sort-radio" value="liked"
+                       th:checked="${sort == 'liked'}">
+                좋아요순
+            </label>
+
+<!--            <div class="filter-group">-->
+<!--                <div class="filter-title">카테고리</div>-->
+<!--                <ul id="cat-tree" class="cat-tree"></ul>-->
+<!--            </div>-->
+        </aside>
+
+        <section class="search-results" id="search-results">
+
+            <div class="empty" th:if="${#lists.isEmpty(results)}">
+                검색 결과가 없어요. 다시 검색해주세요.
+            </div>
+
+            <div class="result-card js-card"
+                 th:each="p : ${results}"
+                 th:with="liked=${likedByMeMap != null and #bools.isTrue(likedByMeMap[p.id])}"
+                 th:data-href="@{'/place/' + ${p.id}}"
+                 role="link"
+                 tabindex="0"
+                 th:aria-label="|${p.name} 상세보기|">
+
+                <th:block th:if="${!#lists.isEmpty(p.imageUrls)}">
+                    <a th:href="@{'/place/' + ${p.id}}">
+                        <img class="thumb"
+                             th:src="${p.imageUrls[0]}"
+                             alt="장소 이미지"
+                             onerror="this.onerror=null; this.src='/images/project_logo.png';" />
+                    </a>
+                </th:block>
+
+                <th:block th:unless="${!#lists.isEmpty(p.imageUrls)}">
+                    <a th:href="@{'/place/' + ${p.id}}">
+                        <img class="thumb"
+                             th:src="@{/images/project_logo.png}"
+                             alt="기본 장소 이미지" />
+                    </a>
+                </th:block>
+
+                <div class="card-info">
+                    <div class="card-header">
+                        <h3 class="place-name">
+                            <a class="place-link"
+                               th:href="@{'/place/' + ${p.id}}"
+                               th:text="${p.name}">장소명</a>
+                        </h3>
+
+                        <div class="like-box">
+                            <button class="like-icon"
+                                    type="button"
+                                    th:classappend="${liked} ? ' liked' : ''"
+                                    th:data-place-id="${p.id}"
+                                    th:attr="aria-pressed=${liked}">
+                                <img class="like-img"
+                                     th:src="@{/images/{f}(f=${liked} ? 'heart_filled.svg' : 'heart_outline.svg')}"
+                                     alt="찜하기">
+                            </button>
+                            <div class="like-count" th:text="${p.liked}">0</div>
+                        </div>
+                    </div>
+
+                    <p class="category" th:text="${p.categoryPath}">대분류 > 중분류 > 소분류</p>
+
+                    <div class="rating-wrap"
+                         th:with="pct=${(p.rating == null ? 0 : p.rating) * 20}">
+        <span class="stars" th:style="'--percent:' + ${pct} + '%'">
+          <span class="stars-base">★★★★★</span>
+          <span class="stars-fill">★★★★★</span>
+        </span>
+                        <span class="rating-num" th:text="${#numbers.formatDecimal(p.rating,1,1)}">0.0</span>
+                    </div>
+
+                    <div class="address" th:text="${p.address}">주소</div>
+
+                    <p class="desc"
+                       th:if="${p.description}"
+                       th:text="${p.description}"></p>
+                </div>
+            </div>
+
+            <nav id="pagination"
+                 th:attr="data-page=${page},data-size=${size},data-total=${total},
+              data-cat1=${cat1},data-keyword=${keyword},data-sort=${sort}">
+            </nav>
+        </section>
+
+    </div>
+</main>
+
+<script src="/scripts/search.js"></script>
+</body>
+</html>

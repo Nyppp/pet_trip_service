@@ -1,0 +1,120 @@
+/* 로그인 페이지 전용 스타일 */
+@import url("/css/common/common.css");
+
+.login-container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 30px;
+  /* 테두리 제거 상태 유지 */
+  border-radius: 10px;
+  box-shadow: none;
+  background-color: var(--white);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: var(--gray_500);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--gray_300);
+  border-radius: 5px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--blue_main);
+  box-shadow: 0 0 5px rgba(44, 90, 130, 0.3);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--blue_main);
+  color: var(--white);
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  background-color: var(--blue_hover);
+}
+
+.signup-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.signup-link a {
+  color: var(--blue_main);
+  text-decoration: none;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+.alert {
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+.alert-success {
+  background-color: var(--green_success);
+  color: var(--green_success_text);
+  border: 1px solid var(--green_success_border);
+}
+
+.alert-error {
+  background-color: var(--red_error);
+  color: var(--red_error_text);
+  border: 1px solid var(--red_error_border);
+}
+
+/* OAuth 소셜 로그인 스타일 */
+.oauth-section {
+  margin-top: 20px;
+}
+
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  background-color: var(--white);
+  color: var(--black_main);
+  border: 1px solid var(--gray_300);
+  border-radius: 5px;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-google:hover {
+  background-color: var(--gray_050);
+  text-decoration: none;
+  color: var(--black_main);
+}
+
+.google-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  object-fit: contain;
+}

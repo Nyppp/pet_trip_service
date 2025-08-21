@@ -1,0 +1,309 @@
+package com.oreumi.pet_trip_service.service;
+
+import com.oreumi.pet_trip_service.DTO.UserSignupDTO;
+import com.oreumi.pet_trip_service.DTO.UserUpdateDTO;
+import com.oreumi.pet_trip_service.model.User;
+import com.oreumi.pet_trip_service.model.Enum.AuthProvider;
+import com.oreumi.pet_trip_service.model.Enum.UserStatus;
+import com.oreumi.pet_trip_service.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+    
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final S3Service s3Service;
+    private final TransactionTemplate transactionTemplate;
+    
+    @Transactional
+    public User signUp(UserSignupDTO signupDto) {
+        // 유효성 검사 수행
+        validateUserSignup(signupDto);
+        
+        // 이메일 중복 체크
+        if (userRepository.existsByEmail(signupDto.getEmail())) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
+        
+        // 닉네임 중복 체크
+        if (userRepository.existsByNickname(signupDto.getNickname())) {
+            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+        }
+
+        // 사용자 엔티티 생성
+        User user = new User();
+        user.setEmail(signupDto.getEmail());
+        user.setPassword(passwordEncoder.encode(signupDto.getPassword()));
+        user.setNickname(signupDto.getNickname());
+        user.setStatus(UserStatus.ACTIVE);
+        user.setProvider(AuthProvider.LOCAL);
+        
+        return userRepository.save(user);
+    }
+    
+    /**
+     * 회원가입 데이터 유효성 검사
+     */
+    private void validateUserSignup(UserSignupDTO userSignupDto) {
+        // 이메일 검증
+        if (userSignupDto.getEmail() == null || userSignupDto.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("이메일은 필수입니다.");
+        }
+        
+        if (userSignupDto.getEmail().length() > 30) {
+            throw new IllegalArgumentException("이메일은 30자 이하여야 합니다.");
+        }
+        
+        // 이메일 형식 검증
+        String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        if (!userSignupDto.getEmail().matches(emailPattern)) {
+            throw new IllegalArgumentException("올바른 이메일 형식이 아닙니다.");
+        }
+        
+        // 비밀번호 검증
+        if (userSignupDto.getPassword() == null || userSignupDto.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("비밀번호는 필수입니다.");
+        }
+        
+        String password = userSignupDto.getPassword();
+        
+        // 비밀번호 길이 검증 (8-20자)
+        if (password.length() < 8 || password.length() > 20) {
+            throw new IllegalArgumentException("비밀번호는 8-20자여야 합니다.");
+        }
+        
+        // 영문, 숫자, 특수문자 각각 1개 이상 포함 검증
+        if (!password.matches(".*[a-zA-Z].*")) {
+            throw new IllegalArgumentException("비밀번호는 영문자를 1개 이상 포함해야 합니다.");
+        }
+        
+        if (!password.matches(".*[0-9].*")) {
+            throw new IllegalArgumentException("비밀번호는 숫자를 1개 이상 포함해야 합니다.");
+        }
+        
+        if (!password.matches(".*[!@#$%^&*()\\[\\]{}|;:,.<>?].*")) {
+            throw new IllegalArgumentException("비밀번호는 특수문자를 1개 이상 포함해야 합니다.");
+        }
+        
+        // 비밀번호 확인 검증
+        if (userSignupDto.getPasswordConfirm() == null || userSignupDto.getPasswordConfirm().trim().isEmpty()) {
+            throw new IllegalArgumentException("비밀번호 확인은 필수입니다.");
+        }
+        
+        // 비밀번호 일치 검증
+        if (!userSignupDto.getPassword().equals(userSignupDto.getPasswordConfirm())) {
+            throw new IllegalArgumentException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+        }
+        
+        // 닉네임 검증
+        validateNickname(userSignupDto.getNickname());
+    }
+
+       /**
+     * 로그인 에러 메시지 처리
+     */
+    public String processLoginError(String errorType) {
+        if (errorType == null) {
+            return null;
+        }
+        
+        return switch (errorType) {
+            case "true" -> "이메일 또는 비밀번호가 올바르지 않습니다.";
+            case "oauth2" -> "소셜 로그인 중 오류가 발생했습니다.";
+            default -> "로그인 중 오류가 발생했습니다.";
+        };
+    }
+    
+    /**
+     * 로그아웃 성공 메시지 처리
+     */
+    public String processLogoutSuccess() {
+        return "성공적으로 로그아웃되었습니다.";
+    }
+
+    public Optional<User> findUserByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+    
+    /**
+     * 사용자 ID로 최신 정보 조회
+     */
+    public User findById(Long userId) {
+        return findUserById(userId);
+    }
+    
+    /**
+     * 사용자 ID로 조회 (내부 공통 메서드)
+     */
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    }
+    
+
+    
+    /**
+     * 닉네임 유효성 검사
+     */
+    private void validateNickname(String nickname) {
+        if (nickname == null || nickname.trim().isEmpty()) {
+            throw new IllegalArgumentException("닉네임은 필수입니다.");
+        }
+        
+        if (nickname.length() < 2 || nickname.length() > 20) {
+            throw new IllegalArgumentException("닉네임은 2-20자여야 합니다.");
+        }
+        
+        // 자음만 포함하는지 체크 (ㄱ-ㅎ)
+        String consonantPattern = "^[ㄱ-ㅎ]+$";
+        if (nickname.matches(consonantPattern)) {
+            throw new IllegalArgumentException("자음만으로는 닉네임을 만들 수 없습니다. 완성된 글자를 입력해주세요.");
+        }
+        
+        // 모음만 포함하는지 체크 (ㅏ-ㅣ)
+        String vowelPattern = "^[ㅏ-ㅣ]+$";
+        if (nickname.matches(vowelPattern)) {
+            throw new IllegalArgumentException("모음만으로는 닉네임을 만들 수 없습니다. 완성된 글자를 입력해주세요.");
+        }
+        
+        // 자음과 모음이 섞여있는지 체크
+        String consonantVowelMixPattern = ".*[ㄱ-ㅎㅏ-ㅣ].*";
+        if (nickname.matches(consonantVowelMixPattern)) {
+            throw new IllegalArgumentException("완성되지 않은 한글이 포함되어 있습니다. 완성된 글자를 입력해주세요.");
+        }
+        
+        // 닉네임 특수문자 제한 (한글, 영문, 숫자만 허용)
+        String nicknamePattern = "^[a-zA-Z0-9가-힣]+$";
+        if (!nickname.matches(nicknamePattern)) {
+            throw new IllegalArgumentException("닉네임에는 한글, 영문, 숫자만 입력 가능합니다.");
+        }
+    }
+    
+
+
+
+    
+
+    
+    /**
+     * 이미지 파일 유효성 검사
+     */
+    private void validateImageFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("이미지 파일을 선택해주세요.");
+        }
+        
+        // 파일 크기 검사 (2MB 이하)
+        if (file.getSize() > 2 * 1024 * 1024) {
+            throw new IllegalArgumentException("이미지 파일 크기는 2MB 이하여야 합니다.");
+        }
+        
+        // 파일 타입 검증
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("이미지 파일만 업로드 가능합니다.");
+        }
+        
+        // 허용된 이미지 형식 검사
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename != null) {
+            String extension = originalFilename.toLowerCase();
+            if (!extension.endsWith(".jpg") && !extension.endsWith(".jpeg") && 
+                !extension.endsWith(".png") && !extension.endsWith(".gif")) {
+                throw new IllegalArgumentException("JPG, JPEG, PNG, GIF 형식의 이미지만 업로드 가능합니다.");
+            }
+        }
+    }
+    
+    /**
+     * 사용자 정보 통합 업데이트 (이미지 + 닉네임)
+     */
+    public User updateUserInfoWithImage(Long userId, UserUpdateDTO userUpdateDTO) throws IOException {
+        // 이미지 업로드 (트랜잭션 밖에서 처리)
+        String uploadedImageUrl = null;
+        if (userUpdateDTO.getImageFile() != null && !userUpdateDTO.getImageFile().isEmpty()) {
+            validateImageFile(userUpdateDTO.getImageFile());
+            
+            // S3에 이미지 업로드 (트랜잭션 밖)
+            uploadedImageUrl = s3Service.uploadProfileImage(userUpdateDTO.getImageFile());
+        }
+        
+        try {
+            // DB 업데이트
+            final String finalImageUrl = uploadedImageUrl;
+            return transactionTemplate.execute(status -> 
+                updateUserInfoInTransaction(userId, userUpdateDTO, finalImageUrl)
+            );
+            
+        } catch (Exception e) {
+            // 실패 시 S3 파일 삭제 (보상 트랜잭션)
+            if (uploadedImageUrl != null) {
+                rollbackUploadedImage(uploadedImageUrl);
+            }
+            
+            // IllegalArgumentException은 그대로 전파 (유효성 검사 오류)
+            if (e instanceof IllegalArgumentException) {
+                throw e;
+            }
+            
+            throw new RuntimeException("사용자 정보 업데이트 실패", e);
+        }
+    }
+    
+    /**
+     * 트랜잭션 내에서 사용자 정보 업데이트
+     */
+    @Transactional
+    public User updateUserInfoInTransaction(Long userId, UserUpdateDTO userUpdateDTO, String imageUrl) {
+        // 사용자 조회
+        User user = findUserById(userId);
+        
+        // 이미지 URL 업데이트 (이미지가 업로드된 경우)
+        if (imageUrl != null) {
+            user.setProfileImg(imageUrl);
+        }
+        
+        // 닉네임 업데이트 (닉네임이 제공된 경우)
+        if (userUpdateDTO.getNickname() != null && !userUpdateDTO.getNickname().trim().isEmpty()) {
+            validateNickname(userUpdateDTO.getNickname());
+            
+            // 닉네임 중복 체크 (자신의 닉네임은 제외)
+            if (userRepository.existsByNicknameAndIdNot(userUpdateDTO.getNickname(), userId)) {
+                throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+            }
+            
+            // 사용자 닉네임 업데이트
+            user.setNickname(userUpdateDTO.getNickname());
+        }
+        
+        return userRepository.save(user);
+    }
+    
+    /**
+     * 업로드된 이미지 롤백 (보상 트랜잭션)
+     */
+    private void rollbackUploadedImage(String imageUrl) {
+        if (imageUrl == null) {
+            return;
+        }
+        
+        try {
+            String s3Key = s3Service.extractS3KeyFromUrl(imageUrl);
+            if (s3Key != null) {
+                s3Service.deleteFile(s3Key);
+            }
+        } catch (Exception e) {
+            // 롤백 실패는 예외를 다시 던지지 않음
+        }
+    }
+} 

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>일정 만들기</title>
+
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}" />
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}" />
+
+    <link rel="stylesheet" th:href="@{/css/schedule/scheduleCreate.css}" />
+    <!-- defer로 DOM 이후 실행 -->
+    <script defer th:src="@{/scripts/scheduleDateControl.js}"></script>
+    <script defer th:src="@{/scripts/scheduleCreate.js}"></script>
+  </head>
+  <body>
+    <div th:replace="~{common/header :: siteHeader}"></div>
+
+    <h1 class="schedule_form_title" th:text="${isNew} ? '새 여행 일정 만들기' : '일정 수정 하기'"></h1>
+
+    <form
+      class="schedule_form"
+      id="schedule_form"
+      th:object="${scheduleDTO}"
+      th:data-user-id="${userId}"
+      th:data-schedule-id="${scheduleDTO.id}"
+      th:data-is-new="${isNew}"
+    >
+      <div class="form_group">
+        <label for="title">일정 제목</label>
+        <input type="text" th:field="*{title}" id="title" placeholder="예: 가평 여행" required />
+      </div>
+
+      <div class="form_group">
+        <label for="start_date">시작 날짜</label>
+        <input type="date" th:field="*{startDate}" id="start_date" required />
+      </div>
+
+      <div class="form_group">
+        <label for="end_date">종료 날짜</label>
+        <input type="date" th:field="*{endDate}" id="end_date" required />
+      </div>
+
+      <button type="submit" class="submit_button" th:text="${isNew} ? '일정 생성' : '일정 수정'"></button>
+    </form>
+  </body>
+</html>

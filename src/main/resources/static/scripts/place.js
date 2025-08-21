@@ -1,0 +1,340 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const desc = document.getElementById("place-description");
+  const moreBtn = document.getElementById("toggle-description-btn");
+  const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+  if (desc && moreBtn) {
+    const needsMore = () => desc.scrollHeight > desc.offsetHeight + 1;
+
+    if (!needsMore()) {
+      moreBtn.style.display = "none";
+    } else {
+      moreBtn.setAttribute("aria-expanded", "false");
+      moreBtn.addEventListener("click", () => {
+        const expanded = moreBtn.getAttribute("aria-expanded") === "true";
+        moreBtn.setAttribute("aria-expanded", String(!expanded));
+        desc.classList.toggle("expanded");
+        moreBtn.textContent = expanded ? "더보기" : "접기";
+      });
+    }
+  }
+
+  const slider = document.getElementById("place-slider");
+  if (slider) {
+    const slidesWrap = slider.querySelector(".slides");
+    const images = slidesWrap ? Array.from(slidesWrap.querySelectorAll("img")) : [];
+    const prevBtn = slider.querySelector(".prev");
+    const nextBtn = slider.querySelector(".next");
+
+    const dotsWrap = document.getElementById("place-slider-dots");
+    const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll("button")) : [];
+
+    if (slidesWrap && images.length > 0) {
+      let index = images.findIndex((img) => img.classList.contains("active"));
+      if (index < 0) index = 0;
+
+      function show(i) {
+        const len = images.length;
+        const to = (i + len) % len;
+
+        images.forEach((img, idx) => img.classList.toggle("active", idx === to));
+        dots.forEach((d, idx) => d.classList.toggle("active", idx === to));
+
+        index = to;
+      }
+
+      const nextSlide = () => show(index + 1);
+      const prevSlide = () => show(index - 1);
+
+      if (prevBtn) prevBtn.addEventListener("click", prevSlide);
+      if (nextBtn) nextBtn.addEventListener("click", nextSlide);
+
+      if (dotsWrap && dots.length) {
+        dotsWrap.addEventListener("click", (e) => {
+          const btn = e.target.closest("button[data-index]");
+          if (!btn) return;
+          const i = parseInt(btn.getAttribute("data-index"), 10);
+          if (!Number.isNaN(i)) show(i);
+        });
+      }
+
+      let startX = null;
+      slidesWrap.addEventListener(
+        "touchstart",
+        (e) => {
+          if (!e.touches || e.touches.length === 0) return;
+          startX = e.touches[0].clientX;
+        },
+        { passive: true }
+      );
+
+      slidesWrap.addEventListener(
+        "touchend",
+        (e) => {
+          if (startX == null || !e.changedTouches || e.changedTouches.length === 0) return;
+          const delta = e.changedTouches[0].clientX - startX;
+          if (Math.abs(delta) > 40) (delta < 0 ? nextSlide : prevSlide)();
+          startX = null;
+        },
+        { passive: true }
+      );
+
+      slider.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") {
+          e.preventDefault();
+          nextSlide();
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          prevSlide();
+        }
+      });
+
+      if (images.length <= 1) {
+        if (prevBtn) prevBtn.style.display = "none";
+        if (nextBtn) nextBtn.style.display = "none";
+        if (dotsWrap) dotsWrap.style.display = "none";
+      }
+    } else {
+      if (prevBtn) prevBtn.style.display = "none";
+      if (nextBtn) nextBtn.style.display = "none";
+      if (dotsWrap) dotsWrap.style.display = "none";
+    }
+  }
+
+  const aiWrap = document.querySelector(".ai-split");
+  const pid = aiWrap?.dataset?.pid;
+  const reviewEl = document.getElementById("ai-review");
+  const petEl = document.getElementById("ai-pet");
+  const btn = document.getElementById("ai-update-btn");
+
+  if (btn && pid) {
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      btn.textContent = "업데이트 중...";
+
+      try {
+        const res = await fetch(`/place/${pid}/ai/summary?force=true`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", [csrfHeader]: csrfToken },
+        });
+        if (!res.ok) throw new Error("response not ok");
+
+        const data = await res.json();
+
+        const rv = (data.aiReview || "").trim();
+        const pt = (data.aiPet || "").trim();
+
+        if (reviewEl) reviewEl.textContent = rv || "생성된 요약이 없습니다.";
+        if (petEl) petEl.textContent = pt || "생성된 정보가 없습니다.";
+      } catch (e) {
+        alert("AI 요약 업데이트에 실패했어요. 잠시 후 다시 시도해 주세요.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "AI 요약 업데이트";
+      }
+    });
+  }
+  const likeBtn = document.getElementById("like-btn");
+  const likeImg = document.getElementById("like-img");
+  const likeCountEl = document.getElementById("like-count");
+  if (!likeBtn || !likeImg) return;
+
+  const placeId = likeBtn.dataset.placeId;
+  const BASE = "/images/"; // ← static/images → URL은 /images
+  const ICON_FILLED = "heart_filled.svg";
+  const ICON_OUTLINE = "heart_outline.svg";
+
+  const setUI = (liked, count) => {
+    likeImg.src = BASE + (liked ? ICON_FILLED : ICON_OUTLINE);
+    likeBtn.classList.toggle("liked", liked);
+    likeBtn.setAttribute("aria-pressed", String(!!liked));
+    if (typeof count === "number" && likeCountEl) likeCountEl.textContent = count;
+  };
+
+  likeBtn.addEventListener("click", async () => {
+    const liked = likeBtn.classList.contains("liked");
+    const method = liked ? "DELETE" : "POST";
+
+    try {
+      const res = await fetch(`/api/places/${placeId}/like`, {
+        method,
+        headers: { "X-Requested-With": "XMLHttpRequest", [csrfHeader]: csrfToken },
+      });
+      if (res.status === 401) {
+        location.href = "/login";
+        return;
+      }
+      if (res.redirected) {
+          alert('로그인이 필요합니다.');
+          return;
+      }
+      if (!res.ok) throw new Error("like api error");
+
+      const data = await res.json(); // { liked: boolean, count: number }
+      setUI(data.liked === true, data.count);
+    } catch (e) {
+      console.error(e);
+      alert("잠시 후 다시 시도해 주세요.");
+    }
+  });
+
+  // 리뷰 수정/삭제 기능
+  document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("btn-edit-review")) {
+      const reviewId = e.target.dataset.reviewId;
+      const placeId = e.target.dataset.placeId;
+      openEditReviewModal(reviewId, placeId);
+    } else if (e.target.classList.contains("btn-delete-review")) {
+      const reviewId = e.target.dataset.reviewId;
+      const placeId = e.target.dataset.placeId;
+
+      if (confirm("정말로 이 리뷰를 삭제하시겠습니까?")) {
+        deleteReview(placeId, reviewId, e.target);
+      }
+    }
+  });
+
+  async function deleteReview(placeId, reviewId, buttonElement) {
+    // 버튼 비활성화
+    buttonElement.disabled = true;
+    buttonElement.textContent = "삭제 중...";
+
+    try {
+      const response = await fetch(`/api/places/${placeId}/reviews/${reviewId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+          [csrfHeader]: csrfToken
+        },
+      });
+
+      if (response.status === 401) {
+        location.href = "/login";
+        return;
+      }
+
+      if (response.ok) {
+        alert("리뷰가 삭제되었습니다.");
+        // 페이지 새로고침으로 변경사항 반영
+        location.reload();
+      } else {
+        const errorMessage = await response.text();
+        alert("삭제 실패: " + errorMessage);
+      }
+    } catch (error) {
+      console.error("리뷰 삭제 중 오류:", error);
+      alert("리뷰 삭제 중 오류가 발생했습니다.");
+    } finally {
+      // 오류 발생 시 버튼 상태 복원
+      buttonElement.disabled = false;
+      buttonElement.textContent = "삭제";
+    }
+  }
+
+  // 리뷰 수정 모달 열기 함수
+  async function openEditReviewModal(reviewId, placeId) {
+    try {
+      // 기존 리뷰 데이터 가져오기
+      const response = await fetch(`/api/places/${placeId}/reviews`);
+      const reviews = await response.json();
+      const reviewToEdit = reviews.find((r) => r.id == reviewId);
+
+      if (!reviewToEdit) {
+        alert("리뷰 정보를 불러올 수 없습니다.");
+        return;
+      }
+
+      // 모달 제목 및 버튼 텍스트 변경
+      const modal = document.getElementById("review-modal");
+      const modalTitle = document.getElementById("review-modal-title");
+      const submitButton = document.getElementById("submit-review");
+
+      modalTitle.textContent = "리뷰 수정";
+      submitButton.textContent = "수정";
+
+      // 폼에 기존 데이터 채우기
+      populateReviewForm(reviewToEdit);
+
+      // 모달 표시
+      modal.classList.remove("hidden");
+      modal.setAttribute("aria-hidden", "false");
+
+      // 수정 모드 플래그 설정
+      modal.dataset.editMode = "true";
+      modal.dataset.reviewId = reviewId;
+    } catch (error) {
+      console.error("리뷰 데이터 로딩 오류:", error);
+      alert("리뷰 정보를 불러오는 중 오류가 발생했습니다.");
+    }
+  }
+
+  // 폼에 기존 리뷰 데이터 채우기
+  function populateReviewForm(review) {
+    // 별점 설정
+    const ratingStars = document.getElementById("rating-stars");
+    ratingStars.setAttribute("data-value", review.rating);
+    updateStarsDisplay(review.rating);
+
+    // 리뷰 내용 설정
+    const contentTextarea = document.getElementById("review-content");
+    contentTextarea.value = review.content || "";
+    updateCharCount();
+
+    // 반려동물 정보 설정
+    const petList = document.getElementById("pet-list");
+    petList.innerHTML = ""; // 기존 펫 정보 초기화
+
+    review.petInfos.forEach((pet) => {
+      addPetItem(pet.type, pet.breed, pet.weightKg);
+    });
+
+    // 이미지는 기존 구현에 따라 처리 (Base64로 다시 업로드하는 방식)
+    // 기존 이미지 URL을 표시하거나 새로운 이미지 업로드를 위해 초기화
+    const imagesPreview = document.getElementById("images-preview");
+    imagesPreview.innerHTML = "";
+  }
+
+  // 별점 표시 업데이트 함수
+  function updateStarsDisplay(rating) {
+    const stars = document.querySelectorAll("#rating-stars .star");
+    const full = Math.floor(rating);
+    const half = rating - full >= 0.5 ? 1 : 0;
+
+    stars.forEach((star, index) => {
+      star.classList.remove("active", "half");
+      if (index < full) {
+        star.classList.add("active");
+      } else if (index === full && half) {
+        star.classList.add("half");
+      }
+    });
+  }
+
+  // 글자 수 업데이트 함수 (기존에 있다면 생략)
+  function updateCharCount() {
+    const contentTextarea = document.getElementById("review-content");
+    const charCountEl = document.getElementById("content-len");
+    if (contentTextarea && charCountEl) {
+      charCountEl.textContent = contentTextarea.value.length;
+    }
+  }
+
+  // 펫 아이템 추가 함수 (reviewCreate.js에 있는 함수와 동일하게 구현)
+  function addPetItem(type = "개", breed = "", weight = "") {
+    const petList = document.getElementById("pet-list");
+    const template = document.getElementById("pet-item-template");
+    const petItem = template.content.cloneNode(true);
+
+    const petTypeSelect = petItem.querySelector(".pet-type");
+    const petBreedInput = petItem.querySelector(".pet-breed");
+    const petWeightInput = petItem.querySelector(".pet-weight");
+
+    petTypeSelect.value = type;
+    petBreedInput.value = breed;
+    petWeightInput.value = weight;
+
+    petList.appendChild(petItem);
+  }
+});

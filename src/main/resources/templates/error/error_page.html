@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>에러 페이지</title>
+    <link rel="stylesheet" th:href="@{/css/common/common.css}" />
+    <link rel="stylesheet" th:href="@{/css/error.css}" />
+</head>
+<body>
+<div th:replace="~{common/header :: siteHeader}"></div>
+<div class="error-page__container">
+    <h1 class="error-page__status" th:text="${status}">Error</h1>
+    <h2 class="error-page__error" th:text="${error}">에러 발생</h2>
+    <p class="error-page__message" th:text="${message}">요청을 처리하는 중에 문제가 발생했습니다.</p>
+    <a class="error-page__home-btn" th:href="@{/}">홈으로 돌아가기</a>
+</div>
+</body>
+</html>

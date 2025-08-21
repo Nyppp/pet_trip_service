@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>내 여행 일정</title>
+    <script th:src="@{/scripts/scheduleList.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/schedule/scheduleList.css}" />
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}" />
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}" />
+  </head>
+  <body>
+    <div th:replace="~{common/header :: siteHeader}"></div>
+    <h1 class="main_title">📅 내 여행 일정</h1>
+
+    <div id="empty_message" class="empty_message" th:if="${#lists.isEmpty(schedules)}">
+      <p>등록된 일정이 없습니다.</p>
+    </div>
+
+    <div id="schedule_list" class="schedule_list"></div>
+
+    <a th:href="@{/users/{userId}/schedules/new(userId=${userId}, placeId=${placeId})}" class="create_schedule_button">+ 새 일정 만들기</a>
+  </body>
+</html>

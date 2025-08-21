@@ -1,0 +1,48 @@
+.error-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #f9f9f9;
+    margin: 0;
+}
+
+.error-page__container {
+    width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.error-page__status {
+    font-size: 72px;
+    margin: 0;
+    color: #ff6f0e;
+}
+
+.error-page__error {
+    font-size: 24px;
+    margin: 8px 0;
+    color: #333;
+}
+
+.error-page__message {
+    font-size: 16px;
+    margin-bottom: 24px;
+    color: #666;
+}
+
+.error-page__home-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: var(--blue_main);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+.error-page__home-btn:hover {
+    background: var(--blue_hover);
+}
