@@ -25,9 +25,15 @@ public class PlaceApiController {
         return placeRepository.findAllByNameContainingIgnoreCase(keyword);
     }
 
-    @GetMapping("/places")
+    @GetMapping("/places/all")
     public ResponseEntity<List<PlaceDTO>> findAllPlaces(){
-        List<PlaceDTO> places =  placeService.findAllPlaces();
+        List<PlaceDTO> places =  placeService.findAll();
+        return ResponseEntity.ok(places);
+    }
+
+    @GetMapping("/places/rating")
+    public ResponseEntity<List<PlaceDTO>> findAllPlacesOrderByRatingTop12(){
+        List<PlaceDTO> places =  placeService.findTop12ByOrderByRatingDesc();
         return ResponseEntity.ok(places);
     }
 }
