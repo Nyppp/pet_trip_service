@@ -255,4 +255,23 @@ public class UserController {
         HttpSession session = request.getSession();
         session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
     }
+
+    // 사용자별 리뷰 삭제 (마이페이지용)
+    @DeleteMapping("/api/reviews/{reviewId}")
+    @ResponseBody
+    public ResponseEntity<?> deleteUserReview(@PathVariable Long reviewId,
+                                              @AuthenticationPrincipal CustomUserPrincipal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body("로그인이 필요합니다.");
+        }
+
+        try {
+            reviewService.deleteReview(reviewId, principal.getUser().getId());
+            return ResponseEntity.ok().body("리뷰가 성공적으로 삭제되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("리뷰 삭제 중 오류가 발생했습니다.");
+        }
+    }
 }
