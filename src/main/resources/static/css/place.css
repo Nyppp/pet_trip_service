@@ -1,4 +1,7 @@
-body { background-color: var(--gray_050); color: var(--black_main); }
+body {
+  background-color: var(--gray_050);
+  color: var(--black_main);
+}
 
 .container {
   max-width: 1100px;
@@ -341,6 +344,110 @@ body { background-color: var(--gray_050); color: var(--black_main); }
   display: flex;
   gap: 8px;
   margin-top: 8px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  max-width: 1000px; /* 4개 이미지 + gap + 여백 */
+}
+
+/* 리뷰 이미지 슬라이더 컨테이너 */
+.review-images-slider {
+  display: flex;
+  gap: 8px;
+  transition: transform 0.3s ease;
+  width: max-content; /* 내용에 맞게 너비 설정 */
+  min-width: 100%;
+}
+
+/* 리뷰 이미지 아이템 (통합된 스타일) */
+.review-image-item,
+.review-image-small {
+  flex-shrink: 0;
+  width: 240px;
+  height: 240px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid var(--gray_200);
+  transition: border-color 0.2s ease;
+}
+
+/* 4장 이하일 때 이미지들이 제대로 표시되도록 */
+.review-images:not(:has(.review-images-slider)) {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow: visible;
+}
+
+.review-images:not(:has(.review-images-slider)) img {
+  width: 240px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--gray_200);
+  transition: border-color 0.2s ease;
+}
+
+.review-images:not(:has(.review-images-slider)) img:hover {
+  border-color: var(--orange_main);
+}
+
+.review-image-item:hover,
+.review-image-small:hover {
+  border-color: var(--orange_main);
+}
+
+.review-image-item img,
+.review-image-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 슬라이더 네비게이션 버튼 */
+.review-images-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  z-index: 2;
+  transition: background-color 0.2s ease;
+}
+
+.review-images-nav:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.review-images-nav.prev {
+  left: 8px;
+}
+
+.review-images-nav.next {
+  right: 8px;
+}
+
+/* 이미지가 없을 때 */
+.review-images:empty::before {
+  content: "이미지 없음";
+  color: var(--gray_400);
+  font-size: 14px;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 160px;
 }
 
 /* 리뷰 수정/삭제 버튼 스타일 */
@@ -679,6 +786,37 @@ textarea:focus {
   background: rgba(255, 0, 0, 0.8);
 }
 
+/* 기존 이미지 스타일 */
+.image-preview-item[data-is-existing="true"] {
+  border: 2px solid var(--blue_500);
+  position: relative;
+}
+
+/* 기존 이미지 제거 버튼 */
+.remove-image-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  z-index: 2;
+}
+
+.remove-image-btn:hover {
+  background: rgba(255, 0, 0, 1);
+}
+
 .image-count-info {
   font-size: 12px;
   color: var(--gray_500);
@@ -847,20 +985,33 @@ textarea:focus {
   -webkit-appearance: none;
   font: inherit;
 }
-.ai-card-header{
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
+.ai-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
-.ai-title{
-  display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+.ai-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
 }
-.ai-title h2{ margin:0; }
-.ai-note{
-  font-size:12px;
-  color:#6b7280;
-  line-height:1.2;
+.ai-title h2 {
+  margin: 0;
+}
+.ai-note {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.2;
 }
 
-@media (max-width: 640px){
-  .ai-card-header{ align-items:flex-start; }
-  .ai-title{ flex-direction:column; gap:4px; }
+@media (max-width: 640px) {
+  .ai-card-header {
+    align-items: flex-start;
+  }
+  .ai-title {
+    flex-direction: column;
+    gap: 4px;
+  }
 }
