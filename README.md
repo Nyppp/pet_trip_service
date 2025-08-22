@@ -4,6 +4,15 @@
 
 ---
 
+## 📋 목차
+1. [프로젝트 소개](#1-프로젝트-소개)
+2. [팀원 소개 및 역할](#2-팀원-소개-및-역할)
+3. [사용 기술 및 도구](#3-사용-기술-및-도구)
+4. [디렉토리 구조](#4-디렉토리-구조)
+5. [ERD](#5-erd)
+6. [페이지 구성](#6-페이지-구성)
+7. [Git 컨벤션](#7-git-컨벤션)
+
 ## 1. 프로젝트 소개
 
 ### 📋 프로젝트 설명
@@ -75,37 +84,50 @@ PetTrip은 반려동물과 함께 방문 가능한 관광지를 추천하고, �
 
 ### 🛠️ Backend
 
-- **Language**: Java 17
-- **Framework**: Spring Boot 3.5.4
-- **ORM**: Spring Data JPA, Hibernate
-- **Security**: Spring Security, OAuth2
-- **Build Tool**: Maven
+![Java 17](https://img.shields.io/badge/Java_17-007396?style=flat-square&logo=java&logoColor=white)
+![Spring Boot 3.5.4](https://img.shields.io/badge/Spring_Boot_3.5.4-6DB33F?style=flat-square&logo=spring-boot&logoColor=white)
+![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F?style=flat-square&logo=spring&logoColor=white)
+![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=flat-square&logo=hibernate&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=flat-square&logo=spring-security&logoColor=white)
+![OAuth2](https://img.shields.io/badge/OAuth2-0069B5?style=flat-square&logo=oauth&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-C71A36?style=flat-square&logo=apache-maven&logoColor=white)
+
+
 
 ### 🎨 Frontend
 
-- **Template Engine**: Thymeleaf
-- **CSS**: Custom CSS
-- **JavaScript**: Vanilla JS
+![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=flat-square&logo=thymeleaf&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS-1572B6?style=flat-square&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+
+
 
 ### 🗄️ Database & Storage
 
-- **Database**: PostgreSQL
-- **Image Storage**: AWS S3
-- **Test Database**: H2
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![AWS S3](https://img.shields.io/badge/AWS_S3-569A31?style=flat-square&logo=amazon-s3&logoColor=white)
+![H2](https://img.shields.io/badge/H2-2EC866?style=flat-square&logo=h2-database&logoColor=white)
+
 
 ### 🔐 Authentication & API
 
-- **OAuth2**: Google OAuth2
-- **External APIs**:
-  - 공공데이터포털 TourAPI 4.0
-  - Google Maps API
-- **AI Service**: Alan AI
+![Google OAuth2](https://img.shields.io/badge/Google_OAuth2-4285F4?style=flat-square&logo=google&logoColor=white)
+![TourAPI 4.0](https://img.shields.io/badge/TourAPI_4.0-0078D4?style=flat-square&logo=data&logoColor=white)
+![Google Maps API](https://img.shields.io/badge/Google_Maps_API-4285F4?style=flat-square&logo=googlemaps&logoColor=white)
+![Alan AI](https://img.shields.io/badge/Alan_AI-000000?style=flat-square&logo=alan-ai&logoColor=white)
+
 
 ### ☁️ Deployment & DevOps
 
-- **Cloud**: AWS EC2
-- **Version Control**: Git, GitHub
-- **Documentation**: Swagger/OpenAPI
+![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?style=flat-square&logo=amazon-ec2&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-6BA539?style=flat-square&logo=swagger&logoColor=white)
+
+### 💬 Communication
+
+![Notion](https://img.shields.io/badge/Notion-000000?style=flat-square&logo=notion&logoColor=white)
+![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)
+
 
 ---
 
@@ -159,7 +181,7 @@ pet_trip_service/
 
 ---
 
-## 5. ERD (Entity Relationship Diagram)
+## 5. ERD
 ![ERD 설명](https://github.com/user-attachments/assets/8bb5c941-abd4-4d92-9b61-dd982e5a16ed)
 
 ---
@@ -256,7 +278,7 @@ pet_trip_service/
 
 ---
  
-## 🔧 Git 컨벤션
+## 7. Git 컨벤션
 
 
 ### 🌿 브랜치 전략
