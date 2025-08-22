@@ -25,8 +25,8 @@ public class ReviewService {
     private final PlaceRepository placeRepository;
     private final S3Service s3Service;
 
-    @Transactional
     public ReviewDTO create(Long userId, Long pathPlaceId, ReviewDTO dto) {
+        // 입력값 검증 (트랜잭션 밖에서)
         if (dto.getRating() == null || Math.round(dto.getRating() * 2) != dto.getRating() * 2) {
             throw new IllegalArgumentException("별점은 0.5 단위로 입력해 주세요.");
         }
@@ -34,7 +34,14 @@ public class ReviewService {
             throw new IllegalArgumentException("반려동물 정보를 최소 1개 입력해 주세요.");
         }
 
-        //Base64 이미지들을 S3에 업로드 (트랜잭션 밖에서 처리)
+        // 사용자 및 장소 조회 (트랜잭션 밖에서)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+        Long placeId = (dto.getPlaceId() != null) ? dto.getPlaceId() : pathPlaceId;
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new IllegalArgumentException("place not found"));
+
+        // Base64 이미지들을 S3에 업로드 (트랜잭션 밖에서 처리)
         List<String> uploadedImageUrls = new ArrayList<>();
         try {
             if (dto.getImages() != null && !dto.getImages().isEmpty()) {
@@ -45,13 +52,20 @@ public class ReviewService {
         }
 
         try {
-            //사용자 및 장소 조회
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("user not found"));
-            Long placeId = (dto.getPlaceId() != null) ? dto.getPlaceId() : pathPlaceId;
-            Place place = placeRepository.findById(placeId)
-                    .orElseThrow(() -> new IllegalArgumentException("place not found"));
+            // DB 트랜잭션 실행
+            return createReviewTransaction(user, place, dto, uploadedImageUrls);
+        } catch (Exception e) {
+            // 실패 시 업로드된 이미지들 삭제 (보상 트랜잭션)
+            rollbackUploadedImages(uploadedImageUrls);
+            throw e;
+        }
+    }
 
+    /**
+     * 리뷰 생성의 DB 트랜잭션 부분 (S3 업로드 후 실행)
+     */
+    @Transactional
+    private ReviewDTO createReviewTransaction(User user, Place place, ReviewDTO dto, List<String> uploadedImageUrls) {
         Review review = new Review();
         review.setUser(user);
         review.setPlace(place);
@@ -67,47 +81,41 @@ public class ReviewService {
             review.getPetInfos().add(e);
         }
 
-                 Review saved = reviewRepository.save(review);
+        Review saved = reviewRepository.save(review);
 
-            //업로드된 이미지 URL들을 ReviewImg 엔티티로 저장
-            for (String imageUrl : uploadedImageUrls) {
-                ReviewImg reviewImg = new ReviewImg();
-                reviewImg.setReview(saved);
-                reviewImg.setImgURL(imageUrl);
-                reviewImgRepository.save(reviewImg);  // 개별 저장
-            }
-
-            // 장소 평점 재계산
-            recomputeAndUpdatePlaceRating(place.getId());
-
-            // DTO 변환 및 반환 - 저장된 이미지들 조회
-            List<ReviewImg> savedImages = reviewImgRepository.findAllByReviewId(saved.getId());
-            List<String> finalImageUrls = savedImages.stream()
-                    .map(ReviewImg::getImgURL)
-                    .toList();
-
-            List<PetInfoDTO> petInfos = saved.getPetInfos().stream()
-                    .map(pi -> new PetInfoDTO(pi.getPetType(), pi.getBreed(), pi.getWeightKg()))
-                    .toList();
-
-            ReviewDTO res = new ReviewDTO();
-            res.setId(saved.getId());
-            res.setUserId(user.getId());
-            res.setPlaceId(place.getId());
-            res.setRating(saved.getRating());
-            res.setContent(saved.getContent());
-            res.setCreatedAt(saved.getCreatedAt());
-            res.setNickname(user.getNickname());
-            res.setUserProfileImageUrl(user.getProfileImg());
-            res.setImages(finalImageUrls);
-            res.setPetInfos(petInfos);
-            return res;
-
-        } catch (Exception e) {
-            // 실패 시 업로드된 이미지들 삭제 (보상 트랜잭션)
-            rollbackUploadedImages(uploadedImageUrls);
-            throw e;
+        // 업로드된 이미지 URL들을 ReviewImg 엔티티로 저장
+        for (String imageUrl : uploadedImageUrls) {
+            ReviewImg reviewImg = new ReviewImg();
+            reviewImg.setReview(saved);
+            reviewImg.setImgURL(imageUrl);
+            reviewImgRepository.save(reviewImg);  // 개별 저장
         }
+
+        // 장소 평점 재계산
+        recomputeAndUpdatePlaceRating(place.getId());
+
+        // DTO 변환 및 반환 - 저장된 이미지들 조회
+        List<ReviewImg> savedImages = reviewImgRepository.findAllByReviewIdOrderById(saved.getId());
+        List<String> finalImageUrls = savedImages.stream()
+                .map(ReviewImg::getImgURL)
+                .toList();
+
+        List<PetInfoDTO> petInfos = saved.getPetInfos().stream()
+                .map(pi -> new PetInfoDTO(pi.getPetType(), pi.getBreed(), pi.getWeightKg()))
+                .toList();
+
+        ReviewDTO res = new ReviewDTO();
+        res.setId(saved.getId());
+        res.setUserId(user.getId());
+        res.setPlaceId(place.getId());
+        res.setRating(saved.getRating());
+        res.setContent(saved.getContent());
+        res.setCreatedAt(saved.getCreatedAt());
+        res.setNickname(user.getNickname());
+        res.setUserProfileImageUrl(user.getProfileImg());
+        res.setImages(finalImageUrls);
+        res.setPetInfos(petInfos);
+        return res;
     }
     
     /**
@@ -127,37 +135,40 @@ public class ReviewService {
         }
     }
 
+    /**
+     * Review 엔티티를 ReviewDTO로 변환하는 공통 메서드
+     */
+    private ReviewDTO convertToDTO(Review review) {
+        // 이미지를 ID 순서대로 조회 (업로드 순서와 일치)
+        List<ReviewImg> orderedImages = reviewImgRepository.findAllByReviewIdOrderById(review.getId());
+        List<String> imgs = orderedImages.stream().map(ReviewImg::getImgURL).toList();
+        
+        List<PetInfoDTO> pets = review.getPetInfos().stream()
+                .map(pi -> new PetInfoDTO(pi.getPetType(), pi.getBreed(), pi.getWeightKg()))
+                .toList();
+
+        ReviewDTO dto = new ReviewDTO();
+        dto.setId(review.getId());
+        dto.setUserId(review.getUser() != null ? review.getUser().getId() : null);
+        dto.setPlaceId(review.getPlace() != null ? review.getPlace().getId() : null);
+        dto.setPlaceName(review.getPlace() != null ? review.getPlace().getName() : null);
+        dto.setRating(review.getRating());
+        dto.setContent(review.getContent());
+        dto.setCreatedAt(review.getCreatedAt());
+        dto.setNickname(review.getUser() != null ? review.getUser().getNickname() : null);
+        dto.setUserProfileImageUrl(review.getUser() != null ? review.getUser().getProfileImg() : null);
+        dto.setImages(imgs);
+        dto.setPetInfos(pets);
+        
+        return dto;
+    }
+
     // 버튼 노출 제어용
     @Transactional
     public boolean hasReview(Long userId, Long placeId) {
         return reviewRepository.existsByUserIdAndPlaceId(userId, placeId);
     }
 
-
-    @Transactional
-    public List<ReviewDTO> listByPlace(Long placeId) {
-        List<Review> list = reviewRepository.findAllByPlaceIdOrderByCreatedAtDesc(placeId);
-
-        return list.stream().map(r -> {
-            List<String> imgs = r.getImages().stream().map(ReviewImg::getImgURL).toList();
-            List<PetInfoDTO> pets = r.getPetInfos().stream()
-                    .map(pi -> new PetInfoDTO(pi.getPetType(), pi.getBreed(), pi.getWeightKg()))
-                    .toList();
-
-            ReviewDTO d = new ReviewDTO();
-            d.setId(r.getId());
-            d.setUserId(r.getUser() != null ? r.getUser().getId() : null);
-            d.setPlaceId(r.getPlace() != null ? r.getPlace().getId() : null);
-            d.setRating(r.getRating());
-            d.setContent(r.getContent());
-            d.setCreatedAt(r.getCreatedAt());
-            d.setNickname(r.getUser() != null ? r.getUser().getNickname() : null);
-            d.setUserProfileImageUrl(r.getUser() != null ? r.getUser().getProfileImg() : null);
-            d.setImages(imgs);
-            d.setPetInfos(pets);
-            return d;
-        }).toList();
-    }
     private void recomputeAndUpdatePlaceRating(Long placeId) {
         Double avg = reviewRepository.findAverageRatingByPlaceId(placeId);
         double value = (avg == null) ? 0.0 : Math.round(avg * 10.0) / 10.0;
@@ -171,32 +182,7 @@ public class ReviewService {
     public List<ReviewDTO> getReviewsByPlace(Long placeId) {
         return reviewRepository.findAllByPlaceIdOrderByCreatedAtDesc(placeId)
                 .stream()
-                .map(r -> {
-                    ReviewDTO dto = new ReviewDTO();
-                    dto.setId(r.getId());
-                    dto.setUserId(r.getUser().getId());
-                    dto.setPlaceId(r.getPlace().getId());
-                    dto.setRating(r.getRating());
-                    dto.setContent(r.getContent());
-                    dto.setCreatedAt(r.getCreatedAt());
-
-                    dto.setNickname(r.getUser().getNickname());
-                    dto.setUserProfileImageUrl(r.getUser().getProfileImg());
-
-                    dto.setImages(
-                            r.getImages().stream()
-                                    .map(ReviewImg::getImgURL)
-                                    .toList()
-                    );
-
-                    dto.setPetInfos(
-                            r.getPetInfos().stream()
-                                    .map(pi -> new PetInfoDTO(pi.getPetType(), pi.getBreed(), pi.getWeightKg()))
-                                    .toList()
-                    );
-
-                    return dto;
-                })
+                .map(this::convertToDTO)
                 .toList();
     }
 
@@ -219,10 +205,19 @@ public class ReviewService {
         }
 
         // 기존 이미지 URL 수집 (트랜잭션 밖에서)
-        List<ReviewImg> existingImages = reviewImgRepository.findAllByReviewId(reviewId);
+        List<ReviewImg> existingImages = reviewImgRepository.findAllByReviewIdOrderById(reviewId);
         List<String> oldImageUrls = new ArrayList<>();
         for (ReviewImg img : existingImages) {
             oldImageUrls.add(img.getImgURL());
+        }
+
+        // 이미지 개수 제한 검증
+        List<String> imagesToKeep = dto.getExistingImages() != null ? dto.getExistingImages() : new ArrayList<>();
+        int newImageCount = dto.getImages() != null ? dto.getImages().size() : 0;
+        int totalImageCount = imagesToKeep.size() + newImageCount;
+        
+        if (totalImageCount > 5) {
+            throw new IllegalArgumentException("이미지는 최대 5장까지 업로드할 수 있습니다. (기존: " + imagesToKeep.size() + "장, 새로 추가: " + newImageCount + "장)");
         }
 
         // 새로운 이미지들을 S3에 업로드 (트랜잭션 밖에서 처리)
@@ -235,8 +230,18 @@ public class ReviewService {
             throw new RuntimeException("이미지 업로드에 실패했습니다: " + e.getMessage(), e);
         }
 
+        // 삭제할 이미지들 계산 (트랜잭션 밖에서)
+        List<String> imagesToDelete = new ArrayList<>(oldImageUrls);
+        imagesToDelete.removeAll(imagesToKeep);
+
         try {
-            return updateReviewTransaction(reviewId, dto, uploadedImageUrls, oldImageUrls);
+            // DB 트랜잭션 실행
+            ReviewDTO result = updateReviewTransaction(review, dto, uploadedImageUrls, imagesToKeep);
+            
+            // 트랜잭션 성공 후 S3에서 삭제할 이미지들 처리 (트랜잭션 밖에서)
+            deleteS3Images(imagesToDelete);
+            
+            return result;
         } catch (Exception e) {
             // 실패 시 새로 업로드된 이미지들 삭제 (보상 트랜잭션)
             rollbackUploadedImages(uploadedImageUrls);
@@ -245,14 +250,27 @@ public class ReviewService {
     }
 
     /**
-     * 리뷰 수정의 DB 트랜잭션 부분 (S3 업로드 후 실행)
+     * S3에서 이미지들을 삭제하는 메서드 (트랜잭션 밖에서 실행)
+     */
+    private void deleteS3Images(List<String> imageUrls) {
+        for (String imageUrl : imageUrls) {
+            try {
+                String s3Key = s3Service.extractS3KeyFromUrl(imageUrl);
+                if (s3Key != null) {
+                    s3Service.deleteFile(s3Key);
+                }
+            } catch (Exception e) {
+                // S3 삭제 실패는 로그만 남기고 계속 진행
+                System.err.println("S3 이미지 삭제 실패: " + imageUrl + ", 오류: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * 리뷰 수정의 DB 트랜잭션 부분 (S3 업로드 후 실행, S3 삭제는 트랜잭션 밖에서 처리)
      */
     @Transactional
-    private ReviewDTO updateReviewTransaction(Long reviewId, ReviewDTO dto, List<String> uploadedImageUrls, List<String> oldImageUrls) {
-        // 리뷰 다시 조회 (트랜잭션 내에서)
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
-        
+    private ReviewDTO updateReviewTransaction(Review review, ReviewDTO dto, List<String> uploadedImageUrls, List<String> imagesToKeep) {
         // 리뷰 기본 정보 수정
         review.setContent(dto.getContent());
         review.setRating(dto.getRating());
@@ -268,8 +286,16 @@ public class ReviewService {
             review.getPetInfos().add(petInfo);
         }
 
-        // 기존 이미지 엔티티 삭제하고 새로 추가
-        reviewImgRepository.deleteAllByReviewId(reviewId);
+        // 이미지 처리: 기존 이미지 유지 + 새 이미지 추가 (DB 작업만)
+        // 삭제할 이미지들의 DB 레코드만 삭제 (S3 삭제는 트랜잭션 밖에서)
+        List<ReviewImg> allExistingImages = reviewImgRepository.findAllByReviewIdOrderById(review.getId());
+        for (ReviewImg existingImg : allExistingImages) {
+            if (!imagesToKeep.contains(existingImg.getImgURL())) {
+                reviewImgRepository.delete(existingImg);
+            }
+        }
+        
+        // 새로 업로드된 이미지들 추가
         for (String imageUrl : uploadedImageUrls) {
             ReviewImg reviewImg = new ReviewImg();
             reviewImg.setReview(review);
@@ -280,23 +306,11 @@ public class ReviewService {
         // 리뷰 저장
         Review savedReview = reviewRepository.save(review);
 
-        // 기존 S3 이미지들 삭제 (트랜잭션 커밋 후에도 실행됨)
-        for (String oldImageUrl : oldImageUrls) {
-            try {
-                String s3Key = s3Service.extractS3KeyFromUrl(oldImageUrl);
-                if (s3Key != null) {
-                    s3Service.deleteFile(s3Key);
-                }
-            } catch (Exception e) {
-                System.err.println("기존 이미지 삭제 실패: " + oldImageUrl + ", 오류: " + e.getMessage());
-            }
-        }
-
         // 장소 평점 재계산
         recomputeAndUpdatePlaceRating(review.getPlace().getId());
 
         // DTO 변환 및 반환
-        List<ReviewImg> finalImages = reviewImgRepository.findAllByReviewId(savedReview.getId());
+        List<ReviewImg> finalImages = reviewImgRepository.findAllByReviewIdOrderById(savedReview.getId());
         List<String> finalImageUrls = finalImages.stream()
                 .map(ReviewImg::getImgURL)
                 .toList();
@@ -324,27 +338,16 @@ public class ReviewService {
     @Transactional
     public List<ReviewDTO> getReviewsByUser(Long userId) {
         List<Review> reviews = reviewRepository.findAllByUserIdOrderByCreatedAt(userId);
-        
-        return reviews.stream().map(r -> {
-            List<String> imgs = r.getImages().stream().map(ReviewImg::getImgURL).toList();
-            List<PetInfoDTO> pets = r.getPetInfos().stream()
-                    .map(pi -> new PetInfoDTO(pi.getPetType(), pi.getBreed(), pi.getWeightKg()))
-                    .toList();
+        return reviews.stream().map(this::convertToDTO).toList();
+    }
 
-            ReviewDTO d = new ReviewDTO();
-            d.setId(r.getId());
-            d.setUserId(r.getUser() != null ? r.getUser().getId() : null);
-            d.setPlaceId(r.getPlace() != null ? r.getPlace().getId() : null);
-            d.setPlaceName(r.getPlace() != null ? r.getPlace().getName() : null);
-            d.setRating(r.getRating());
-            d.setContent(r.getContent());
-            d.setCreatedAt(r.getCreatedAt());
-            d.setNickname(r.getUser() != null ? r.getUser().getNickname() : null);
-            d.setUserProfileImageUrl(r.getUser() != null ? r.getUser().getProfileImg() : null);
-            d.setImages(imgs);
-            d.setPetInfos(pets);
-            return d;
-        }).toList();
+    // 특정 리뷰 조회 (수정용)
+    @Transactional
+    public ReviewDTO getReviewById(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+        
+        return convertToDTO(review);
     }
 
     // 리뷰 삭제
@@ -359,27 +362,28 @@ public class ReviewService {
             throw new IllegalArgumentException("본인이 작성한 리뷰만 삭제할 수 있습니다.");
         }
         
-        // S3에 업로드된 이미지들 삭제
-        List<ReviewImg> images = reviewImgRepository.findAllByReviewId(reviewId);
-        for (ReviewImg img : images) {
-            try {
-                String s3Key = s3Service.extractS3KeyFromUrl(img.getImgURL());
-                if (s3Key != null) {
-                    s3Service.deleteFile(s3Key);
-                }
-            } catch (Exception e) {
-                // 이미지 삭제 실패는 로그만 남기고 계속 진행
-                System.err.println("이미지 삭제 실패: " + img.getImgURL() + ", 오류: " + e.getMessage());
-            }
-        }
+        // S3에 업로드된 이미지들 수집 (트랜잭션 밖에서)
+        List<ReviewImg> images = reviewImgRepository.findAllByReviewIdOrderById(reviewId);
+        List<String> imageUrls = images.stream()
+                .map(ReviewImg::getImgURL)
+                .toList();
         
         // 장소 ID 저장 (평점 재계산용)
         Long placeId = review.getPlace().getId();
         
-        // 데이터베이스에서 리뷰 삭제 (cascade로 연관 데이터도 자동 삭제)
-        reviewRepository.delete(review);
-        
-        // 장소 평점 재계산
-        recomputeAndUpdatePlaceRating(placeId);
+        try {
+            // 데이터베이스에서 리뷰 삭제 (cascade로 연관 데이터도 자동 삭제)
+            reviewRepository.delete(review);
+            
+            // 장소 평점 재계산
+            recomputeAndUpdatePlaceRating(placeId);
+            
+            // 트랜잭션 성공 후 S3에서 이미지들 삭제 (트랜잭션 밖에서)
+            deleteS3Images(imageUrls);
+            
+        } catch (Exception e) {
+            // DB 삭제 실패 시 S3 삭제는 하지 않음
+            throw e;
+        }
     }
 }

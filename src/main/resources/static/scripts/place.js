@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const desc = document.getElementById("place-description");
   const moreBtn = document.getElementById("toggle-description-btn");
-  const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+  const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
   const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
   if (desc && moreBtn) {
@@ -166,8 +166,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       if (res.redirected) {
-          alert('로그인이 필요합니다.');
-          return;
+        alert("로그인이 필요합니다.");
+        return;
       }
       if (!res.ok) throw new Error("like api error");
 
@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: {
           "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest",
-          [csrfHeader]: csrfToken
+          [csrfHeader]: csrfToken,
         },
       });
 
@@ -236,13 +236,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // 리뷰 수정 모달 열기 함수
   async function openEditReviewModal(reviewId, placeId) {
     try {
-      // 기존 리뷰 데이터 가져오기
+      // 기존 리뷰 데이터 가져오기 (기존 방식 사용)
       const response = await fetch(`/api/places/${placeId}/reviews`);
+
+      if (!response.ok) {
+        alert("리뷰 정보를 불러올 수 없습니다.");
+        return;
+      }
+
       const reviews = await response.json();
       const reviewToEdit = reviews.find((r) => r.id == reviewId);
 
       if (!reviewToEdit) {
-        alert("리뷰 정보를 불러올 수 없습니다.");
+        alert("리뷰 정보를 찾을 수 없습니다.");
         return;
       }
 
@@ -290,10 +296,42 @@ document.addEventListener("DOMContentLoaded", () => {
       addPetItem(pet.type, pet.breed, pet.weightKg);
     });
 
-    // 이미지는 기존 구현에 따라 처리 (Base64로 다시 업로드하는 방식)
-    // 기존 이미지 URL을 표시하거나 새로운 이미지 업로드를 위해 초기화
+    // 기존 이미지 표시
     const imagesPreview = document.getElementById("images-preview");
     imagesPreview.innerHTML = "";
+
+    if (review.images && review.images.length > 0) {
+      review.images.forEach((imageUrl, index) => {
+        const imageContainer = document.createElement("div");
+        imageContainer.className = "image-preview-item";
+        imageContainer.dataset.imageUrl = imageUrl;
+        imageContainer.dataset.isExisting = "true";
+
+        const img = document.createElement("img");
+        img.src = imageUrl;
+        img.alt = `리뷰 이미지 ${index + 1}`;
+
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "remove-image-btn";
+        removeBtn.innerHTML = "×";
+        removeBtn.onclick = () => removeExistingImage(imageContainer);
+
+        imageContainer.appendChild(img);
+        imageContainer.appendChild(removeBtn);
+        imagesPreview.appendChild(imageContainer);
+      });
+    }
+  }
+
+  // 기존 이미지 제거 함수
+  function removeExistingImage(imageContainer) {
+    imageContainer.remove();
+
+    // 이미지 업로드 버튼 상태 업데이트 (reviewCreate.js의 함수 호출)
+    if (typeof updateImageUploadButton === "function") {
+      updateImageUploadButton();
+    }
   }
 
   // 별점 표시 업데이트 함수
@@ -337,4 +375,77 @@ document.addEventListener("DOMContentLoaded", () => {
 
     petList.appendChild(petItem);
   }
+
+  // 리뷰 이미지 슬라이더 초기화
+  function initializeReviewImageSliders() {
+    const reviewImages = document.querySelectorAll(".review-images");
+
+    reviewImages.forEach((container, index) => {
+      const images = container.querySelectorAll("img");
+      if (images.length <= 4) return; // 4개 이하면 슬라이더 불필요
+
+      // 기존 구조를 슬라이더 구조로 변경
+      const sliderContainer = document.createElement("div");
+      sliderContainer.className = "review-images-slider";
+
+      // 이미지들을 슬라이더 컨테이너로 이동
+      images.forEach((img) => {
+        const imageItem = document.createElement("div");
+        imageItem.className = "review-image-item";
+        imageItem.appendChild(img.cloneNode(true));
+        sliderContainer.appendChild(imageItem);
+      });
+
+      // 기존 내용 제거하고 슬라이더 추가
+      container.innerHTML = "";
+      container.appendChild(sliderContainer);
+
+      // 네비게이션 버튼 추가
+      const prevBtn = document.createElement("button");
+      prevBtn.className = "review-images-nav prev";
+      prevBtn.innerHTML = "‹";
+      prevBtn.style.display = "none";
+
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "review-images-nav next";
+      nextBtn.innerHTML = "›";
+
+      container.appendChild(prevBtn);
+      container.appendChild(nextBtn);
+
+      // 슬라이더 로직
+      let currentIndex = 0;
+      const maxVisible = 4; // 한 번에 보이는 이미지 개수
+      const maxIndex = Math.max(0, images.length - maxVisible);
+
+      function updateSlider() {
+        const translateX = -currentIndex * (240 + 8); // 이미지 너비 + gap
+        sliderContainer.style.transform = `translateX(${translateX}px)`;
+
+        // 버튼 표시/숨김
+        prevBtn.style.display = currentIndex > 0 ? "flex" : "none";
+        nextBtn.style.display = currentIndex < maxIndex ? "flex" : "none";
+      }
+
+      prevBtn.addEventListener("click", () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateSlider();
+        }
+      });
+
+      nextBtn.addEventListener("click", () => {
+        if (currentIndex < maxIndex) {
+          currentIndex++;
+          updateSlider();
+        }
+      });
+
+      // 초기 상태 설정
+      updateSlider();
+    });
+  }
+
+  // 페이지 로드 시 슬라이더 초기화
+  initializeReviewImageSliders();
 });
