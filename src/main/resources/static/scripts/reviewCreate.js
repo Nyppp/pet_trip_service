@@ -16,8 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const likeBtn = document.getElementById("like-btn");
   const placeId = likeBtn?.dataset.placeId || document.body?.dataset.placeId;
 
-
-
   const toggleModal = (show) => {
     if (!modal) return;
     modal.classList.toggle("hidden", !show);
@@ -136,10 +134,13 @@ document.addEventListener("DOMContentLoaded", () => {
   multipleImgInput?.addEventListener("change", (e) => {
     const files = Array.from(e.target.files || []);
 
+    // 기존 이미지 개수 계산
+    const existingImageCount = imagesPreview.querySelectorAll('.image-preview-item[data-is-existing="true"]').length;
+
     // 현재 선택된 파일 수와 새로 추가할 파일 수 합계 확인
-    const totalFiles = selectedFiles.length + files.length;
+    const totalFiles = selectedFiles.length + files.length + existingImageCount;
     if (totalFiles > MAX_IMAGES) {
-      alert(`최대 ${MAX_IMAGES}장까지만 선택할 수 있습니다.`);
+      alert(`최대 ${MAX_IMAGES}장까지만 선택할 수 있습니다. (기존: ${existingImageCount}장, 새로 추가: ${selectedFiles.length + files.length}장)`);
       e.target.value = ""; // 입력 초기화
       return;
     }
@@ -227,16 +228,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 업로드 버튼 상태 업데이트
   function updateImageUploadButton() {
-    const count = selectedFiles.length;
+    const newImageCount = selectedFiles.length;
+    const existingImageCount = imagesPreview.querySelectorAll('.image-preview-item[data-is-existing="true"]').length;
+    const totalCount = newImageCount + existingImageCount;
+
     const btn = imageUploadBtn?.querySelector("span");
     if (btn) {
-      if (count >= MAX_IMAGES) {
+      if (totalCount >= MAX_IMAGES) {
         btn.textContent = `최대 ${MAX_IMAGES}장 선택됨`;
         imageUploadBtn.disabled = true;
         imageUploadBtn.style.opacity = "0.6";
         imageUploadBtn.style.cursor = "not-allowed";
       } else {
-        btn.textContent = `+ 사진 추가 (${count}/${MAX_IMAGES})`;
+        btn.textContent = `+ 사진 추가 (${totalCount}/${MAX_IMAGES})`;
         imageUploadBtn.disabled = false;
         imageUploadBtn.style.opacity = "1";
         imageUploadBtn.style.cursor = "pointer";
@@ -375,12 +379,28 @@ document.addEventListener("DOMContentLoaded", () => {
       images: images, // Base64 이미지 배열 추가
     };
 
+    // 수정 모드인 경우 기존 이미지 정보 추가
+    const isEditMode = modal.dataset.editMode === "true";
+    if (isEditMode) {
+      // 기존 이미지 URL들 수집
+      const existingImages = [];
+      const existingImageElements = imagesPreview.querySelectorAll('.image-preview-item[data-is-existing="true"]');
+      existingImageElements.forEach((element) => {
+        const imageUrl = element.dataset.imageUrl;
+        if (imageUrl) {
+          existingImages.push(imageUrl);
+        }
+      });
+
+      payload.existingImages = existingImages;
+      // images 필드는 그대로 유지 (Base64 이미지들)
+    }
+
     try {
       // 수정 모드인지 확인
-      const isEditMode = modal.dataset.editMode === "true";
       const reviewId = modal.dataset.reviewId;
 
-      const csrfToken  = document.querySelector('meta[name="_csrf"]')?.content;
+      const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
       const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
       let res;

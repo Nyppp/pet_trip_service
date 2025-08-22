@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}"/>
-    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}" />
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>내가 쓴 리뷰 - PetTrip</title>
     <link rel="stylesheet" th:href="@{/css/common/common.css}" />
     <link rel="stylesheet" th:href="@{/css/mypage.css}" />
@@ -80,12 +80,8 @@
               <!-- 리뷰 이미지들 -->
               <div th:if="${review.images != null and !review.images.isEmpty()}" class="review-images">
                 <div class="images-grid">
-                  <div th:each="image, iterStat : ${review.images}" th:if="${iterStat.index < 4}" class="image-item">
+                  <div th:each="image, iterStat : ${review.images}" class="image-item">
                     <img th:src="${image}" th:alt="'리뷰 이미지 ' + ${iterStat.index + 1}" alt="리뷰 이미지" onerror="this.style.display='none';" />
-                    <!-- 4장 이상일 때 +N 표시 -->
-                    <div th:if="${iterStat.index == 3 and #lists.size(review.images) > 4}" class="more-images-overlay">
-                      <span th:text="'+' + ${#lists.size(review.images) - 4}">+2</span>
-                    </div>
                   </div>
                 </div>
               </div>

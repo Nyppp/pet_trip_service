@@ -33,6 +33,9 @@ public class ReviewDTO {
 
     private List<String> images;
 
+    // 기존 이미지 URL들 (수정 시 사용)
+    private List<String> existingImages;
+
     @NotNull @Size(min = 1, max = 5)
     @Valid
     private List<PetInfoDTO> petInfos;

@@ -29,7 +29,7 @@ public class ReviewApiController {
 
     @GetMapping
     public ResponseEntity<List<ReviewDTO>> list(@PathVariable Long placeId) {
-        return ResponseEntity.ok(reviewService.listByPlace(placeId));
+        return ResponseEntity.ok(reviewService.getReviewsByPlace(placeId));
     }
 
     @PutMapping("/{reviewId}")
