@@ -10,8 +10,9 @@
 3. [사용 기술 및 도구](#3-사용-기술-및-도구)
 4. [디렉토리 구조](#4-디렉토리-구조)
 5. [ERD](#5-erd)
-6. [페이지 구성](#6-페이지-구성)
-7. [Git 컨벤션](#7-git-컨벤션)
+6. [API 명세서](#6-api-명세서)
+7. [페이지 구성](#7-페이지-구성)
+8. [Git 컨벤션](#8-git-컨벤션)
 
 ## 1. 프로젝트 소개
 
@@ -37,7 +38,7 @@ PetTrip은 반려동물과 함께 방문 가능한 관광지를 추천하고, �
 
 - **노션 주소**: [프로젝트 노션](https://www.notion.so/Team-23f4c3b14a3580b5be54d98d2123a4b2)
 - **배포 사이트**: [PetTrip 서비스](https://pet-trip-service.p-e.kr/)
-- **시연 영상**: [YouTube 시연 영상](https://drive.google.com/file/d/17bzy5vBeIRje5YOqfpT-SmsC-YSVyo9J/view)
+- **시연 영상**: [시연 영상](https://drive.google.com/file/d/17bzy5vBeIRje5YOqfpT-SmsC-YSVyo9J/view)
 - **발표 자료**: [Google Slides 발표자료](https://docs.google.com/presentation/d/1Czaar7PO975W6uUUmfY18KhyrjKpEafz/edit?slide=id.p1#slide=id.p1)
 
 ---
@@ -78,7 +79,14 @@ PetTrip은 반려동물과 함께 방문 가능한 관광지를 추천하고, �
   </tr>
 </table>
 
+###  👥 팀원별 역할 및 담당 업무(WBS)
+
+- **WBS 문서**: [Google Sheets WBS](https://docs.google.com/spreadsheets/d/18RpCZjGifkFwGRlzzqAmbo7T7b9NjJVdaXGLW1iXOSI/edit?gid=0#gid=0)
+
+![WBS](https://github.com/user-attachments/assets/c768af79-a0ce-4b55-a2a0-f48e9cd05f7d)
+
 ---
+
 
 ## 3. 사용 기술 및 도구
 
@@ -186,7 +194,14 @@ pet_trip_service/
 
 ---
 
-## 6. 페이지 구성
+## 6. API 명세서
+
+- **개발 환경**: [Swagger UI](http://localhost:8080/swagger-ui.html)
+- **배포 환경**: [Swagger UI](https://pet-trip-service.p-e.kr/swagger-ui.html)
+
+---
+
+## 7. 페이지 구성
 
 ### 📝 회원가입 페이지
 
@@ -278,7 +293,7 @@ pet_trip_service/
 
 ---
  
-## 7. Git 컨벤션
+## 8. Git 컨벤션
 
 
 ### 🌿 브랜치 전략
