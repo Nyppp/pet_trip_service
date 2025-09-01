@@ -195,9 +195,11 @@ pet_trip_service/
 ---
 
 ## 6. API 명세서
-
-- **개발 환경**: [Swagger UI](http://localhost:8080/swagger-ui.html)
-- **배포 환경**: [Swagger UI](https://pet-trip-service.p-e.kr/swagger-ui.html)
+※ 보안 등의 문제로 이미지로 요약하여 보여드리겠습니다.
+<img width="1471" height="355" alt="image" src="https://github.com/user-attachments/assets/4990632d-4c4b-4187-a0cb-8a18b131a7b9" />
+<img width="1451" height="340" alt="image" src="https://github.com/user-attachments/assets/bd778c48-14a1-4f79-b567-7bd0dc5f7439" />
+<img width="1456" height="696" alt="image" src="https://github.com/user-attachments/assets/d886010e-f1a2-4b4c-98d0-7c7b22ed448c" />
+<img width="1478" height="418" alt="image" src="https://github.com/user-attachments/assets/39d1dd83-3409-4305-9b0c-332bbe6fcd9f" />
 
 ---
 
