@@ -38,7 +38,6 @@ PetTrip은 반려동물과 함께 방문 가능한 관광지를 추천하고, �
 
 - **노션 주소**: [프로젝트 노션](https://www.notion.so/Team-23f4c3b14a3580b5be54d98d2123a4b2)
 - **배포 사이트**: [PetTrip 서비스](https://pet-trip-service.p-e.kr/)
-- **시연 영상**: [시연 영상](https://drive.google.com/file/d/17bzy5vBeIRje5YOqfpT-SmsC-YSVyo9J/view)
 - **발표 자료**: [Google Slides 발표자료](https://docs.google.com/presentation/d/1Czaar7PO975W6uUUmfY18KhyrjKpEafz/edit?slide=id.p1#slide=id.p1)
 
 ---
